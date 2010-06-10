@@ -23,22 +23,22 @@ module CSD
         run_command("sudo apt-get install #{apt}")
       end
       
-      unless File.directory?('trunk')
-        log "Checking out minisip trunk"
-        checkout_trunk
+      unless File.directory?('repository')
+        log "Checking out minisip repository"
+        checkout_repository
       end
       
       run_command "sudo echo /usr/local/share/aclocal >> /usr/share/aclocal/dirlist"
       
       ['libmutil', 'libmnetutil', 'libmcrypto', 'libmikey', 'libmsip', 'libmstun', 'libminisip'].each do |lib|
-        Dir.chdir File.join(root_dir, 'trunk', lib)
+        Dir.chdir File.join(root_dir, 'repository', lib)
         log "Going through #{Dir.pwd}"
       end
       
     end
     
-    def checkout_trunk
-      run_command("git clone http://github.com/csd/minisip.git")
+    def checkout_repository
+      run_command("git clone http://github.com/csd/minisip.git repository")
     end
     
   end
