@@ -25,8 +25,10 @@ Gem::Specification.new do |s|
      "README.rdoc",
      "Rakefile",
      "VERSION",
+     "bin/csd",
      "csd.gemspec",
      "lib/csd.rb",
+     "lib/csd/loader.rb",
      "test/helper.rb",
      "test/test_csd.rb"
   ]
