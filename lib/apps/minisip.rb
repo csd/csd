@@ -19,7 +19,7 @@ module CSD
       Dir.chdir('minisip')
       root_dir = Dir.pwd
       
-      ['git-core', 'automake', 'libssl-dev', 'libtool', 'libglademm-2.4-dev'].each do |apt|
+      ['git-core', 'subversion', 'automake', 'libssl-dev', 'libtool', 'libglademm-2.4-dev'].each do |apt|
         run_command("sudo apt-get --yes install #{apt}")
       end
       
@@ -45,7 +45,8 @@ module CSD
     end
     
     def checkout_repository
-      run_command("git clone http://github.com/csd/minisip.git repository")
+      #run_command("git clone http://github.com/csd/minisip.git repository")
+      run_command("svn co svn://minisip.org/minisip/trunk repository")
     end
     
   end
