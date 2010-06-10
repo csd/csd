@@ -10,18 +10,22 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Technology Transfer Alliance Team"]
   s.date = %q{2010-06-10}
+  s.default_executable = %q{csd}
   s.description = %q{CSD stands for Communication Systems Design and is a project of the Telecommunication Systems Laboratory (TSLab) of the Royal Institute of Technology in Stockholm, Sweden. Within CSD many software tools are used to build up various networks and services. This gem is supposed to automate processes to handle the compilation and installation of these software tools. Technology Transfer Alliance (TTA) is the project team, which maintains this code.}
   s.email = %q{mtoday11@gmail.com}
+  s.executables = ["csd"]
   s.extra_rdoc_files = [
     "LICENSE",
-     "README.textile"
+     "README.rdoc"
   ]
   s.files = [
     ".document",
      ".gitignore",
      "LICENSE",
+     "README.rdoc",
      "Rakefile",
      "VERSION",
+     "csd.gemspec",
      "lib/csd.rb",
      "test/helper.rb",
      "test/test_csd.rb"
