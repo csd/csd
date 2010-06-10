@@ -26,7 +26,7 @@ module CSD
         when 'install'
           Installer.new :options => @options, :actions => @actions
         else
-          puts 'Run csd -h to get help.'
+          puts "Unknown action, try 'csd install'"
       end
       self
     end

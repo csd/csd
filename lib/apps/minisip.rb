@@ -38,7 +38,7 @@ module CSD
     end
     
     def checkout_trunk
-      run_command("git clone http://github.com/csd/minisip")
+      run_command("git clone http://github.com/csd/minisip.git")
     end
     
   end
