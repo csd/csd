@@ -11,6 +11,7 @@ begin
     gemspec.homepage = "http://github.com/csd/csd"
     gemspec.authors = ["Technology Transfer Alliance Team"]
     gemspec.add_dependency "term-ansicolor", ">= 0"
+    gemspec.executables = ["csd"]
   end
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
