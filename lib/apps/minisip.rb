@@ -20,7 +20,7 @@ module CSD
       root_dir = Dir.pwd
       
       ['git-core', 'automake', 'libssl-dev', 'libtool', 'libglademm-2.4-dev'].each do |apt|
-        run_command("sudo apt-get install #{apt}")
+        run_command("sudo apt-get --yes install #{apt}")
       end
       
       unless File.directory?('repository')
@@ -33,7 +33,14 @@ module CSD
       ['libmutil', 'libmnetutil', 'libmcrypto', 'libmikey', 'libmsip', 'libmstun', 'libminisip'].each do |lib|
         Dir.chdir File.join(root_dir, 'repository', lib)
         log "Going through #{Dir.pwd}"
+        run_command("./bootstrap")
+        run_command("./configure")
+        run_command("make")
+        run_command("make install")
       end
+      
+      run_command("ldconfig /usr/local/lib/libminisip.so.0")
+      run_command("minisip_gtkgui")
       
     end
     
