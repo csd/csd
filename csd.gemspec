@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
      "bin/csd",
      "csd.gemspec",
      "lib/csd.rb",
+     "lib/csd/installer.rb",
      "lib/csd/loader.rb",
      "test/helper.rb",
      "test/test_csd.rb"

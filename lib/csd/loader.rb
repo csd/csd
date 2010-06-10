@@ -1,5 +1,4 @@
 require File.join(File.dirname(__FILE__), 'installer')
-
 require 'optparse'
 
 module CSD
@@ -16,9 +15,9 @@ module CSD
       
       case ARGV.first
         when 'install'
-        
+          installer = Installer.new
         else
-          p 'Run csd -h to get help.'
+          puts 'Run csd -h to get help.'
       end
       self
     end
