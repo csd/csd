@@ -3,4 +3,6 @@
 require 'rubygems' # As a side note: Rubygems is already included for Ruby >= 1.9
 require 'csd'
 
+require File.join(File.dirname(__FILE__), '..', 'lib', 'csd') # For local development
+
 CSD::Loader.new
