@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{csd}
-  s.version = "0.0.7"
+  s.version = "0.0.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Technology Transfer Alliance Team"]
@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
      "VERSION",
      "bin/csd",
      "csd.gemspec",
-     "lib/apps/minisip.rb",
+     "lib/applications/minisip.rb",
      "lib/csd.rb",
      "lib/csd/installer.rb",
      "lib/csd/loader.rb",
@@ -37,9 +37,13 @@ Gem::Specification.new do |s|
      "test/test_csd.rb"
   ]
   s.homepage = %q{http://github.com/csd/csd}
+  s.post_install_message = %q{    ========================================================================
+    This is s test to see if ruby code is executed here. /usr/bin
+    ========================================================================
+}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.6}
+  s.rubygems_version = %q{1.3.7}
   s.summary = %q{Installation and compilation handler for software used in CSD projects.}
   s.test_files = [
     "test/helper.rb",
@@ -50,7 +54,7 @@ Gem::Specification.new do |s|
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
-    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<term-ansicolor>, [">= 0"])
     else
       s.add_dependency(%q<term-ansicolor>, [">= 0"])
