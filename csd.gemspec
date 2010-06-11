@@ -27,11 +27,17 @@ Gem::Specification.new do |s|
      "VERSION",
      "bin/csd",
      "csd.gemspec",
-     "lib/applications/minisip.rb",
      "lib/csd.rb",
-     "lib/csd/installer.rb",
-     "lib/csd/loader.rb",
-     "lib/csd/shared.rb",
+     "lib/csd/applications/base.rb",
+     "lib/csd/applications/minisip/darwin/minisip_darwin.rb",
+     "lib/csd/applications/minisip/init.rb",
+     "lib/csd/applications/minisip/linux/minisip_linux.rb",
+     "lib/csd/applications/minisip/minisip.rb",
+     "lib/csd/init.rb",
+     "lib/csd/options.rb",
+     "lib/csd/path_struct.rb",
+     "lib/extensions/array.rb",
+     "lib/extensions/string.rb",
      "publish",
      "test/helper.rb",
      "test/test_csd.rb"
@@ -44,8 +50,7 @@ Gem::Specification.new do |s|
  
     You can run it by just typing ´csd´ in your command line.
     
-    Note: On Debian and Ubuntu the executable ´csd´ is not yet in your path.
-          The reason for this is to protect you from malicious code.
+    Note: On Debian and Ubuntu the executable ´csd´ is not in your PATH by default
           You can fix this problem by creating a symlink with these two commands:
           
           GEMBIN=$(gem env | grep "E D" | sed "s/[^\w]* //")
@@ -68,11 +73,14 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<term-ansicolor>, [">= 0"])
+      s.add_runtime_dependency(%q<active_record>, [">= 0"])
     else
       s.add_dependency(%q<term-ansicolor>, [">= 0"])
+      s.add_dependency(%q<active_record>, [">= 0"])
     end
   else
     s.add_dependency(%q<term-ansicolor>, [">= 0"])
+    s.add_dependency(%q<active_record>, [">= 0"])
   end
 end
 
