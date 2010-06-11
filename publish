@@ -1,15 +1,16 @@
 #!/usr/bin/env ruby
 
-p ARGV
-
 unless ARGV.is_a?(Array) and ARGV.size > 0
   puts "Please provide a commit message as argument."
   exit
 end
 
-
 `git status`
 `git add .`
 `git add -u`
 `git commit -m "#{ARGV.first}"`
+
+`rake version:bump:patch`
+`rake release`
+`rake build`
 
