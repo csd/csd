@@ -15,8 +15,8 @@ module CSD
       @actions = ARGV
       OptionParser.new do |opts|
         opts.banner = "Usage: csd [options]"
-        opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
-          @options[:verbose] = v
+        opts.on("-s", "--silent", "Don't run verbosely") do |v|
+          @options[:verbose] = !v
         end
       end.parse!
       

@@ -7,7 +7,7 @@ module CSD
     include Term::ANSIColor
     
     def run_command(cmd)
-      log "Running command: #{cmd}".green.bold
+      log "Running command: #{cmd} in #{Dir.pwd}".green.bold
       ret = ''
       IO.popen(cmd) do |stdout|
         stdout.each do |line|
