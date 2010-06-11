@@ -12,11 +12,22 @@ begin
     gemspec.authors = ["Technology Transfer Alliance Team"]
     gemspec.add_dependency "term-ansicolor", ">= 0"
     gemspec.executables = ["csd"]
-    gemspec.post_install_message = <<-END
-    ========================================================================
-    This is s test to see if ruby code is executed here. \#{Gem.bindir}
-    ========================================================================
-    END
+    gemspec.post_install_message = %q{
+    ==============================================================================
+
+    Thank you for installing the Communication Systems Design Gem!
+ 
+    You can run it by just typing ´csd´ in your command line.
+    
+    Note: On Debian and Ubuntu the executable ´csd´ is not yet in your path.
+          The reason for this is to protect you from malicious code.
+          You can fix this problem by creating a symlink with these two commands:
+          
+          GEMBIN=$(gem env | grep "E D" | sed "s/[^\w]* //")
+          sudo ln -s "${GEMBIN}/csd" /usr/local/bin/csd
+          
+    ==============================================================================
+    }
   end
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"

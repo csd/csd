@@ -5,12 +5,23 @@ unless ARGV.is_a?(Array) and ARGV.size > 0
   exit
 end
 
-`git status`
-`git add .`
-`git add -u`
-`git commit -m "#{ARGV.first}"`
+def run_command(cmd)
+  puts "Running command: #{cmd}"
+  ret = ''
+  IO.popen(cmd) do |stdout|
+    stdout.each do |line|
+      puts line
+      ret << line
+    end
+  end
+  ret
+end
 
-`rake version:bump:patch`
-`rake release`
-`rake build`
-
+[ 'git status',
+  'git add .',
+  'git add -u',
+  'git commit -m "#{ARGV.first}"',
+  'rake version:bump:patch',
+  'rake release',
+  'rake build'
+  ].each { |cmd| run_command(cmd) }
