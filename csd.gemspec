@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{csd}
-  s.version = "0.0.8"
+  s.version = "0.0.9"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Technology Transfer Alliance Team"]
@@ -37,10 +37,22 @@ Gem::Specification.new do |s|
      "test/test_csd.rb"
   ]
   s.homepage = %q{http://github.com/csd/csd}
-  s.post_install_message = %q{    ========================================================================
-    This is s test to see if ruby code is executed here. #{Gem.bindir}
-    ========================================================================
-}
+  s.post_install_message = %q{
+    ==============================================================================
+
+    Thank you for installing the Communication Systems Design Gem!
+ 
+    You can run it by just typing ´csd´ in your command line.
+    
+    Note: On Debian and Ubuntu the executable ´csd´ is not yet in your path.
+          The reason for this is to protect you from malicious code.
+          You can fix this problem by creating a symlink with these two commands:
+          
+          GEMBIN=$(gem env | grep "E D" | sed "s/[^\w]* //")
+          sudo ln -s "${GEMBIN}/csd" /usr/local/bin/csd
+          
+    ==============================================================================
+    }
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
