@@ -6,7 +6,9 @@ unless ARGV.is_a?(Array) and ARGV.size > 0
 end
 
 def run_command(cmd)
+  puts "================"
   puts "Running command: #{cmd}"
+  puts "================"
   ret = ''
   IO.popen(cmd) do |stdout|
     stdout.each do |line|

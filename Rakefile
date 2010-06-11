@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'rake'
+require 'rdoc'
 
 begin
   require 'jeweler'
@@ -11,6 +12,7 @@ begin
     gemspec.homepage = "http://github.com/csd/csd"
     gemspec.authors = ["Technology Transfer Alliance Team"]
     gemspec.add_dependency "term-ansicolor", ">= 0"
+    gemspec.add_dependency "active_record", ">= 0"
     gemspec.executables = ["csd"]
     gemspec.post_install_message = %q{
     ==============================================================================
@@ -19,8 +21,7 @@ begin
  
     You can run it by just typing ´csd´ in your command line.
     
-    Note: On Debian and Ubuntu the executable ´csd´ is not yet in your path.
-          The reason for this is to protect you from malicious code.
+    Note: On Debian and Ubuntu the executable ´csd´ is not in your PATH by default
           You can fix this problem by creating a symlink with these two commands:
           
           GEMBIN=$(gem env | grep "E D" | sed "s/[^\w]* //")
