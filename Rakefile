@@ -14,7 +14,7 @@ begin
     gemspec.executables = ["csd"]
     gemspec.post_install_message = <<-END
     ========================================================================
-    This is s test to see if ruby code is executed here. #{Gem.bindir}
+    This is s test to see if ruby code is executed here. \#{Gem.bindir}
     ========================================================================
     END
   end

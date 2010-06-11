@@ -37,10 +37,10 @@ Gem::Specification.new do |s|
      "test/test_csd.rb"
   ]
   s.homepage = %q{http://github.com/csd/csd}
-  s.post_install_message = %q{    ========================================================================
-    This is s test to see if ruby code is executed here. /usr/bin
+  s.post_install_message = "    ========================================================================
+    This is s test to see if ruby code is executed here. #{Gem.bindir}
     ========================================================================
-}
+"
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
