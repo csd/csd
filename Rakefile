@@ -12,7 +12,7 @@ begin
     gemspec.authors = ["Technology Transfer Alliance Team"]
     gemspec.add_dependency "term-ansicolor", ">= 0"
     gemspec.executables = ["csd"]
-    spec.post_install_message = <<-END
+    gemspec.post_install_message = <<-END
     ========================================================================
     This is s test to see if ruby code is executed here. #{Gem.bindir}
     ========================================================================
