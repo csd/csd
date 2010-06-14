@@ -2,6 +2,9 @@ require 'rbconfig'
 
 module CSD
   module Application
+    
+    # This is the root parent of all Applications
+    #
     class Base
       
       include Gem::UserInteraction
