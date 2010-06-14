@@ -14,7 +14,11 @@ module CSD
       options.temp   = false
       options.silent = false
       options.dry    = false
-      
+      options.bootstrap    = true
+      options.configure    = true
+      options.make         = true
+      options.make_install = true
+
       # Parse the command line options
       OptionParser.new do |opts|
         opts.banner = "Usage: csd [action] [application] [options]"
@@ -35,6 +39,22 @@ module CSD
         
         opts.on("-d", "--dry","Don't execute any commands, just show them") do |value|
           options.dry = value
+        end
+
+        opts.on("-d", "--no-bootstrap","Don't run the bootstrap command") do |value|
+          options.bootstrap = value
+        end
+        
+        opts.on("-d", "--no-configure","Don't run the configure command") do |value|
+          options.configure = value
+        end
+        
+        opts.on("-d", "--no-make","Don't run the make command") do |value|
+          options.make = value
+        end
+        
+        opts.on("-d", "--no-make-install","Don't run the make install command") do |value|
+          options.make_install = value
         end
         
         opts.on("-p", "--path [PATH]",

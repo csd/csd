@@ -10,9 +10,9 @@ module CSD
           create_working_dir
           install_aptitude_dependencies
           checkout_repository
+          make_libraries
           fix_aclocal_dirlist
           ldconfig_and_gtkgui
-          make_libraries
         end
         
         def install_aptitude_dependencies

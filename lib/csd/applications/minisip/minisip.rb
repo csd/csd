@@ -62,7 +62,7 @@ module CSD
               log "Make #{lib}".green.bold
               run_command("make")
               log "Make install #{lib}".green.bold
-              #run_command("make install")
+              run_command("make install")
             else
               log "Skipping ´#{lib}´ because ´#{lib_dir}´ could not be found".red.bold
             end
