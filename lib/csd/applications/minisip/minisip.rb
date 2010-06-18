@@ -1,70 +1,115 @@
-require File.join(File.dirname(__FILE__), '..', 'base')
+require File.relative(__FILE__, '..', 'base')
 
 module CSD
   module Application
     module Minisip
       class Minisip < CSD::Application::Base
-                
+        
         def introduction
           super
-          log
-          log "Hello, I'm the application #{self.class.name}"
-          exit unless ask_yes_no("Continue?", true)
+          define_paths
+          say "Working directory:   ".green + path.work.to_s.yellow
+          say "Your Platform:       ".green + Gem::Platform.local.humanize.to_s.yellow
+          say "Application module:  ".green + self.class.name.to_s.yellow
+          say
+          exit unless ask_yes_no("Continue?".red.bold, true)
+          say
           build!
         end
         
         def build!
-          define_paths
-          create_working_dir
-          checkout_repository
-          make_libraries
+          before_build
+          cd path.work
+          make_hdviper if checkout_hdviper or options.dry
+          checkout_minisip
+          make_minisip
+          after_build
         end
 
         def define_paths
-          path.work       = File.expand_path(File.join(path.root, 'minisip_building'))
-          path.repository = File.expand_path(File.join(path.work, 'repository'))
+          path.work                      = Pathname.new(File.join(path.root, 'minisip_building'))
+          path.repository                = Pathname.new(File.join(path.work, 'repository'))
+          path.open_gl_display           = Pathname.new(File.join(path.repository, 'libminisip', 'source', 'subsystem_media', 'video', 'display', 'OpenGLDisplay.cxx'))
+          path.hdviper                   = Pathname.new(File.join(path.work, 'hdviper'))
+          path.hdviper_x264              = Pathname.new(File.join(path.hdviper, 'x264'))
+          path.hdviper_x264_test_x264api = Pathname.new(File.join(path.hdviper_x264, 'test', 'x264API'))
+          path.build                     = Pathname.new(File.join(path.work, 'build'))
+          path.build_include             = Pathname.new(File.join(path.build, 'include'))
+          path.build_lib                 = Pathname.new(File.join(path.build, 'lib'))
+          path.build_share               = Pathname.new(File.join(path.build, 'share'))
+          path.build_share_aclocal       = Pathname.new(File.join(path.build_share, 'aclocal'))
         end
         
-        def create_working_dir
-          if File.directory?(path.work)
-            log "Working directory ´#{path.work}´ already exists."
+        def checkout_hdviper
+          if path.hdviper.directory?
+            say "Skipping hdviper, because the directory already exists: #{path.hdviper}".green.bold
           else
-            log "Creating working directory ´#{path.work}´"
-            Dir.mkdir(path.work)
-          end
-          Dir.chdir(path.work)
-        end
-        
-        def checkout_repository
-          if File.directory?(path.repository)
-            log "The minisip repository already exists in ´#{path.repository}´"
-          else
-            log "Checking out minisip repository to ´#{path.repository}´"
-            #run_command("git clone http://github.com/csd/minisip.git repository")
-            if test_command('svn', 'info', 'svn://minisip.org/minisip/trunk')
-              run_command("svn co svn://minisip.org/minisip/trunk #{path.repository}")
+            if path.hdviper.parent.writable? or options.dry
+              say "Downloading hdviper to: #{path.hdviper}".green.bold
+              run_command("svn co --quiet svn://hdviper.org/hdviper/wp3/src #{path.hdviper}")
+              return true
             else
-              log "Sorry, something is wrong with subversion.".red.bold
-              exit
+              say "Could not download hdviper (no permission): #{path.hdviper}".red
             end
           end
         end
         
-        def make_libraries
-          ['libmutil', 'libmnetutil', 'libmcrypto', 'libmikey', 'libmsip', 'libmstun', 'libminisip'].each do |lib|
-            lib_dir = File.join(path.repository, lib)
-            if File.directory?(lib_dir)
-              Dir.chdir(lib_dir)
-              log "Bootstrapping #{lib}".green.bold
-              run_command("./bootstrap")
-              log "Configuring #{lib}".green.bold
-              run_command("./configure")
-              log "Make #{lib}".green.bold
-              run_command("make")
-              log "Make install #{lib}".green.bold
-              run_command("make install")
+        def make_hdviper
+          cd path.hdviper_x264
+          run_command('./configure')
+          run_command('make')
+          cd path.hdviper_x264_test_x264api
+          run_command('make')
+        end
+        
+        def checkout_minisip # TODO: Refactor because redudancy with checkout_hdviper
+          if path.repository.directory?
+            say "Skipping repository download, because the directory already exists: #{path.hdviper}".green.bold
+          else
+            if path.repository.parent.writable? or options.dry
+              say "Downloading minisip repository to: #{path.repository}".green.bold
+              run_command("git clone http://github.com/csd/minisip.git #{path.repository}")
+              # Fixing hard-coded stuff
+              new_file_content = File.read(path.open_gl_display).gsub('/home/erik', path.build)
+              File.open(path.open_gl_display, 'w+') { |file| file << new_file_content }
+              return true
             else
-              log "Skipping ´#{lib}´ because ´#{lib_dir}´ could not be found".red.bold
+              say "Could not download minisip repository (no permission): #{path.hdviper}".red
+            end
+          end
+        end
+        
+        def make_minisip
+          [path.build, path.build_include, path.build_lib, path.build_share, path.build_share_aclocal].each { |target| mkdir target }
+          ['libmutil', 'libmnetutil', 'libmcrypto', 'libmikey', 'libmsip', 'libmstun', 'libminisip', 'minisip'].each do |library|
+            directory = Pathname.new(File.join(path.repository, library))
+            next if options.only and !options.only.include?(library)
+            if cd(directory)
+              if options.bootstrap
+                say "Bootstrapping #{library}".green.bold
+                run_command("./bootstrap -I #{path.build_share_aclocal.enquote}")
+              end
+              if options.configure
+                say "Configuring #{library}".green.bold
+                case library
+                  when 'libminisip'
+                    run_command("./configure --prefix=#{path.build.enquote} --enable-debug --enable-video --disable-mil --disable-decklink --enable-opengl --disable-sdl CPPFLAGS=\"-I#{path.hdviper_x264_test_x264api} -I#{path.hdviper_x264}\" LDFLAGS=\"#{File.join(path.hdviper_x264_test_x264api, 'libx264api.a')} #{File.join(path.hdviper_x264_test_x264api 'libtidx264.a')} -lpthread -lrt\"")
+                  when 'minisip'
+                    run_command("./configure --prefix=#{path.build.enquote} --enable-debug --enable-video --enable-textui --enable-opengl")
+                  else
+                    run_command("./configure --prefix=#{path.build.enquote}  ")
+                end
+              end
+              if options.make
+                say "Make #{library}".green.bold
+                run_command("make")
+              end
+              if options.make_install
+                say "Make install #{library}".green.bold
+                run_command("make install")
+              end
+            else
+              say "Skipping minisip library #{library} because it not be found: #{directory}".green.bold
             end
           end
         end

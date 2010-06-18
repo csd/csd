@@ -7,7 +7,7 @@ module CSD
       class Init
                 
         def self.application(*args)
-          case Gem::Platform.local
+          case Gem::Platform.local.os
             when 'linux'
               MinisipLinux.new(*args)
             when 'darwin'

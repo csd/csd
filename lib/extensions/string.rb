@@ -3,9 +3,9 @@ require 'term/ansicolor'
 
 module StringExtensions
   
-  #def constantize
-  #  ActiveSupport::Inflector.constantize(self)
-  #end
+  def enquote
+    "\"#{self}\""
+  end
   
 end
 

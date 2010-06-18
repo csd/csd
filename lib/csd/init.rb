@@ -16,7 +16,7 @@ module CSD
     def initialize
       @options     = Options.parse
       @path        = path_struct
-      @gem_version = File.new(File.join(path.gem_root, 'VERSION')).read
+      @gem_version = File.new(File.join(path.gem_root, 'VERSION')).read # TODO: replace with File.read
       validate_arguments
       @application = initialize_application
       @application.introduction

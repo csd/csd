@@ -10,14 +10,16 @@ module CSD
     #
     def self.parse
       # Default options
-      options        = OpenStruct.new
-      options.temp   = false
-      options.silent = false
-      options.dry    = false
+      options              = OpenStruct.new
+      options.temp         = false
+      options.silent       = false
+      options.dry          = false
       options.bootstrap    = true
       options.configure    = true
       options.make         = true
       options.make_install = true
+      options.owner        = nil
+      options.apt_get      = true
 
       # Parse the command line options
       OptionParser.new do |opts|
@@ -41,20 +43,32 @@ module CSD
           options.dry = value
         end
 
-        opts.on("-d", "--no-bootstrap","Don't run the bootstrap command") do |value|
+        opts.on("-na", "--no-apt-get","Don't run any apt-get commands") do |value|
+          options.apt_get = value
+        end
+        
+        opts.on("-nb", "--no-bootstrap","Don't run any bootstrap commands") do |value|
           options.bootstrap = value
         end
         
-        opts.on("-d", "--no-configure","Don't run the configure command") do |value|
+        opts.on("-nc", "--no-configure","Don't run any configure commands") do |value|
           options.configure = value
         end
         
-        opts.on("-d", "--no-make","Don't run the make command") do |value|
+        opts.on("-nm", "--no-make","Don't run any make commands") do |value|
           options.make = value
         end
         
-        opts.on("-d", "--no-make-install","Don't run the make install command") do |value|
+        opts.on("-nmi", "--no-make-install","Don't run any make install commands") do |value|
           options.make_install = value
+        end
+        
+        opts.on("--only libmcrypto,libmnetuli,etc.", Array, "Include only these libraries") do |list|
+          options.only = list
+        end
+
+        opts.on("-o", "--owner [OWNER]","Specify OWNER:GROUP for this operation") do |value|
+          options.owner = value
         end
         
         opts.on("-p", "--path [PATH]",
@@ -73,10 +87,17 @@ module CSD
         end
 
         opts.on_tail("-v", "--version", "Show version") do
-          puts "CSD Gem Version: #{CSD::Init::GEM_VERSION}"
+          puts "CSD Gem Version: #{File.new(File.join(PathStruct.new.gem_root, 'VERSION')).read}"  # TODO: replace with File.read
           exit
         end
       end.parse!
+      
+      if options.owner
+        chmod = options.owner.split(':')
+        options.owner = chmod.first
+        options.group = chmod.last
+      end
+      
       options
     end
 

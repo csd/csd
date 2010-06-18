@@ -1,3 +1,4 @@
+require File.relative(__FILE__, '..', 'commands')
 require 'rbconfig'
 
 module CSD
@@ -7,9 +8,11 @@ module CSD
     #
     class Base
       
+      include Commands
       include Gem::UserInteraction
       
       attr_reader :gem_version, :options
+      attr_reader :after_build, :before_build # Dummies to be overwritten by methods
       attr_accessor :path
       
       def initialize(options={})
@@ -20,34 +23,10 @@ module CSD
       end
       
       def introduction
-        say "CSD Gem Version: #{gem_version}"
-        say
-        say "The working directory is:"
-        say path.root
+        say "CSD Version: #{gem_version}".blue
       end
       
-      def test_command(*args)
-        say "Testing command for success: #{args.join(' ')}".cyan
-        system(*args)
-      end
-      
-      def run_command(cmd)
-        log "Running command: #{cmd} in #{Dir.pwd}".magenta
-        ret = ''
-        unless options.dry
-          IO.popen(cmd) do |stdout|
-            stdout.each do |line|
-              say line
-              ret << line
-            end
-          end
-        end
-        ret
-      end
 
-      def log(msg="")
-        say msg.yellow unless options.silent
-      end
       
     end
   end
