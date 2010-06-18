@@ -82,7 +82,7 @@ module CSD
     end
     
     def exit_if_last_command_had_errors
-      unless $?.success?
+      unless $?.try(:success?) or options.dry
         say "The last command was unsuccessful.".red unless options.quiet
         exit
       end

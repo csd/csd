@@ -8,11 +8,13 @@ module CSD
         def introduction
           super
           define_paths
-          say "Working directory:   ".green + path.work.to_s.yellow
-          say "Your Platform:       ".green + Gem::Platform.local.humanize.to_s.yellow
-          say "Application module:  ".green + self.class.name.to_s.yellow
+          say " Working directory:   ".green + path.work.to_s.yellow
+          say " Your Platform:       ".green + Gem::Platform.local.humanize.to_s.yellow
+          say " Application module:  ".green + self.class.name.to_s.yellow
           say
-          exit unless ask_yes_no("Continue?".red.bold, true)
+          unless options.yes
+            exit unless ask_yes_no("Continue?".red.bold, true)
+          end
           say
           build!
         end
@@ -27,7 +29,7 @@ module CSD
         end
 
         def define_paths
-          path.work                      = Pathname.new(File.join(path.root, 'minisip_building'))
+          path.work                      = Pathname.new(File.join(path.root, 'minisip'))
           path.repository                = Pathname.new(File.join(path.work, 'repository'))
           path.open_gl_display           = Pathname.new(File.join(path.repository, 'libminisip', 'source', 'subsystem_media', 'video', 'display', 'OpenGLDisplay.cxx'))
           path.hdviper                   = Pathname.new(File.join(path.work, 'hdviper'))
@@ -36,6 +38,7 @@ module CSD
           path.build                     = Pathname.new(File.join(path.work, 'build'))
           path.build_include             = Pathname.new(File.join(path.build, 'include'))
           path.build_lib                 = Pathname.new(File.join(path.build, 'lib'))
+          path.build_lib_pkg_config      = Pathname.new(File.join(path.build_lib, 'pkgconfig'))
           path.build_share               = Pathname.new(File.join(path.build, 'share'))
           path.build_share_aclocal       = Pathname.new(File.join(path.build_share, 'aclocal'))
         end
@@ -64,7 +67,7 @@ module CSD
         
         def checkout_minisip # TODO: Refactor because redudancy with checkout_hdviper
           if path.repository.directory?
-            say "Skipping repository download, because the directory already exists: #{path.hdviper}".green.bold
+            say "Skipping repository download, because the directory already exists: #{path.repository}".green.bold
           else
             if path.repository.parent.writable? or options.dry
               say "Downloading minisip repository to: #{path.repository}".green.bold
@@ -84,21 +87,22 @@ module CSD
           ['libmutil', 'libmnetutil', 'libmcrypto', 'libmikey', 'libmsip', 'libmstun', 'libminisip', 'minisip'].each do |library|
             directory = Pathname.new(File.join(path.repository, library))
             next if options.only and !options.only.include?(library)
-            if cd(directory)
+            if cd(directory) or options.dry
               if options.bootstrap
                 say "Bootstrapping #{library}".green.bold
                 run_command("./bootstrap -I #{path.build_share_aclocal.enquote}")
               end
               if options.configure
                 say "Configuring #{library}".green.bold
-                case library
+                individual_options = case library
                   when 'libminisip'
-                    run_command("./configure --prefix=#{path.build.enquote} --enable-debug --enable-video --disable-mil --disable-decklink --enable-opengl --disable-sdl CPPFLAGS=\"-I#{path.hdviper_x264_test_x264api} -I#{path.hdviper_x264}\" LDFLAGS=\"#{File.join(path.hdviper_x264_test_x264api, 'libx264api.a')} #{File.join(path.hdviper_x264_test_x264api 'libtidx264.a')} -lpthread -lrt\"")
+                    %Q{--enable-debug --enable-video --disable-mil --disable-decklink --enable-opengl --disable-sdl CPPFLAGS="-I#{path.hdviper_x264_test_x264api} -I#{path.hdviper_x264}" LDFLAGS="#{File.join(path.hdviper_x264_test_x264api, 'libx264api.a')} #{File.join(path.hdviper_x264_test_x264api 'libtidx264.a')} -lpthread -lrt"}
                   when 'minisip'
-                    run_command("./configure --prefix=#{path.build.enquote} --enable-debug --enable-video --enable-textui --enable-opengl")
+                    %Q{--enable-debug --enable-video --enable-textui --enable-opengl}
                   else
-                    run_command("./configure --prefix=#{path.build.enquote}  ")
+                    ''
                 end
+                run_command(%Q{./configure #{individual_options} --prefix=#{path.build.enquote} PKG_CONFIG_PATH=#{path.build_lib_pkg_config.enquote} ACLOCAL_FLAGS=#{path.build_share_aclocal} LD_LIBRARY_PATH=#{path.build_lib.enquote} --silent})
               end
               if options.make
                 say "Make #{library}".green.bold

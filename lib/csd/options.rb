@@ -20,6 +20,7 @@ module CSD
       options.make_install = true
       options.owner        = nil
       options.apt_get      = true
+      options.yes          = false
 
       # Parse the command line options
       OptionParser.new do |opts|
@@ -43,6 +44,10 @@ module CSD
           options.dry = value
         end
 
+        opts.on("-y", "--yes","Answering all questions with 'yes'") do |value|
+          options.yes = value
+        end
+        
         opts.on("-na", "--no-apt-get","Don't run any apt-get commands") do |value|
           options.apt_get = value
         end
