@@ -12,7 +12,7 @@ begin
     gemspec.homepage = "http://github.com/csd/csd"
     gemspec.authors = ["Technology Transfer Alliance Team"]
     gemspec.add_dependency "term-ansicolor", ">= 0"
-    gemspec.add_dependency "active_support", ">= 0"
+    gemspec.add_dependency "activesupport", ">= 0"  # needs to be active_support in the next release of it, I guess
     gemspec.add_dependency "builder", ">= 0"
     gemspec.executables = ["csd"]
     gemspec.post_install_message = %q{
