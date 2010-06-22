@@ -16,12 +16,11 @@ module Csd
     
     include Gem::UserInteraction
     
-    attr_reader :gem_version, :options, :path, :application
+    attr_reader :options, :path, :application
     
     def initialize
       @options     = Options.parse
       @path        = path_struct
-      @gem_version = File.read(File.join(path.gem_root, 'VERSION'))
       validate_arguments
       @application = initialize_application
       @application.introduction
@@ -29,7 +28,7 @@ module Csd
     end
     
     def path_struct
-      path = PathContainer.new
+      path = OpenStruct.new
       if options.path
         if File.directory?(options.path)
           path.root = File.expand_path(options.path)
@@ -58,7 +57,7 @@ module Csd
       directory_name = ARGV.second.underscore
       begin
         require File.join(File.join(path.applications, "#{directory_name}"), 'init.rb')
-        "Csd::Application::#{directory_name.camelize}::Init".constantize.application(:gem_version => @gem_version, :options => @options, :path => @path)
+        "Csd::Application::#{directory_name.camelize}::Init".constantize.application(:options => @options, :path => @path)
       rescue LoadError
         say "Unknown application: #{directory_name}"
         exit

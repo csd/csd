@@ -4,7 +4,7 @@ module Csd
   module Extensions
     module Core
       module Pathname
-  
+        
         def enquote
           to_s.enquote
         end

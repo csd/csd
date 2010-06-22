@@ -3,116 +3,86 @@ require 'optparse/time'
 require 'ostruct'
 
 module Csd
+  # A class that handles the command line option parsing and manipulation
+  #
   class Options
 
+    # Parse all options that the user gave as command parameter. Note that this function strips the options
+    # from ARGV and leaves only non-option parameters (i.e. actions/applications; strings without -- and -).
     #
-    # Returns a structure describing the options.
+    # ==== Returns
+    #
+    # An OpenStruct object describing the options.
     #
     def self.parse
       # Default options
       options              = OpenStruct.new
-      options.temp         = false
-      options.silent       = false
-      options.dry          = false
-      options.bootstrap    = true
-      options.configure    = true
-      options.make         = true
-      options.make_install = true
-      options.owner        = nil
-      options.apt_get      = true
       options.yes          = false
 
       # Parse the command line options
       OptionParser.new do |opts|
-        opts.banner = "Usage: csd [action] [application] [options]"
-        opts.separator ""
-        opts.separator "Actions:"
-        opts.separator "    install"
-        opts.separator ""
-        opts.separator "Applications:"
-        opts.separator "    minisip"
-        opts.separator ""
-        opts.separator "Options:"
-        
-        opts.on("-t", "--temp",
-                "Use a subdirectory in the system's temporary directory",
-                "to download files and not the current directory") do |value|
-          options.temp = value
-        end
-        
-        opts.on("-d", "--dry","Don't execute any commands, just show them") do |value|
-          options.dry = value
-        end
+        opts.separator "Usage: csd ACTION APPLICATION [SCOPE] [OPTIONS]".blue.bold
 
-        opts.on("-y", "--yes","Answering all questions with 'yes'") do |value|
+        opts.headline "ACTIONS".green.bold
+        opts.subheadline "For users".yellow
+        opts.list_item 'install',       'Installs an application via a pre-compiled package'
+        opts.list_item '  |-run',           'Executes an installed application'
+        opts.list_item '  |-update',        'Updates an installed application (not available for all)'
+        opts.list_item '  \-remove',        'Removes an installed application (not available for all)'
+        opts.list_item 'show',          'Shows information about an application'
+        opts.subheadline "For developers".yellow
+        opts.list_item 'download',      'Downloads an application'
+        opts.list_item 'build',         'Downloads and compiles an application'
+        opts.list_item '  \-package',    'Packages a compiled application (Developers only)'
+        opts.list_item '     \-publish', 'Submits a compiled package to the CSD package repository'
+        
+        opts.headline "APPLICATIONS".green.bold
+        Applications.all { |app| opts.list_item(app.dir_name, app.short_description)  }
+        
+        opts.headline "SCOPES".green.bold
+        opts.separator "(Depends on the action and the application. Type `csd ACTION APPLICATION --help´ for more info)"
+        
+        opts.headline "OPTIONS".green.bold
+        
+        opts.subheadline "System interaction".yellow
+        options.yes = false
+        opts.on("-y", "--yes", "Answer all questions with `yes´ (batch mode)") do |value|
           options.yes = value
         end
-        
-        opts.on("-na", "--no-apt-get","Don't run any apt-get commands") do |value|
-          options.apt_get = value
+        options.dry = false
+        opts.on("-p", "--dry","Don't actually execute any commands (preview mode)") do |value|
+          options.dry = value
+        end
+        options.reveal = false
+        opts.on("-r", "--reveal","List all commands that normally would be executed in this operation") do |value|
+          options.reveal = value
         end
         
-        opts.on("-nb", "--no-bootstrap","Don't run any bootstrap commands") do |value|
-          options.bootstrap = value
+        opts.subheadline "Information output".yellow
+        options.verbose = false
+        opts.on("-e", "--verbose","Show elaborate output") do |value|
+          options.verbose = value
         end
-        
-        opts.on("-nc", "--no-configure","Don't run any configure commands") do |value|
-          options.configure = value
+        options.debug = false
+        opts.on("-d", "--debug","Show elaborate output and debugging information") do |value|
+          options.debug = value
         end
-        
-        opts.on("-nm", "--no-make","Don't run any make commands") do |value|
-          options.make = value
-        end
-        
-        opts.on("-nmi", "--no-make-install","Don't run any make install commands") do |value|
-          options.make_install = value
-        end
-        
-        opts.on("--only libmcrypto,libmnetuli,etc.", Array, "Include only these libraries") do |list|
-          options.only = list
-        end
-
-        opts.on("-o", "--owner [OWNER]","Specify OWNER:GROUP for this operation") do |value|
-          options.owner = value
-        end
-        
-        opts.on("-p", "--path [PATH]",
-                "Defines the working directory manually.",
-                "(This will override the --temp option)") do |value|
-          options.path = value
-        end
-        
-        
-        opts.on("-d", "--debug","Show debugging information") do |value|
-          options.quiet = value
-        end
-        
-        opts.on("--verbose","Show elaborate output") do |value|
-          options.quiet = value
-        end
-                
+        options.silent = false
         opts.on("-s", "--silent","Don't show any output") do |value|
           options.silent = value
         end
-
-        opts.on_tail("-h", "--help", "Show this message") do
-          puts opts
+        
+        opts.subheadline "Basics".yellow
+        opts.on_tail("-h", "--help", "Show detailed help regarding the given parameters") do
+          print opts.summarize
+          puts
           exit
         end
-
         opts.on_tail("-v", "--version", "Show version") do
-          puts "CSD Gem Version: #{File.read(File.join(PathContainer.new.gem_root, 'VERSION'))}"
+          print "CSD Gem Version: #{opts.version}".blue
           exit
         end
-      end
-      
-      #.parse!
-      
-      if options.owner
-        chmod = options.owner.split(':')
-        options.owner = chmod.first
-        options.group = chmod.last
-      end
+      end.parse!
       
       options
     end

@@ -11,22 +11,19 @@ module Csd
       include Commands
       include Gem::UserInteraction
       
-      attr_reader :gem_version, :options
+      attr_reader :options
       attr_reader :after_build, :before_build # Dummies to be overwritten by methods
       attr_accessor :path
       
       def initialize(options={})
-        @gem_version = options[:gem_version]
         @options     = options[:options]
         @path        = options[:path]
         self
       end
       
       def introduction
-        say "CSD Version: #{gem_version}".blue
+        say "This is the Application Base Introduction".blue
       end
-      
-
       
     end
   end
