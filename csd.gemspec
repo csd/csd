@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{csd}
-  s.version = "0.0.13"
+  s.version = "0.0.14"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Technology Transfer Alliance Team"]
-  s.date = %q{2010-06-14}
+  s.date = %q{2010-06-22}
   s.default_executable = %q{csd}
   s.description = %q{CSD stands for Communication Systems Design and is a project of the Telecommunication Systems Laboratory (TSLab) of the Royal Institute of Technology in Stockholm, Sweden. Within CSD many software tools are used to build up various networks and services. This gem is supposed to automate processes to handle the compilation and installation of these software tools. Technology Transfer Alliance (TTA) is the project team, which maintains this code.}
   s.email = %q{mtoday11@gmail.com}
@@ -29,18 +29,24 @@ Gem::Specification.new do |s|
      "csd.gemspec",
      "lib/csd.rb",
      "lib/csd/applications/base.rb",
-     "lib/csd/applications/minisip/darwin/minisip_darwin.rb",
+     "lib/csd/applications/minisip/base.rb",
      "lib/csd/applications/minisip/init.rb",
-     "lib/csd/applications/minisip/linux/minisip_linux.rb",
-     "lib/csd/applications/minisip/minisip.rb",
+     "lib/csd/applications/minisip/unix/base.rb",
+     "lib/csd/commands.rb",
      "lib/csd/init.rb",
      "lib/csd/options.rb",
-     "lib/csd/path_struct.rb",
-     "lib/extensions/array.rb",
-     "lib/extensions/string.rb",
+     "lib/csd/path_container.rb",
+     "lib/extensions/core/array.rb",
+     "lib/extensions/core/file.rb",
+     "lib/extensions/core/object.rb",
+     "lib/extensions/core/pathname.rb",
+     "lib/extensions/core/string.rb",
+     "lib/extensions/gem/platform.rb",
      "publish",
+     "test/functional/test_commands.rb",
      "test/helper.rb",
-     "test/test_csd.rb"
+     "test/unit/test_pathname.rb",
+     "test/unit/test_string.rb"
   ]
   s.homepage = %q{http://github.com/csd/csd}
   s.post_install_message = %q{
@@ -63,8 +69,10 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Installation and compilation handler for software used in CSD projects.}
   s.test_files = [
-    "test/helper.rb",
-     "test/test_csd.rb"
+    "test/functional/test_commands.rb",
+     "test/helper.rb",
+     "test/unit/test_pathname.rb",
+     "test/unit/test_string.rb"
   ]
 
   if s.respond_to? :specification_version then
@@ -73,16 +81,16 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<term-ansicolor>, [">= 0"])
-      s.add_runtime_dependency(%q<activesupport>, [">= 0"])
+      s.add_runtime_dependency(%q<active_support>, [">= 0"])
       s.add_runtime_dependency(%q<builder>, [">= 0"])
     else
       s.add_dependency(%q<term-ansicolor>, [">= 0"])
-      s.add_dependency(%q<activesupport>, [">= 0"])
+      s.add_dependency(%q<active_support>, [">= 0"])
       s.add_dependency(%q<builder>, [">= 0"])
     end
   else
     s.add_dependency(%q<term-ansicolor>, [">= 0"])
-    s.add_dependency(%q<activesupport>, [">= 0"])
+    s.add_dependency(%q<active_support>, [">= 0"])
     s.add_dependency(%q<builder>, [">= 0"])
   end
 end
