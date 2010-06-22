@@ -1,7 +1,7 @@
 require 'ostruct'
 
-module CSD
-  class PathStruct < OpenStruct
+module Csd
+  class PathContainer < OpenStruct
     
     def gem_root
       File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))

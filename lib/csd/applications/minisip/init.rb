@@ -1,7 +1,6 @@
-require File.join(File.dirname(__FILE__), 'minisip')
 Dir.glob(File.join(File.dirname(__FILE__), '**', '*.rb')) { |file| require file }
 
-module CSD
+module Csd
   module Application
     module Minisip
       class Init
@@ -9,11 +8,9 @@ module CSD
         def self.application(*args)
           case Gem::Platform.local.os
             when 'linux'
-              MinisipLinux.new(*args)
-            when 'darwin'
-              MinisipDarwin.new(*args)
+              Unix::Base.new(*args)
             else
-              Minisip.new(*args)
+              Base.new(*args)
           end
         end
         

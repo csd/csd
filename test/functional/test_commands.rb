@@ -2,7 +2,7 @@ require 'helper'
 require 'ostruct'
 
 class Cmd
-  include CSD::Commands
+  include Csd::Commands
   attr_accessor :options
   def initialize
     @options = OpenStruct.new({ :silent => true, :quiet => true, :dry => false })
@@ -67,9 +67,32 @@ class TestCommands < Test::Unit::TestCase
         assert !result.writable?
         Pathname.new(@dir).chmod(0777) # Cleanup
       end
+      
+    end # context "mkdir"
+
+    context "cd" do
+      
+      should "return a CommanResult with success? if the directory was changed successfully" do
+        assert_kind_of(Cmd::CommandResult, result = @cmd.cd('/'))
+        assert result.success?
+        assert_kind_of(Cmd::CommandResult, result = @cmd.cd(@tmp))
+        assert result.success?
+      end
+      
+      should "realize when the target is not a directory, but a file or something" do
+        testfile_path = File.join(@tmp, 'testfile')
+        File.new(testfile_path, 'w')
+        assert_kind_of(Cmd::CommandResult, result = @cmd.cd(testfile_path))
+        assert !result.success?
+      end
+      
+      should "realize when the target doesn't exist" do
+        assert_kind_of(Cmd::CommandResult, result = @cmd.cd('/i/for/sure/dont/exist'))
+        assert !result.success?
+      end
+      
+    end # context "cd"
   
-    end
-  
-  end
+  end # context "As a directory function"
 
 end

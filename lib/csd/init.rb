@@ -6,7 +6,12 @@ require 'ostruct'
 require 'tmpdir'
 require 'active_support/core_ext'
 
-module CSD
+# This namespace is given to the entire CSD gem.
+#
+module Csd
+  # On initialization, this class bootstraps and runs the CSD gem.
+  # The initialization is most likely be done by the `csd´ executable.
+  #
   class Init
     
     include Gem::UserInteraction
@@ -16,7 +21,7 @@ module CSD
     def initialize
       @options     = Options.parse
       @path        = path_struct
-      @gem_version = File.new(File.join(path.gem_root, 'VERSION')).read # TODO: replace with File.read
+      @gem_version = File.read(File.join(path.gem_root, 'VERSION'))
       validate_arguments
       @application = initialize_application
       @application.introduction
@@ -24,7 +29,7 @@ module CSD
     end
     
     def path_struct
-      path = PathStruct.new
+      path = PathContainer.new
       if options.path
         if File.directory?(options.path)
           path.root = File.expand_path(options.path)
@@ -53,7 +58,7 @@ module CSD
       directory_name = ARGV.second.underscore
       begin
         require File.join(File.join(path.applications, "#{directory_name}"), 'init.rb')
-        "CSD::Application::#{directory_name.camelize}::Init".constantize.application(:gem_version => @gem_version, :options => @options, :path => @path)
+        "Csd::Application::#{directory_name.camelize}::Init".constantize.application(:gem_version => @gem_version, :options => @options, :path => @path)
       rescue LoadError
         say "Unknown application: #{directory_name}"
         exit

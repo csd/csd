@@ -2,7 +2,7 @@ require 'optparse'
 require 'optparse/time'
 require 'ostruct'
 
-module CSD
+module Csd
   class Options
 
     #
@@ -82,6 +82,15 @@ module CSD
           options.path = value
         end
         
+        
+        opts.on("-d", "--debug","Show debugging information") do |value|
+          options.quiet = value
+        end
+        
+        opts.on("--verbose","Show elaborate output") do |value|
+          options.quiet = value
+        end
+                
         opts.on("-s", "--silent","Don't show any output") do |value|
           options.silent = value
         end
@@ -92,10 +101,12 @@ module CSD
         end
 
         opts.on_tail("-v", "--version", "Show version") do
-          puts "CSD Gem Version: #{File.new(File.join(PathStruct.new.gem_root, 'VERSION')).read}"  # TODO: replace with File.read
+          puts "CSD Gem Version: #{File.read(File.join(PathContainer.new.gem_root, 'VERSION'))}"
           exit
         end
-      end.parse!
+      end
+      
+      #.parse!
       
       if options.owner
         chmod = options.owner.split(':')

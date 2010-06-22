@@ -1,10 +1,10 @@
-require File.relative(__FILE__, '..', 'commands')
+require File.join(File.dirname(__FILE__), '..', 'commands')
 require 'rbconfig'
 
-module CSD
+module Csd
   module Application
     
-    # This is the root parent of all Applications
+    # This is the class root parent of all Applications
     #
     class Base
       

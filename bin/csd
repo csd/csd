@@ -5,4 +5,4 @@ require 'rubygems' # As a side note: Rubygems is already included for Ruby >= 1.
 
 require File.join(File.dirname(__FILE__), '..', 'lib', 'csd')
 
-CSD::Init.new
+Csd::Init.new
