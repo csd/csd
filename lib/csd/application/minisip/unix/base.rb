@@ -1,10 +1,10 @@
 require File.join(File.dirname(__FILE__), '..', 'base')
 
-module Csd
+module CSD
   module Application
     module Minisip
       module Unix
-        class Base < Csd::Application::Minisip::Base
+        class Base < CSD::Application::Minisip::Base
           
           # A list of apt-get packages that are required by this application. 
           #
@@ -43,7 +43,6 @@ module Csd
           end
 
           def ldconfig_and_gtkgui
-            run_command("ldconfig /usr/local/lib/libminisip.so.0")
             run_command("minisip_gtkgui")
           end
         

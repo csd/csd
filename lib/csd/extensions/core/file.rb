@@ -1,4 +1,4 @@
-module Csd
+module CSD
   module Extensions
     module Core
       module File
@@ -9,5 +9,5 @@ module Csd
 end
 
 class File #:nodoc:
-  extend Csd::Extensions::Core::File
+  extend CSD::Extensions::Core::File
 end

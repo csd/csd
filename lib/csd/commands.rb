@@ -1,8 +1,8 @@
+require 'active_support/core_ext'
 require 'pathname'
 require 'ostruct'
-require 'active_support'
 
-module Csd
+module CSD
   # This module contains wrapper methods for standard file system commands. They are meant to be
   # a little bit more robust (e.g. raising no exceptions) and return elaborate feedback on their operation.
   #

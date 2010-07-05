@@ -1,9 +1,9 @@
 require File.join(File.dirname(__FILE__), '..', 'base')
 
-module Csd
+module CSD
   module Application
     module Minisip
-      class Base < Csd::Application::Base
+      class Base < CSD::Application::Base
         
         def introduction
           super
@@ -96,7 +96,7 @@ module Csd
                 say "Configuring #{library}".green.bold
                 individual_options = case library
                   when 'libminisip'
-                    %Q{--enable-debug --enable-video --disable-mil --disable-decklink --enable-opengl --disable-sdl CPPFLAGS="-I#{path.hdviper_x264_test_x264api} -I#{path.hdviper_x264}" LDFLAGS="#{File.join(path.hdviper_x264_test_x264api, 'libx264api.a')} #{File.join(path.hdviper_x264, 'libtidx264.a')} -lpthread -lrt"}
+                    %Q{--enable-debug --enable-video --disable-mil --enable-decklink --enable-opengl --disable-sdl CPPFLAGS="-I#{path.hdviper_x264_test_x264api} -I#{path.hdviper_x264}" LDFLAGS="#{File.join(path.hdviper_x264_test_x264api, 'libx264api.a')} #{File.join(path.hdviper_x264, 'libtidx264.a')} -lpthread -lrt"}
                     #%Q{--enable-debug --enable-video --disable-mil --disable-decklink --enable-opengl --disable-sdl CPPFLAGS="-I#{path.hdviper_x264}" LDFLAGS="#{File.join(path.hdviper_x264, 'libx264.a')} -lpthread -lrt"}
                   when 'minisip'
                     %Q{--enable-debug --enable-video --enable-textui --enable-opengl}

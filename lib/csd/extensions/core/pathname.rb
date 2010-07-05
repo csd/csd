@@ -1,9 +1,18 @@
 require File.join(File.dirname(__FILE__), 'string')
 
-module Csd
+module CSD
   module Extensions
     module Core
       module Pathname
+        
+        def children_directories(&block)
+          result = []
+          children.map do |child|
+            next unless child.directory?
+            block_given? ? yield(child) : result << child
+          end
+          result
+        end
         
         def enquote
           to_s.enquote
@@ -19,5 +28,5 @@ module Csd
 end
 
 class Pathname #:nodoc:
-  include Csd::Extensions::Core::Pathname
+  include CSD::Extensions::Core::Pathname
 end

@@ -17,4 +17,18 @@ class Test::Unit::TestCase
     target
   end
 
+  def assert_includes(elem, array, message = nil) 
+    message = build_message message, ' is not found in .', elem, array 
+    assert_block message do 
+      array.include? elem 
+    end 
+  end
+  
+  def assert_excludes(elem, array, message = nil) 
+    message = build_message message, ' is found in .', elem, array 
+    assert_block message do 
+      !array.include? elem 
+    end 
+  end
+  
 end

@@ -2,7 +2,7 @@ require 'helper'
 require 'ostruct'
 
 class Cmd
-  include Csd::Commands
+  include CSD::Commands
   attr_accessor :options
   def initialize
     @options = OpenStruct.new({ :silent => true, :quiet => true, :dry => false })

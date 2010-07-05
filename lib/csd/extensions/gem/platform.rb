@@ -1,4 +1,4 @@
-module Csd
+module CSD
   module Extensions
     module Gem
       module Platform
@@ -15,6 +15,6 @@ end
 
 module Gem
   class Platform #:nodoc:
-    include Csd::Extensions::Gem::Platform
+    include CSD::Extensions::Gem::Platform
   end
 end

@@ -1,6 +1,6 @@
 require 'term/ansicolor'
 
-module Csd
+module CSD
   module Extensions
     module Core
       module String
@@ -16,5 +16,5 @@ end
 
 class String #:nodoc:
   include Term::ANSIColor
-  include Csd::Extensions::Core::String
+  include CSD::Extensions::Core::String
 end

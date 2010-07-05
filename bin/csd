@@ -1,8 +1,20 @@
 #!/usr/bin/env ruby
 
-require 'rubygems' # As a side note: Rubygems is already included for Ruby >= 1.9
-#require 'csd'
+# First, load the Rubygems framework and the CSD gem.
+# Note: Rubygems is already included for Ruby >= 1.9, but we want to go sure here
+require 'rubygems'
+require 'csd'
 
-require File.join(File.dirname(__FILE__), '..', 'lib', 'csd')
-
-Csd::Init.new
+# Now, let's bootstrap the Command Line Interface and off we go
+begin
+  CSD.bootstrap
+#rescue NameError
+#  puts 'NameError! If you are an AI-developer, you might want to use `ruby bin/csd-devel´ instead.'
+#  exit 1
+#rescue CSD::BundlerError => e
+#  CSD.ui.error e.message
+#  exit e.status_code
+#rescue Interrupt
+#  CSD.ui.error "\nQuitting..."
+#  exit 1
+end

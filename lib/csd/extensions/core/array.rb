@@ -1,4 +1,4 @@
-module Csd
+module CSD
   module Extensions
     module Core
       module Array
@@ -9,5 +9,5 @@ module Csd
 end
 
 class Array #:nodoc:
-  include Csd::Extensions::Core::Array
+  include CSD::Extensions::Core::Array
 end

@@ -1,4 +1,4 @@
-module Csd
+module CSD
   module Extensions
     module Core
       module Object
@@ -18,5 +18,5 @@ module Csd
 end
 
 class Object #:nodoc:
-  include Csd::Extensions::Core::Object
+  include CSD::Extensions::Core::Object
 end

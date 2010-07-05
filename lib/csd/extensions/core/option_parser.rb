@@ -1,7 +1,7 @@
 require File.join(File.dirname(__FILE__), 'string')
 require 'optparse'
 
-module Csd
+module CSD
   module Extensions
     module Core
       module OptionParser
@@ -19,7 +19,7 @@ module Csd
           separator(@summary_indent + text)
         end
         
-        def list_item(item, description, &block)
+        def list_item(item='', description='', &block)
           separator(summary_indent + item.ljust(summary_width + 1) + description)
         end
         
@@ -29,5 +29,5 @@ module Csd
 end
 
 class OptionParser #:nodoc:
-  include Csd::Extensions::Core::OptionParser
+  include CSD::Extensions::Core::OptionParser
 end
