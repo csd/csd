@@ -1,3 +1,4 @@
+require File.join(File.dirname(__FILE__), 'minisip', 'errors')
 Dir.glob(File.join(File.dirname(__FILE__), 'minisip', 'unix', '*.rb')) { |file| require file }
 
 module CSD
@@ -26,7 +27,7 @@ module CSD
           'MiniSIP'
         end
         
-        def options
+        def option_parser
           File.read(File.join(File.dirname(__FILE__), 'minisip', 'options.rb'))
         end
         

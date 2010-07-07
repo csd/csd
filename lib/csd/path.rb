@@ -1,12 +1,20 @@
 module CSD
   class Path < GlobalOpenStruct
-      
+    
     def self.root
-      @@root ||= File.expand_path(File.join(File.dirname(__FILE__), '..' ,'..'))
+      @@root ||= Dir.pwd
+    end
+    
+    def self.root=(path)
+      @@root = path
+    end
+    
+    def self.gem
+      @@gem ||= File.expand_path(File.join(File.dirname(__FILE__), '..' ,'..'))
     end
     
     def self.applications
-      @@applications ||= File.expand_path(File.join(root, 'lib', 'csd', 'application'))
+      @@applications ||= File.expand_path(File.join(gem, 'lib', 'csd', 'application'))
     end
     
     def self.applications=(path)

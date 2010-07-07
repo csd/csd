@@ -6,10 +6,10 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'csd')
 
 begin
   CSD.bootstrap
-#rescue CSD::BundlerError => e
-#  CSD.ui.error e.message
-#  exit e.status_code
-#rescue Interrupt
-#  CSD.ui.error "\nQuitting..."
-#  exit 1
+rescue CSD::CSDError => e
+  CSD.ui.error e.message
+  exit e.status_code
+rescue Interrupt
+  CSD.ui.error "\nQuitting..."
+  exit 1
 end

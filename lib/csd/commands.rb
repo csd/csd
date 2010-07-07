@@ -154,17 +154,9 @@ module CSD
       end
     end
     
-    
-    def say(something='')
-    end
-
-    def log(msg="")
-      say msg.yellow unless options.silent
-    end
-    
     # Dummy to be overwritten by real options
     def options
-      OpenStruct.new
+      Options
     end
   
   end

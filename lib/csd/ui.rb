@@ -1,17 +1,1 @@
-module CSD
-  class UI
-    
-    def self.warn(message)
-    end
-
-    def self.error(message)
-    end
-
-    def self.info(message)
-    end
-
-    def self.confirm(message)
-    end
-
-  end
-end
+Dir.glob(File.join(File.dirname(__FILE__), 'ui', '*.rb')) { |file| require file }

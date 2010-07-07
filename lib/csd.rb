@@ -1,8 +1,4 @@
-# Defining application wide constants
-#ROOT_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..'))  # Absolute root directory of this gem
-#Version   = File.read(File.join(ROOT_PATH, 'VERSION'))                 # Version number of this gem
-
-# Loading all files in csd
+# Loading all files in CSD
 Dir.glob(File.join(File.dirname(__FILE__), 'csd', '*.rb')) { |file| require file }
 
 # This namespace is given to the entire CSD gem.
@@ -10,40 +6,30 @@ Dir.glob(File.join(File.dirname(__FILE__), 'csd', '*.rb')) { |file| require file
 module CSD
   class << self
 
-    def bootstrap
-      Options.parse
-      puts 'here:'
-      puts Options.action.inspect
-    end
-    
-    
     include Gem::UserInteraction
     
-    attr_reader :options, :path, :application
-    
-    def initialize
-      @options     = Options.parse
-      #puts @options.inspect
-      @path        = path_struct
-      validate_arguments
-      @application = initialize_application
-      @application.introduction
-      self
+    def bootstrap
+      Options.parse!
+      define_root_path
+      ui.ask('yo?')
     end
     
-    def path_struct
-      path = OpenStruct.new
-      if options.path
-        if File.directory?(options.path)
-          path.root = File.expand_path(options.path)
+    def ui
+      @@ui ||= CLI.new
+    end
+    
+    private
+    
+    def define_root_path
+      if Options.path
+        if File.directory?(Options.path)
+          Path.root = File.expand_path(Options.path)
         else
-          say "The path ´#{options.path}´ doesn't exist."
-          exit
+          raise OptionsPathNotFound, "The path `#{Options.path}´ doesn't exist."
         end
       else
-        path.root = options.temp ? Dir.mktmpdir : Dir.pwd
+        Path.root = Options.temp ? Dir.mktmpdir : Dir.pwd
       end
-      path
     end
     
     def validate_arguments
@@ -57,17 +43,6 @@ module CSD
       end
       #if Applications.valid?()
       
-    end
-    
-    def initialize_application
-      directory_name = ARGV.second.underscore
-      begin
-        require File.join(File.join(Applications.path, "#{directory_name}"), 'init.rb')
-        "CSD::Application::#{directory_name.camelize}::Init".constantize.application(:options => @options, :path => @path)
-      rescue LoadError
-        say "Unknown application: #{directory_name}"
-        exit
-      end
     end
 
   end

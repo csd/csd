@@ -4,6 +4,6 @@ module CSD
   
   # This global variable holds the version number of this gem by reading the VERSION file.
   #
-  Version = VERSION = File.read(File.join(Path.root, 'VERSION'))
+  Version = VERSION = File.read(File.join(Path.gem, 'VERSION'))
   
 end
