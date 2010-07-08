@@ -10,7 +10,7 @@ module CSD
     INTERACTIONS = %w{ debug info warn error ask }
     
     def debug(message)
-      say message
+      say "DEBUG: #{message}".magenta 
     end
     
     def info(message)

@@ -8,12 +8,13 @@ module CSD
 
     # Returns nil if application could not be found
     #
-    def self.find(dir_name)
+    def self.find(app_name)
       begin
-        require File.join(Path.applications, dir_name)
-        "CSD::Application::#{dir_name.camelize}".constantize
-      #rescue MissingSourceFile
-      #  nil
+        require File.join(Path.applications, app_name)
+        "CSD::Application::#{app_name.camelize}".constantize
+      rescue MissingSourceFile
+        UI.debug "The Application `#{app_name}´ could not be loaded properly."
+        nil
       end
     end
 
@@ -32,7 +33,7 @@ module CSD
     end
     
     def self.current
-      @@current ||= Applications.find(ARGV.second) if ARGV.second
+      @@current ||= Applications.find(ARGV.second) if ARGV.second and !ARGV.first.starts_with?('-')
     end
     
   end

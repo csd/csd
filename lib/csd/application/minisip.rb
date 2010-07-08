@@ -6,12 +6,12 @@ module CSD
     module Minisip
       class << self
                 
-        def bootstrap(*args)
-          case Gem::Platform.local.os
+        def instance
+          @instance ||= case Gem::Platform.local.os
             when 'linux'
-              Unix::Base.new(*args)
+              Unix::Base.new
             else
-              Base.new(*args)
+              Base.new
           end
         end
         

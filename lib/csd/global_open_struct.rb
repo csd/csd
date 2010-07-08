@@ -5,7 +5,11 @@ module CSD
       if meth.to_s.ends_with?('=')
         class_variable_set("@@#{meth.to_s.chop}".to_sym, *args)
       else
-        class_variable_get("@@#{meth}".to_sym)
+        begin
+          class_variable_get("@@#{meth}".to_sym)
+        rescue NameError => e
+          UI.debug "The option `#{meth}´ was accessed but not available."
+        end
       end
     end
     

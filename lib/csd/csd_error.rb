@@ -11,6 +11,6 @@ module CSD
       end
     end
     
-    #class OptionsPathNotFound < CSDError; status_code(200); end
+    class ApplicationOptionsSyntaxError < CSDError; status_code(400); end
 
 end

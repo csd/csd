@@ -8,10 +8,12 @@ module CSD
 
     include Gem::UserInteraction
     
-    def bootstrap
+    attr_reader :executable
+    
+    def bootstrap(options={})
+      @executable = options[:executable]
       Options.parse!
       define_root_path
-      ui.ask('yo?')
     end
     
     def ui

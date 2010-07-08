@@ -14,12 +14,27 @@ module CSD
       
       # introduction
       
-      def options_file
-        File.join(path, 'options', 'options.rb')
+      def option_parser
+        
       end
 
       def to_s
         human
+      end
+      
+      # This returns all supported actions of this application module
+      #
+      def actions
+        YAML.load_file(File.join(Path.applications, 'actions.yml'))
+      end
+      
+      # This returns all supported scopes of this application module
+      #
+      def scopes(action)
+        case action.to_sym
+          when :install
+            [{'(none)' => 'Installs the application as recommended'}, {'configuration' => 'Applies a remote configuration to an already installed application'}]
+        end
       end
       
     end
