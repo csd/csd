@@ -15,17 +15,20 @@ module CSD
       OptionParser.new do |opts|
         opts.banner = "Usage: ".bold + "csd ACTION APPLICATION [SCOPE] [OPTIONS]".magenta.bold
         
+        #puts Applications.find('minisip').inspect
+        
         # TODO: Check for action so that we can guarantee that ARGV.second is the desired application name
         if !ARGV.first.starts_with?('-') #and Applications.current.name = Applications.find(ARGV.second).name
           self.action = ARGV.first.downcase
           begin
             opts.headline "OPTIONS (#{Applications.current} specific)".green.bold
-            CSD.ui.debug "No options were loaded from #{Applications.current}"# if Applications.current.option_parser.size.blank?
+            #puts UI.public_methods.sort.inspect
+            UI.debug "No options were loaded from #{Applications.current}"# if Applications.current.option_parser.size.blank?
             eval Applications.current.option_parser
-          rescue Exception => e
-            puts "The individual options of #{Applications.current.inspect} could not be parsed."
-            puts
-            exit 1
+          #rescue Exception => e
+          #  puts "The individual options of #{Applications.current.inspect} could not be parsed."
+          #  puts
+          #  exit 1
           end
         else
           opts.headline "ACTIONS".green.bold
@@ -70,7 +73,7 @@ module CSD
         opts.on("-s", "--silent","Don't show any output") do |value|
           self.silent = value
         end
-        opts.on_tail("-h", "--help", "Show detailed help (including the given ACTION and APPLICATION)") do
+        opts.on_tail("-h", "--help", "Show detailed help (regarding the given ACTION and APPLICATION)") do
           print opts.help
           puts
           exit

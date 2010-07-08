@@ -41,8 +41,6 @@ module CSD
           say "Please specify an APPLICATION or get more help with `" + "csd --help".magenta + "´"
           exit
       end
-      #if Applications.valid?()
-      
     end
 
   end

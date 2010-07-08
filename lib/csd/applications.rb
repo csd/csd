@@ -12,8 +12,8 @@ module CSD
       begin
         require File.join(Path.applications, dir_name)
         "CSD::Application::#{dir_name.camelize}".constantize
-      rescue MissingSourceFile
-        nil
+      #rescue MissingSourceFile
+      #  nil
       end
     end
 
@@ -32,11 +32,7 @@ module CSD
     end
     
     def self.current
-      @@current
-    end
-    
-    def self.current=(name)
-      @@current = name
+      @@current ||= Applications.find(ARGV.second) if ARGV.second
     end
     
   end
