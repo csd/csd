@@ -14,21 +14,22 @@ begin
     gemspec.add_dependency "term-ansicolor", ">= 0"
     gemspec.add_dependency "activesupport", ">= 0"  # needs to be active_support in the next release of it, I guess
     gemspec.add_dependency "builder", ">= 0"
-    gemspec.executables = ["csd"]
+    gemspec.executables = ["ai"]
     gemspec.post_install_message = %q{
-    ==============================================================================
+    ==================================================================================
 
-    Thank you for installing the Communication Systems Design Gem!
- 
-    You can run it by just typing ´csd´ in your command line.
+    Thank you for installing the Communication Systems and Design Automated Installer!
+    You can run it by just typing `ai´ in your command line.
     
-    Note: On Debian and Ubuntu the executable ´csd´ is not in your PATH by default
+    . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+    
+    Note: On Debian and Ubuntu the executable `ai´ is not in your PATH by default.
           You can fix this problem by creating a symlink with these two commands:
           
           GEMBIN=$(gem env | grep "E D" | sed "s/[^\w]* //")
-          sudo ln -s "${GEMBIN}/csd" /usr/local/bin/csd
+          sudo ln -s "${GEMBIN}/ai" /usr/local/bin/ai
           
-    ==============================================================================
+    ==================================================================================
     }
   end
 rescue LoadError

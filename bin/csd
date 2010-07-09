@@ -1,8 +1,0 @@
-#!/usr/bin/env ruby
-
-# First, load the Rubygems framework and the CSD gem.
-# Note: Rubygems is already included for Ruby >= 1.9, but we want to go sure here
-require 'rubygems'
-require 'csd'
-
-# bootstrap goes here...

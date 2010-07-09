@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
 
-# This file does the same as `csd´ but loads the csd library from the current path
+# First, load the Rubygems framework and the CSD gem.
+# Note: Rubygems is already included for Ruby >= 1.9, but we want to go sure here
 require 'rubygems'
-require File.join(File.dirname(__FILE__), '..', 'lib', 'csd')
+require 'csd'
 
 begin
   CSD.bootstrap :executable => :ai

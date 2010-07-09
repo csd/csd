@@ -26,7 +26,9 @@ module CSD
     end
 
     def error(message)
-      say message.red.blink if !Options.silent
+      if !Options.silent
+        say 'ERROR: '.red.blink + message.red
+      end
     end
     
     def die(message)

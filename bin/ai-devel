@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+# This file does the same as `ai´ but loads the csd library from the current path
+require 'rubygems'
+require File.join(File.dirname(__FILE__), '..', 'lib', 'csd')
+
+begin
+  CSD.bootstrap :executable => 'ai-devel'
+rescue CSD::CSDError => e
+  CSD.ui.error e.message
+  exit e.status_code
+rescue Interrupt
+  CSD.ui.error "\nQuitting..."
+  exit 1
+end

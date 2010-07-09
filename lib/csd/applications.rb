@@ -10,7 +10,7 @@ module CSD
     #
     def self.find(app_name)
       begin
-        require File.join(Path.applications, app_name)
+        require File.join(Path.applications, app_name.to_s)
         "CSD::Application::#{app_name.camelize}".constantize
       rescue MissingSourceFile
         UI.debug "The Application `#{app_name}´ could not be loaded properly."
@@ -32,8 +32,20 @@ module CSD
       list.include?(name)
     end
     
+    # This method identifies the desired application and initializes it in to +@@current+.
+    # It is meant to be very robust, we expect the application to be any one of the first three arguments.
+    #
     def self.current
-      @@current ||= Applications.find(ARGV.second) if ARGV.second and !ARGV.first.starts_with?('-')
+      @@current ||= begin
+        Applications.find(ARGV.first) || Applications.find(ARGV.second) || Applications.find(ARGV.third)
+      end
+    end
+    
+    # Forces a reload of the current application. This method is useful for functional tests.
+    #
+    def self.current!
+      @@current = false
+      current
     end
     
   end

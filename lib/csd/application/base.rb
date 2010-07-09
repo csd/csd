@@ -8,7 +8,7 @@ module CSD
     class Base
       
       #include Commands
-      include Gem::UserInteraction
+      include ::Gem::UserInteraction
       
       attr_reader :after_build, :before_build # Dummies to be overwritten by methods
       

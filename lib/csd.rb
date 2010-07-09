@@ -1,7 +1,7 @@
 # Loading all files in CSD
 Dir.glob(File.join(File.dirname(__FILE__), 'csd', '*.rb')) { |file| require file }
 
-# This namespace is given to the entire CSD gem.
+# The CSD namespace is given to the entire gem.
 #
 module CSD
   class << self
@@ -37,14 +37,31 @@ module CSD
     end
     
     def validate_arguments
+      #UI.info Options.helptext if Options.help# if ARGV.first == 'help'
+      
+      puts Applications.current.inspect
+      exit
+      
       case ARGV.size
         when 0
-          say "Please specify an ACTION or get more help with `" + "#{executable} --help".green.bold + "´"
+          introduction
+          #say "Please specify an ACTION or get more help with `" + "#{executable} --help".green.bold + "´"
           exit
         when 1
           say "Please specify an APPLICATION or get more help with `" + "#{executable} --help".green.bold + "´"
           exit
       end
+    end
+    
+    def introduction
+      UI.separator
+      UI.info '  Welcome to the TTA Automated Installer.'.green.bold
+      UI.info '  Please specifiy an ACTION and an APPLICATION.'.yellow
+      UI.separator
+      UI.info '  Type for example:   ' + "#{executable} show minisip".cyan.bold
+      UI.info '  Or get more help:   ' + "#{executable} help".cyan.bold
+      UI.separator
+      exit
     end
 
   end

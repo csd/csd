@@ -3,8 +3,9 @@ require 'pathname'
 require 'ostruct'
 
 module CSD
-  # This module contains wrapper methods for standard file system commands. They are meant to be
+  # This module contains wrapper methods for standard file system operations. They are meant to be
   # a little bit more robust (e.g. raising no exceptions) and return elaborate feedback on their operation.
+  # All of these methods, except for the +run+ method, are platform independent.
   #
   module Commands
     
@@ -54,20 +55,20 @@ module CSD
       target = target.pathnamify
       result = CommandResult.new
       if target.directory?
-        # Don't say anything if the directory already exists
+        # Don't do anything if the directory already exists
         result.already_existed = true
       else
         begin
           UI.info "Creating directory: #{target}".cyan
           # Try to create the directory
-          target.mkpath
+          target.mkpath unless (Options.dry or Options.reveal)
         rescue Errno::EACCES => e
            UI.error "Cannot create directory (no permission): #{target}"
            return result
         end
       end
-      result.success  = (target.directory?)
-      result.writable = (target.writable?)
+      result.success  = (target.directory? or Options.reveal)
+      result.writable = (target.writable? or Options.reveal)
       result
     end
     
@@ -139,7 +140,6 @@ module CSD
     # The following options can be passed as a hash.
     #
     # [+:exit_on_failure+] If the exit code of the command was not 0, exit the CSD application.
-    #
     #
     def run(cmd, params={})
       default_params = { :die_on_failure => true }
