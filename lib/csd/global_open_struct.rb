@@ -8,7 +8,8 @@ module CSD
         begin
           class_variable_get("@@#{meth}".to_sym)
         rescue NameError => e
-          UI.debug "The option `#{meth}´ was accessed but not available."
+          #UI.debug "The option `#{meth}´ was accessed but not available."   # FIXME: This line causes a recursion error :)
+          nil
         end
       end
     end

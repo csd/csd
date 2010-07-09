@@ -8,14 +8,14 @@ opts.on("-t", "--temp",
   self.temp = value
 end
 
-self.owner = nil
-opts.on("-o", "--owner [OWNER]","Specify OWNER:GROUP for this operation") do |value|
-  if owner = value
-    chmod = owner.split(':')
-    self.owner = chmod.first
-    self.group = chmod.last
-  end
-end
+#self.owner = nil
+#opts.on("-o", "--owner [OWNER]","Specify OWNER:GROUP for this operation") do |value|
+#  if owner = value
+#    chmod = owner.split(':')
+#    self.owner = chmod.first
+#    self.group = chmod.last
+#  end
+#end
 
 self.path = nil
 opts.on("--path [PATH]",
@@ -34,6 +34,7 @@ opts.on("--no-bootstrap","Don't run any bootstrap commands") do |value|
   self.bootstrap = value
 end
 
+self.configure = true
 opts.on("--no-configure","Don't run any configure commands") do |value|
   self.configure = value
 end

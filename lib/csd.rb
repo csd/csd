@@ -14,6 +14,8 @@ module CSD
       @executable = options[:executable]
       Options.parse!
       define_root_path
+      validate_arguments
+      Applications.current.instance.introduction
     end
     
     def ui
@@ -37,10 +39,10 @@ module CSD
     def validate_arguments
       case ARGV.size
         when 0
-          say "Please specify an ACTION or get more help with `" + "csd --help".magenta + "´"
+          say "Please specify an ACTION or get more help with `" + "#{executable} --help".green.bold + "´"
           exit
         when 1
-          say "Please specify an APPLICATION or get more help with `" + "csd --help".magenta + "´"
+          say "Please specify an APPLICATION or get more help with `" + "#{executable} --help".green.bold + "´"
           exit
       end
     end

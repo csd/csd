@@ -58,16 +58,16 @@ module CSD
         result.already_existed = true
       else
         begin
-          say "Creating directory: #{target}".cyan unless options.quiet
+          UI.info "Creating directory: #{target}".cyan
           # Try to create the directory
-          target.mkpath unless options.dry
+          target.mkpath
         rescue Errno::EACCES => e
-           say "Cannot create directory (no permission): #{target}".red unless options.quiet
+           UI.error "Cannot create directory (no permission): #{target}"
            return result
         end
       end
-      result.success  = (target.directory? or options.dry)
-      result.writable = (target.writable? or options.dry)
+      result.success  = (target.directory?)
+      result.writable = (target.writable?)
       result
     end
     
@@ -82,13 +82,49 @@ module CSD
     def cd(target)
       target = target.pathnamify
       result = CommandResult.new
-      if target.directory? or options.dry
-        say "cd #{target}".yellow
-        Dir.chdir(target)
+      if target.directory? or Options.reveal
+        UI.info "cd #{target}".yellow
+        if Options.reveal
+          @pwd = target.to_s
+        else
+          Dir.chdir(target)
+        end
       elsif target.exist?
-        say "Cannot change to directory because it exists but is not a directory: #{target}".red
+        UI.error "Cannot change to directory because it exists but is not a directory: #{target}".red
       end
-      result.success = (target.current_path? or options.dry)
+      result.success = (target.current_path? or Options.reveal)
+      result
+    end
+    
+    # This returns the current pwd. However, it will return a fake result if we are in reveal-commands-mode.
+    #
+    def pwd
+      if Options.reveal
+        @pwd ||= Dir.pwd
+      else
+        Dir.pwd
+      end
+    end
+    
+    # Replaces all occurences of a pattern in a file
+    #
+    # ==== Returns
+    #
+    # This method returns a CommandResult object with the following values:
+    #
+    # [+success?+] +true+ if the replacement was successful, +nil+ if not.
+    #
+    def replace(filepath, pattern, substitution)
+      result = CommandResult.new
+      begin
+        UI.info "Modifying contents of `#{filepath}´ as follows:".blue
+        UI.info "  (Replacing all occurences of `#{pattern}´ with `#{substitution}´)".blue
+        new_file_content = File.read(filepath).gsub(pattern, substitution)
+        File.open(filepath, 'w+') { |file| file << new_file_content }
+      rescue Errno::ENOENT => e
+        result.success = false
+      end
+      result.success = true
       result
     end
     
@@ -96,7 +132,7 @@ module CSD
     #
     # ==== Returns
     #
-    # The command's output as an +Array+. Note that the exit code can be accessed via the global variable <tt>$?</tt>
+    # The command's output as a +String+ (with newline delimiters). Note that the exit code can be accessed via the global variable <tt>$?</tt>
     #
     # ==== Options
     #
@@ -105,59 +141,47 @@ module CSD
     # [+:exit_on_failure+] If the exit code of the command was not 0, exit the CSD application.
     #
     #
-    def sh(cmd, params={})
-      default_params = { :exit_on_failure => true }
+    def run(cmd, params={})
+      default_params = { :die_on_failure => true }
       params = default_params.merge(params)
-      say "Running command in #{Dir.pwd}".yellow unless options.silent
-      say cmd.cyan
+      UI.info "Running command in #{pwd}".yellow
+      UI.info cmd.cyan
+      return '' if Options.reveal
       ret = ''
-      unless options.dry
-        IO.popen(cmd) do |stdout|
-          stdout.each do |line|
-            say "       #{line}" if options.verbose
-            ret << line
-          end
+      IO.popen(cmd) do |stdout|
+        stdout.each do |line|
+          UI.info "       #{line}"
+          ret << line
         end
       end
-      exit_if_last_command_had_errors if params[:exit_on_failure]
+      die_if_last_command_had_errors if params[:exit_on_failure]
       ret
     end
     
-    
-    def test_command(*args)
-      say "Testing command for success: #{args.join(' ')}".yellow
-      system(*args)
-    end
-    
-    def run_command(cmd, params={})
-      default_params = { :exit_on_failure => true }
-      params = default_params.merge(params)
-      say "Running command in #{Dir.pwd}".yellow unless options.quiet
-      say cmd.cyan
-      ret = ''
-      unless options.dry
-        IO.popen(cmd) do |stdout|
-          stdout.each do |line|
-            say "       #{line}"
-            ret << line
-          end
-        end
-      end
-      exit_if_last_command_had_errors if params[:exit_on_failure]
-      ret
-    end
-    
-    def exit_if_last_command_had_errors
-      unless $?.try(:success?) or options.dry
-        say "The last command was unsuccessful.".red unless options.quiet
-        exit
-      end
-    end
-    
-    # Dummy to be overwritten by real options
-    def options
-      Options
+    def die_if_last_command_had_errors
+      UI.die "The last command was unsuccessful." unless $?.try(:success?)
     end
   
   end
+  
+  # Having a class to include all command modules
+  #
+  class CommandsInstance
+    include Commands
+  end
+  
+  # Wrapping the CommandsInstance class
+  #
+  class Cmd
+    COMMANDS = %w{ mkdir cd run replace }
+    
+    def self.instance
+      @@instance ||= CommandsInstance.new
+    end
+    
+    def self.method_missing(meth, *args, &block)
+      COMMANDS.include?(meth.to_s) ? instance.send(meth, *args, &block) : super
+    end
+  end
+  
 end

@@ -8,11 +8,11 @@ module CSD
           
           # A list of apt-get packages that are required by this application. 
           #
-          DEBIAN_DEPENDENCIES = %w{ libssl-dev libglademm-2.4-dev libsdl-dev git-core subversion automake libtool libltdl3-dev build-essential libavcodec-dev libswscale-dev nasm yasm libasound2-dev libsdl-ttf2.0-dev }
+          DEBIAN_DEPENDENCIES = %w{ libssl-dev libglademm-2.4-dev libsdl-dev git-core subversion automake libtool libltdl3-dev build-essential libavcodec-dev libswscale-dev libasound2-dev libsdl-ttf2.0-dev nasm yasm ffmpeg }
           
           def before_build
-            fix_aclocal_dirlist
-            install_aptitude_dependencies
+            #fix_aclocal_dirlist
+            install_aptitude_dependencies if Options.apt_get
           end
         
           def after_build
@@ -21,8 +21,8 @@ module CSD
 
           def install_aptitude_dependencies
             DEBIAN_DEPENDENCIES.each do |apt|
-              run_command("sudo apt-get --yes install #{apt}")
-            end if options.apt_get
+              Cmd.run("sudo apt-get --yes install #{apt}")
+            end
           end
         
           def fix_aclocal_dirlist
@@ -43,7 +43,7 @@ module CSD
           end
 
           def ldconfig_and_gtkgui
-            run_command("minisip_gtkgui")
+            Cmd.run("minisip_gtkgui")
           end
         
         end
