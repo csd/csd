@@ -10,12 +10,12 @@ module CSD
           #
           DEBIAN_DEPENDENCIES = %w{ libssl-dev libglademm-2.4-dev libsdl-dev git-core subversion automake libtool libltdl3-dev build-essential libavcodec-dev libswscale-dev libasound2-dev libsdl-ttf2.0-dev nasm yasm ffmpeg }
           
-          def before_build
+          def before_compile
             #fix_aclocal_dirlist
             install_aptitude_dependencies if Options.apt_get
           end
         
-          def after_build
+          def after_compile
             ldconfig_and_gtkgui
           end
 

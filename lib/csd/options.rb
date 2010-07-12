@@ -86,22 +86,27 @@ module CSD
     #
     def self.parse_options
       OptionParser.new do |opts|
-        self.banner = "Usage: ".bold + "ai [help] [TASK] APPLICATION [OPTIONS]"
+        self.banner = Applications.current ? "ADVANCED HELP FOR #{Applications.current.name}" : "Usage: ".bold + "ai [help] [TASK] APPLICATION [OPTIONS]"
         opts.banner = self.banner.magenta.bold
 
-        opts.headline "EXAMPLE COMMANDS".green.bold
-        opts.list_item 'ai', 'Lists all available applications'
-        opts.list_item 'ai minisip', 'Lists available tasks for the application MiniSIP'
-        opts.list_item 'ai minisip --developer', 'Lists advanced AI tasks for the application MiniSIP'
-        opts.list_item 'ai compile minisip', 'Downloads MiniSIP and compiles it'
-        opts.list_item 'ai help compile minisip', 'Shows more details about the different compiling options'
-        
+        unless Applications.current
+          opts.headline "EXAMPLE COMMANDS".green.bold
+          opts.list_item 'ai', 'Lists all available applications'
+          opts.list_item 'ai minisip', 'Lists available tasks for the application MiniSIP'
+          opts.list_item 'ai minisip --developer', 'Lists advanced AI tasks for the application MiniSIP'
+          opts.list_item 'ai compile minisip', 'Downloads MiniSIP and compiles it'
+          opts.list_item 'ai help compile minisip', 'Shows more details about the different compiling options'
+        end
+      
         # Here we load application-specific options file.
         # TODO: There must be a better way for this in general than to eval the raw ruby code
         begin
-          UI.debug "There were no options to be loaded from #{Applications.current}" if Applications.current.options(self.action).size.blank?
-          opts.headline "#{prepend}OPTIONS".green.bold
-          eval Applications.current.options(self.action)
+          unless Applications.current.options(self.action).size.blank?
+            opts.headline "#{self.action.upcase} #{Applications.current.name.upcase} OPTIONS".green.bold
+            eval Applications.current.options(self.action)
+          else
+            UI.debug "There were no options to be loaded from #{Applications.current}" 
+          end
         rescue SyntaxError => e
           raise Error::Application::OptionsSyntax, "The individual options of #{Applications.current.inspect} could not be parsed (SyntaxError)."
         end if Applications.current
@@ -131,9 +136,7 @@ module CSD
           self.developer = value
         end
         opts.on_tail("-h", "--help", "Show detailed help (regarding the given ACTION and APPLICATION)") do |value|
-          #self.help = value
-          UI.info opts.help
-          exit
+          self.help = value
         end
         opts.on_tail("-v", "--version", "Show version") do
           print "CSD Gem Version: #{opts.version}".blue

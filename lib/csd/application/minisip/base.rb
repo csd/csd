@@ -4,28 +4,35 @@ module CSD
   module Application
     module Minisip
       class Base < CSD::Application::Base
-        
-        def introduction
+                
+        def compile!
           define_root_path
           define_paths
+          UI.separator
+          UI.info "This operation will download and compile MiniSIP.".green.bold
+          UI.separator
           UI.info " Working directory:   ".green + Path.work.to_s.yellow
           UI.info " Your Platform:       ".green + Gem::Platform.local.humanize.to_s.yellow
-          UI.info " Application module:  ".green + self.class.name.to_s.yellow
+          UI.info(" Application module:  ".green + self.class.name.to_s.yellow) if Options.developer
           UI.separator
-          unless Options.yes
-            exit unless ask_yes_no("Continue?".red.bold, true)
+          if Options.help
+            UI.info Options.helptext
+          else
+            unless Options.yes
+              exit unless UI.ask_yes_no("Continue?".red.bold, true)
+            end
+            compile_process
           end
           UI.separator
-          build!
         end
-        
-        def build!
-          before_build
+
+        def compile_process
+          before_compile
           Cmd.mkdir Path.work
           make_hdviper if checkout_hdviper or Options.dry
           checkout_minisip
           make_minisip
-          after_build
+          after_compile
         end
         
         def define_root_path

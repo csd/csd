@@ -5,7 +5,7 @@ module CSD
     
     # These are all possible user interactions provided by the UI
     #
-    INTERACTIONS = %w{ separator debug info warn error ask }
+    INTERACTIONS = %w{ separator debug info warn error ask ask_yes_no }
     
     def separator
       say

@@ -16,7 +16,7 @@ module CSD
       @executable = options[:executable]
       Options.parse!
       respond_to_incomplete_arguments
-      Applications.current.instance.introduction
+      Applications.current.instance.send("#{Options.action}!".to_sym)
     end
     
     # This method chooses and holds the user interface instance
@@ -33,10 +33,6 @@ module CSD
     def respond_to_incomplete_arguments
       choose_application unless Applications.current
       choose_action unless Options.valid_action?
-      #if Options.help
-      # UI.info Options.helptext
-      # exit
-      #end
     end
     
     # This methods lists all available applications
