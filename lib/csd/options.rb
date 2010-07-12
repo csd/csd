@@ -21,11 +21,10 @@ module CSD
     end
     
     def self.clear
-      # These option values hold names and descriptions for application-unspecific actions and scopes
-      # They are intended to be overwritten by the specific application module
-      self.actions = YAML.load_file(File.join(Path.applications, 'default', 'actions.yml'))
-      self.scopes  = [{"(Depends on the action and the application. Type `" + "#{CSD.executable} show APPLICATION".magenta.bold + "´ for more info)" => ''}]
-      # At first we define the default literals
+      # First we define all valid actions and scopes
+      self.actions = []
+      self.scopes  = []
+      # Then we define the default literals
       self.help        = false
       self.application = nil
       self.action      = nil
@@ -74,7 +73,7 @@ module CSD
         # Whatever actions we have now, let's display them
         actions_prepend = Applications.current ? Applications.current.name.upcase + ' ' : nil
         opts.headline "#{actions_prepend}ACTIONS".green.bold
-        self.actions[:public].each { |action| opts.list_item(action.keys.first, action.values.first) }
+        self.actions[:public].each { |action| opts.list_item(action.keys.first, action.values.first) } unless actions.empty?
         
         # This is the point where we would show all applications, in case the application is not defined yet
         unless Applications.current

@@ -8,6 +8,13 @@ opts.on("-t", "--temp",
   self.temp = value
 end
 
+self.path = nil
+opts.on("--path [PATH]",
+        "Defines the working directory manually.",
+        "(This will override the --temp option)") do |value|
+  self.path = value
+end
+
 #self.owner = nil
 #opts.on("-o", "--owner [OWNER]","Specify OWNER:GROUP for this operation") do |value|
 #  if owner = value
@@ -16,13 +23,6 @@ end
 #    self.group = chmod.last
 #  end
 #end
-
-self.path = nil
-opts.on("--path [PATH]",
-        "Defines the working directory manually.",
-        "(This will override the --temp option)") do |value|
-  self.path = value
-end
 
 self.apt_get = true
 opts.on("--no-apt-get","Don't run any apt-get commands") do |value|

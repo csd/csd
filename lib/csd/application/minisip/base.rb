@@ -6,6 +6,7 @@ module CSD
       class Base < CSD::Application::Base
         
         def introduction
+          define_root_path
           define_paths
           UI.info " Working directory:   ".green + Path.work.to_s.yellow
           UI.info " Your Platform:       ".green + Gem::Platform.local.humanize.to_s.yellow
@@ -25,6 +26,18 @@ module CSD
           checkout_minisip
           make_minisip
           after_build
+        end
+        
+        def define_root_path
+          if Options.path
+            if File.directory?(Options.path)
+              Path.root = File.expand_path(Options.path)
+            else
+              raise OptionsPathNotFound, "The path `#{Options.path}´ doesn't exist."
+            end
+          else
+            Path.root = Options.temp ? Dir.mktmpdir : Dir.pwd
+          end
         end
 
         def define_paths

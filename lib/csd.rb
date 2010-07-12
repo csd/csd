@@ -14,7 +14,6 @@ module CSD
     def bootstrap(options={})
       @executable = options[:executable]
       Options.parse!
-      define_root_path
       respond_to_incomplete_arguments
       Applications.current.instance.introduction
     end
@@ -27,18 +26,9 @@ module CSD
     
     private
     
-    def define_root_path
-      if Options.path
-        if File.directory?(Options.path)
-          Path.root = File.expand_path(Options.path)
-        else
-          raise OptionsPathNotFound, "The path `#{Options.path}´ doesn't exist."
-        end
-      else
-        Path.root = Options.temp ? Dir.mktmpdir : Dir.pwd
-      end
-    end
-    
+    # This method check the arguments the user has provided and terminates the AI with
+    # some helpful message if the arguments are invalid.
+    #
     def respond_to_incomplete_arguments
       if Options.help
         UI.info Options.helptext

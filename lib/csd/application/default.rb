@@ -8,7 +8,7 @@ module CSD
     module Default
         
       def name
-        self.to_s.demodulize.downcase
+        self.to_s.demodulize.underscore.downcase
       end
       
       def description
