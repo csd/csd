@@ -12,5 +12,6 @@ module CSD
     end
     
     class ApplicationOptionsSyntaxError < CSDError; status_code(400); end
+    class ArgumentErrorNoApplication < CSDError; status_code(100); end
 
 end

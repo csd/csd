@@ -8,7 +8,7 @@ module CSD
     module Default
         
       def name
-        self.to_s.demodulize.underscore.downcase
+        ActiveSupport::Inflector.underscore self.to_s.demodulize
       end
       
       def description

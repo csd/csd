@@ -30,16 +30,20 @@ module CSD
     # some helpful message if the arguments are invalid.
     #
     def respond_to_incomplete_arguments
-      if Options.help
-        UI.info Options.helptext
-        exit
-      end
+      choose_application unless Options.application
       
-      introduction unless Options.application
+      
+      
+      #if Options.help
+      #  UI.info Options.helptext
+      #  exit
+      #end
+      #
+      #introduction unless Options.application
       
     end
     
-    def introduction
+    def choose_application
       UI.separator
       UI.info '  Welcome to the Automated Installer.'.green.bold
       UI.separator
@@ -51,9 +55,9 @@ module CSD
       end
       UI.separator
       UI.info '  For more information type:   '.green.bold + "#{executable} [APPLICATION NAME]".cyan.bold
-      UI.info '                         or:   '.green.bold + "#{executable} help".cyan.bold
+      UI.info '                For example:   '.green.bold + "#{executable} minisip".cyan.bold
       UI.separator
-      exit
+      raise ArgumentErrorNoApplication
     end
 
   end
