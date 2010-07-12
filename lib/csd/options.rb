@@ -131,7 +131,9 @@ module CSD
           self.developer = value
         end
         opts.on_tail("-h", "--help", "Show detailed help (regarding the given ACTION and APPLICATION)") do |value|
-          self.help = value
+          #self.help = value
+          UI.info opts.help
+          exit
         end
         opts.on_tail("-v", "--version", "Show version") do
           print "CSD Gem Version: #{opts.version}".blue

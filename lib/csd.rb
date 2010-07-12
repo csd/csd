@@ -31,18 +31,16 @@ module CSD
     # some helpful message if the arguments are invalid.
     #
     def respond_to_incomplete_arguments
-      if Options.help
-       UI.info Options.helptext
-       exit
-      end
       choose_application unless Applications.current
       choose_action unless Options.valid_action?
-      
-      #
-      #introduction unless Options.application
-      
+      #if Options.help
+      # UI.info Options.helptext
+      # exit
+      #end
     end
     
+    # This methods lists all available applications
+    #
     def choose_application
       UI.separator
       UI.info '  Welcome to the Automated Installer.'.green.bold
@@ -60,7 +58,9 @@ module CSD
       UI.warn "You did not specify a valid application name."
       raise Error::Argument::NoApplication
     end
-    
+
+    # This methods lists all available actions for a specific application
+    #
     def choose_action
       UI.separator
       UI.info "  Automated Installer assistance for #{Applications.current.human}".green.bold
