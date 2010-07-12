@@ -1,3 +1,5 @@
+require 'pathname'
+
 module CSD
   module Extensions
     module Core

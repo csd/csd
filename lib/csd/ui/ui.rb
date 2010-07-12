@@ -1,5 +1,3 @@
-require 'active_support/json'
-
 module CSD
   class UI
     

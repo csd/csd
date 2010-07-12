@@ -1,4 +1,6 @@
 require 'ostruct'
+require 'active_support/inflector'
+require 'active_support/core_ext/string/inflections'
 
 module CSD
   
@@ -11,8 +13,8 @@ module CSD
     def self.find(app_name)
       begin
         require File.join(Path.applications, app_name.to_s)
-        "CSD::Application::#{app_name.camelize}".constantize
-      rescue MissingSourceFile
+        ActiveSupport::Inflector.constantize "CSD::Application::#{app_name.camelize}"
+      rescue LoadError
         UI.debug "The Application `#{app_name}´ could not be loaded properly."
         nil
       end

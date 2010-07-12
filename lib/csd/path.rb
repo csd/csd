@@ -1,3 +1,5 @@
+require File.join(File.dirname(__FILE__), 'global_open_struct')
+
 module CSD
   class Path < GlobalOpenStruct
     
@@ -11,6 +13,10 @@ module CSD
     
     def self.gem
       @@gem ||= File.expand_path(File.join(File.dirname(__FILE__), '..' ,'..'))
+    end
+    
+    def self.vendor
+      @@vendor ||= File.join(gem, 'vendor')
     end
     
     def self.applications

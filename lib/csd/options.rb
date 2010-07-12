@@ -1,7 +1,14 @@
-require File.join(File.dirname(__FILE__), 'global_open_struct')
+# Ruby standard library
 require 'optparse'
 require 'optparse/time'
 require 'ostruct'
+# Vendor
+require 'active_support/core_ext/string/inflections'
+require 'active_support/core_ext/string/starts_ends_with'
+require 'active_support/core_ext/array'
+# CSD
+require 'csd/extensions'
+Dir.glob(File.join(File.dirname(__FILE__), '*.rb')) { |file| require file }
 
 module CSD
   # A class that handles the command line option parsing and manipulation
@@ -95,7 +102,7 @@ module CSD
           opts.headline "#{prepend}OPTIONS".green.bold
           eval Applications.current.options(self.action)
         rescue SyntaxError => e
-          raise ApplicationOptionsSyntaxError, "The individual options of #{Applications.current.inspect} could not be parsed (SyntaxError)."
+          raise Error::Application::OptionsSyntax, "The individual options of #{Applications.current.inspect} could not be parsed (SyntaxError)."
         end if Applications.current
         
         # And here we load all general options

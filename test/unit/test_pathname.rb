@@ -1,4 +1,5 @@
 require 'helper'
+require 'active_support/secure_random'
 
 class TestPathname < Test::Unit::TestCase
   

@@ -1,16 +1,19 @@
 #!/usr/bin/env ruby
 
+# NOTE: If you would like to run this file as a developer, you can use the following command
+# ruby -I path/to/csd/lib path/to/csd/bin/ai
+
 # First, load the Rubygems framework and the CSD gem.
 # Note: Rubygems is already included for Ruby >= 1.9, but we want to go sure here
 require 'rubygems'
 require 'csd'
 
 begin
-  CSD.bootstrap :executable => :ai
-rescue CSD::CSDError => e
-  CSD.ui.error e.message
+  CSD.bootstrap :executable => 'ai'
+rescue CSD::Error::CSDError => e
+  CSD.ui.error e.message unless e.status_code <= 49 # Everything under 50 shows help messages
   exit e.status_code
 rescue Interrupt
-  CSD.ui.error "\nQuitting..."
+  CSD.ui.error "\nQuitting AI..."
   exit 1
 end

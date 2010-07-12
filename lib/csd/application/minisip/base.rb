@@ -33,7 +33,7 @@ module CSD
             if File.directory?(Options.path)
               Path.root = File.expand_path(Options.path)
             else
-              raise OptionsPathNotFound, "The path `#{Options.path}´ doesn't exist."
+              raise Error::Options::PathNotFound, "The path `#{Options.path}´ doesn't exist."
             end
           else
             Path.root = Options.temp ? Dir.mktmpdir : Dir.pwd

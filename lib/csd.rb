@@ -1,5 +1,6 @@
 # Loading all files in CSD
-Dir.glob(File.join(File.dirname(__FILE__), 'csd', '*.rb')) { |file| require file }
+require 'csd/error'
+require 'csd/options'
 
 # The CSD namespace is given to the entire gem.
 #
@@ -30,7 +31,7 @@ module CSD
     # some helpful message if the arguments are invalid.
     #
     def respond_to_incomplete_arguments
-      choose_application unless Options.application
+      choose_application unless Applications.current
       
       
       
@@ -57,7 +58,7 @@ module CSD
       UI.info '  For more information type:   '.green.bold + "#{executable} [APPLICATION NAME]".cyan.bold
       UI.info '                For example:   '.green.bold + "#{executable} minisip".cyan.bold
       UI.separator
-      raise ArgumentErrorNoApplication
+      raise Error::Argument::NoApplication
     end
 
   end

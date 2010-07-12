@@ -1,4 +1,5 @@
 require 'helper'
+require 'active_support/secure_random'
 
 class TestDir < Test::Unit::TestCase
   
