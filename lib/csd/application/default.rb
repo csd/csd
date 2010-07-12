@@ -23,6 +23,10 @@ module CSD
         about.actions
       end
       
+      def scopes(action)
+        about.scopes[:action]
+      end
+      
       def options(action='')
         options_dir      = File.join(Path.applications, name, 'options')
         common_file      = File.join(options_dir, "common.rb")

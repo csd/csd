@@ -31,14 +31,13 @@ module CSD
     # some helpful message if the arguments are invalid.
     #
     def respond_to_incomplete_arguments
+      if Options.help
+       UI.info Options.helptext
+       exit
+      end
       choose_application unless Applications.current
+      choose_action unless Options.valid_action?
       
-      
-      
-      #if Options.help
-      #  UI.info Options.helptext
-      #  exit
-      #end
       #
       #introduction unless Options.application
       
@@ -58,7 +57,29 @@ module CSD
       UI.info '  For more information type:   '.green.bold + "#{executable} [APPLICATION NAME]".cyan.bold
       UI.info '                For example:   '.green.bold + "#{executable} minisip".cyan.bold
       UI.separator
+      UI.warn "You did not specify a valid application name."
       raise Error::Argument::NoApplication
+    end
+    
+    def choose_action
+      UI.separator
+      UI.info "  Automated Installer assistance for #{Applications.current.human}".green.bold
+      UI.separator
+      UI.info "  The AI can assist you with the following tasks regarding #{Applications.current.human}: "
+      OptionParser.new do |opts|
+        opts.banner = ''
+        actions = Applications.current.actions[:public]
+        actions << Applications.current.actions[:developer] if Options.developer
+        actions.flatten.each { |action| opts.list_item(action.keys.first, action.values.first) }
+        UI.info opts.help
+      end
+      UI.separator
+      UI.info '  To execute the task:   '.green.bold + "#{executable} [TASK] #{Applications.current.name}".cyan.bold
+      UI.info '     For more details:   '.green.bold + "#{executable} help [TASK] #{Applications.current.name}".cyan.bold
+      UI.info '              Example:   '.green.bold + "#{executable} help install #{Applications.current.name}".cyan.bold
+      UI.separator
+      UI.warn "You did not specify a valid task name."
+      raise Error::Argument::NoAction
     end
 
   end

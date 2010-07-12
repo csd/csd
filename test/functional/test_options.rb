@@ -66,6 +66,16 @@ class TestOptions < Test::Unit::TestCase
           assert_equal 'myaction', Options.action
           assert_equal @app, Options.application
         end
+        
+        should "understand whether an action is invalid" do
+          ARGV.push 'help'
+          ARGV.push 'invalid_action'
+          ARGV.push @app
+          Options.parse_literals
+          Options.actions = {'valid_action' => 'I am valid'}
+          assert_includes 'valid_action', Options.actions
+          assert !Options.valid_action?
+        end
     
       end # context "together with a valid application"
     

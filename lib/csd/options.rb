@@ -18,13 +18,24 @@ module CSD
     def self.parse!
       clear
       parse_literals
+      define_actions_and_scopes
+      parse_options
+    end
+    
+    def self.valid_action?
+      public_actions    = actions[:public] ? self.actions[:public].map { |pair| pair.keys.first } : []
+      developer_actions = actions[:developer] ? self.actions[:developer].map { |pair| pair.keys.first } : []
+      all_actions = public_actions + developer_actions
+      all_actions.include?(self.action)
+    end
+    
+    def self.define_actions_and_scopes
       if Applications.current
         # Here we overwrite the default supported actions and scopes with the application specific ones
         self.actions = Applications.current.actions
         # At this point we know that the first argument is no option, but *some* action (may it be valid or not)
         self.scopes  = Applications.current.scopes(self.action)
       end
-      parse_options
     end
     
     def self.clear
@@ -36,12 +47,13 @@ module CSD
       self.application = nil
       self.action      = nil
       # Now we define the default options
-      self.yes     = false
-      self.dry     = false
-      self.reveal  = false
-      self.verbose = false
-      self.debug   = false
-      self.silent  = false
+      self.yes       = false
+      self.dry       = false
+      self.reveal    = false
+      self.verbose   = false
+      self.debug     = false
+      self.silent    = false
+      self.developer = false
     end
 
     # Here we check for literals, i.e. "help", ACTION and APPLICATION.
@@ -74,26 +86,15 @@ module CSD
     #
     def self.parse_options
       OptionParser.new do |opts|
-        self.banner = "Usage: ".bold + "ai [help] [ACTION] APPLICATION [OPTIONS]"
+        self.banner = "Usage: ".bold + "ai [help] [TASK] APPLICATION [OPTIONS]"
         opts.banner = self.banner.magenta.bold
-        
-        # Whatever actions we have now, let's display them
-        actions_prepend = Applications.current ? Applications.current.name.upcase + ' ' : nil
-        opts.headline "#{actions_prepend}ACTIONS".green.bold
-        self.actions[:public].each { |action| opts.list_item(action.keys.first, action.values.first) } unless actions.empty?
-        
-        # This is the point where we would show all applications, in case the application is not defined yet
-        unless Applications.current
-          opts.headline "APPLICATIONS".green.bold
-          Applications.all { |app| opts.list_item(app.name, app.description) }
-        end
-        
-        # If we have scopes for this action/application, let's display them
-        if self.scopes
-          scopes_headline = Applications.current ? "SCOPES for the #{self.action.to_s.upcase} action" : 'SCOPES'
-          opts.headline scopes_headline.green.bold
-          self.scopes.each { |scope| opts.list_item(scope.keys.first, scope.values.first) }
-        end
+
+        opts.headline "EXAMPLE COMMANDS".green.bold
+        opts.list_item 'ai', 'Lists all available applications'
+        opts.list_item 'ai minisip', 'Lists available tasks for the application MiniSIP'
+        opts.list_item 'ai minisip --developer', 'Lists advanced AI tasks for the application MiniSIP'
+        opts.list_item 'ai compile minisip', 'Downloads MiniSIP and compiles it'
+        opts.list_item 'ai help compile minisip', 'Shows more details about the different compiling options'
         
         # Here we load application-specific options file.
         # TODO: There must be a better way for this in general than to eval the raw ruby code
@@ -126,7 +127,10 @@ module CSD
         opts.on("-s", "--silent","Don't show any output") do |value|
           self.silent = value
         end
-        opts.on_tail("-h", "--help", "Show detailed help (regarding the given ACTION and APPLICATION)") do
+        opts.on_tail("-a", "--developer", "Activating advanced AI functionality (developers only)") do |value|
+          self.developer = value
+        end
+        opts.on_tail("-h", "--help", "Show detailed help (regarding the given ACTION and APPLICATION)") do |value|
           self.help = value
         end
         opts.on_tail("-v", "--version", "Show version") do
@@ -135,10 +139,7 @@ module CSD
         end
         self.helptext = opts.help
       end.parse!
-
     end
-    
-
 
   end
 end

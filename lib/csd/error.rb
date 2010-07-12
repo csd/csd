@@ -20,6 +20,7 @@ module CSD
     #
     module Argument
       class NoApplication < CSDError; status_code(11); end
+      class NoAction < CSDError; status_code(12); end
     end
     
     module Application
