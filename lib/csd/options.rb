@@ -13,9 +13,9 @@ module CSD
       parse_literals
       if Applications.current
         # Here we overwrite the default supported actions and scopes with the application specific ones
-        self.actions = Applications.current.instance.actions
+        self.actions = Applications.current.actions
         # At this point we know that the first argument is no option, but *some* action (may it be valid or not)
-        self.scopes  = Applications.current.instance.scopes(self.action)
+        self.scopes  = Applications.current.scopes(self.action)
       end
       parse_options
     end
@@ -23,8 +23,8 @@ module CSD
     def self.clear
       # These option values hold names and descriptions for application-unspecific actions and scopes
       # They are intended to be overwritten by the specific application module
-      #self.actions = YAML.load_file(File.join(Path.applications, 'actions.yml'))
-      #self.scopes  = [{"(Depends on the action and the application. Type `" + "#{CSD.executable} show APPLICATION".magenta.bold + "´ for more info)" => ''}]
+      self.actions = YAML.load_file(File.join(Path.applications, 'default', 'actions.yml'))
+      self.scopes  = [{"(Depends on the action and the application. Type `" + "#{CSD.executable} show APPLICATION".magenta.bold + "´ for more info)" => ''}]
       # At first we define the default literals
       self.help        = false
       self.application = nil
@@ -38,7 +38,7 @@ module CSD
       self.silent  = false
     end
 
-    # Here we check for application-specific actions, options and scopes
+    # Here we check for literals, i.e. "help", ACTION and APPLICATION.
     #
     def self.parse_literals
       # First let's see whether we are in help mode, i.e. whether the first argument is `help´.
@@ -67,11 +67,9 @@ module CSD
     # from ARGV and leaves only literal (non-option) parameters (i.e. actions/applications/scopes; strings without -- and -).
     #
     def self.parse_options
-      
-      
-      # Now let's parse all command-line arguments. Here we only care for option arguments.
       OptionParser.new do |opts|
-        opts.banner = "Usage: ".bold + "ai ACTION APPLICATION [SCOPE] [OPTIONS]".magenta.bold
+        self.banner = "Usage: ".bold + "ai [help] [ACTION] APPLICATION [OPTIONS]"
+        opts.banner = self.banner.magenta.bold
         
         # Whatever actions we have now, let's display them
         actions_prepend = Applications.current ? Applications.current.name.upcase + ' ' : nil
@@ -94,9 +92,9 @@ module CSD
         # Here we load application-specific options file.
         # TODO: There must be a better way for this in general than to eval the raw ruby code
         begin
-          UI.debug "There were no options to be loaded from #{Applications.current}" if Applications.current.option_parser.size.blank?
+          UI.debug "There were no options to be loaded from #{Applications.current}" if Applications.current.options(self.action).size.blank?
           opts.headline "#{prepend}OPTIONS".green.bold
-          eval Applications.current.option_parser
+          eval Applications.current.options(self.action)
         rescue SyntaxError => e
           raise ApplicationOptionsSyntaxError, "The individual options of #{Applications.current.inspect} could not be parsed (SyntaxError)."
         end if Applications.current

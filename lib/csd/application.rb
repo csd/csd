@@ -1,2 +1,2 @@
-require File.join(File.dirname(__FILE__), 'application', 'base')
+require File.join(File.dirname(__FILE__), 'application', 'default')
 

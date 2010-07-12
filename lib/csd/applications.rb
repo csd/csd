@@ -21,6 +21,7 @@ module CSD
     def self.all(&block)
       result = []
       Dir.directories(Path.applications) do |dir|
+        next if dir == 'default'
         if app = find(dir)
           block_given? ? yield(app) : result << app
         end

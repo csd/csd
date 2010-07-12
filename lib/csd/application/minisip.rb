@@ -1,11 +1,15 @@
-require File.join(File.dirname(__FILE__), 'minisip', 'errors')
+require File.join(File.dirname(__FILE__), 'default')
+Dir.glob(File.join(File.dirname(__FILE__), 'minisip', '*.rb')) { |file| require file }
 Dir.glob(File.join(File.dirname(__FILE__), 'minisip', 'unix', '*.rb')) { |file| require file }
+require 'ostruct'
 
 module CSD
   module Application
     module Minisip
       class << self
-                
+        
+        include CSD::Application::Default
+        
         def instance
           @instance ||= case Gem::Platform.local.os
             when 'linux'
@@ -13,22 +17,6 @@ module CSD
             else
               Base.new
           end
-        end
-        
-        def name
-          'minisip'
-        end
-        
-        def description
-          'An open-source SIP client for high-definition video conferencing'
-        end
-        
-        def human
-          'MiniSIP'
-        end
-        
-        def option_parser
-          File.read(File.join(File.dirname(__FILE__), 'minisip', 'options.rb'))
         end
         
       end

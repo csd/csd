@@ -5,19 +5,22 @@ Dir.glob(File.join(File.dirname(__FILE__), 'csd', '*.rb')) { |file| require file
 #
 module CSD
   class << self
-
-    include Gem::UserInteraction
     
+    # This String holds the name of the executable the user used to bootstrap this gem
     attr_reader :executable
     
+    # This method "runs" the whole CSD gem, so to speak.
+    #
     def bootstrap(options={})
       @executable = options[:executable]
       Options.parse!
       define_root_path
-      validate_arguments
+      respond_to_incomplete_arguments
       Applications.current.instance.introduction
     end
     
+    # This method chooses and holds the user interface instance
+    #
     def ui
       @@ui ||= CLI.new
     end
@@ -36,30 +39,29 @@ module CSD
       end
     end
     
-    def validate_arguments
-      #UI.info Options.helptext if Options.help# if ARGV.first == 'help'
-      
-      puts Applications.current.inspect
-      exit
-      
-      case ARGV.size
-        when 0
-          introduction
-          #say "Please specify an ACTION or get more help with `" + "#{executable} --help".green.bold + "´"
-          exit
-        when 1
-          say "Please specify an APPLICATION or get more help with `" + "#{executable} --help".green.bold + "´"
-          exit
+    def respond_to_incomplete_arguments
+      if Options.help
+        UI.info Options.helptext
+        exit
       end
+      
+      introduction unless Options.application
+      
     end
     
     def introduction
       UI.separator
-      UI.info '  Welcome to the TTA Automated Installer.'.green.bold
-      UI.info '  Please specifiy an ACTION and an APPLICATION.'.yellow
+      UI.info '  Welcome to the Automated Installer.'.green.bold
       UI.separator
-      UI.info '  Type for example:   ' + "#{executable} show minisip".cyan.bold
-      UI.info '  Or get more help:   ' + "#{executable} help".cyan.bold
+      UI.info '  The AI can assist you with the following applications: '
+      OptionParser.new do |opts|
+        opts.banner = ''
+        Applications.all { |app| opts.list_item(app.name, app.description) }
+        UI.info opts.help
+      end
+      UI.separator
+      UI.info '  For more information type:   '.green.bold + "#{executable} [APPLICATION NAME]".cyan.bold
+      UI.info '                         or:   '.green.bold + "#{executable} help".cyan.bold
       UI.separator
       exit
     end
