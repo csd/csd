@@ -114,7 +114,7 @@ module CSD
             Cmd.replace(Path.new_giomm_header, '#include <giomm/socket.h>', "/* ----- AI COMMENTING OUT START ----- \n#include <giomm/socket.h>")
             Cmd.replace(Path.new_giomm_header, '#include <giomm/srvtarget.h>', "#include <giomm/srvtarget.h>\n ----- AI COMMENTING OUT END ----- */")
             Cmd.replace(Path.new_giomm_header, '# include <giomm/unixconnection.h>', "// #include <giomm/unixconnection.h>  // COMMENTED OUT BY AI")
-            Cmd.run("sudo cp #{Path.giomm_header} #{Path.giomm_header}.backup")
+            Cmd.run("sudo cp #{Path.giomm_header} #{Path.giomm_header}.ai-backup")
             Cmd.run("sudo cp #{Path.new_giomm_header} #{Path.giomm_header}")
           end
         end
