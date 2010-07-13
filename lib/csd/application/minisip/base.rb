@@ -27,13 +27,17 @@ module CSD
         end
 
         def compile_process
-          before_compile
-          Cmd.mkdir Path.work
-          make_hdviper if checkout_hdviper or Options.dry
-          checkout_minisip
-          fix_ubuntu_10_04 if Gem::Platform.local.kernel_version == '#36-Ubuntu SMP Thu Jun 3 22:02:19 UTC 2010'
-          make_minisip
-          after_compile
+          unless Options.only_fix_giomm
+            before_compile
+            Cmd.mkdir Path.work
+            make_hdviper if checkout_hdviper or Options.dry
+            checkout_minisip
+          end
+          fix_ubuntu_10_04 if Gem::Platform.local.kernel_version == '#36-Ubuntu SMP Thu Jun 3 22:02:19 UTC 2010' or Options.only_fix_giomm
+          unless Options.only_fix_giomm
+            make_minisip
+            after_compile
+          end
         end
                 
         def define_root_path
