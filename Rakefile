@@ -11,8 +11,8 @@ begin
     gemspec.email = "mtoday11@gmail.com"
     gemspec.homepage = "http://github.com/csd/csd"
     gemspec.authors = ["Technology Transfer Alliance Team"]
-    gemspec.add_dependency "term-ansicolor", ">= 0"
-    gemspec.add_dependency "activesupport", "3.0.0.beta3"  # needs to be active_support in the next release of it, I guess
+    #gemspec.add_dependency "term-ansicolor", ">= 0"
+    #gemspec.add_dependency "activesupport", "3.0.0.beta3"  # needs to be active_support in the next release of it, I guess
     gemspec.executables = ["ai"]
     gemspec.post_install_message = %q{
     ==================================================================================

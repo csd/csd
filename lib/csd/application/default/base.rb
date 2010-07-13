@@ -1,3 +1,5 @@
+require 'tmpdir'
+
 module CSD
   # This namespace holds all individual application Modules
   #

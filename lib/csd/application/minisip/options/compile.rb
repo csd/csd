@@ -24,6 +24,11 @@ end
 #  end
 #end
 
+self.only_fix_giomm = false
+opts.on("--only-fix-giomm","Forces the AI to do nothing except trying to bugfix the Ubuntu 10.04 giomm") do |value|
+  self.only_fix_giomm = value
+end
+
 self.apt_get = true
 opts.on("--no-apt-get","Don't run any apt-get commands") do |value|
   self.apt_get = value

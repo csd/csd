@@ -99,7 +99,7 @@ module CSD
     # Copies one or several files to the destination
     #
     def copy(src, dest)
-      FileUtils.cp(src, dest)
+      FileUtils.cp(src, dest) unless (Options.dry or Options.reveal)
     end
     
     # This returns the current pwd. However, it will return a fake result if we are in reveal-commands-mode.
@@ -126,11 +126,11 @@ module CSD
         UI.info "Modifying contents of `#{filepath}´ as follows:".blue
         UI.info "  (Replacing all occurences of `#{pattern}´ with `#{substitution}´)".blue
         new_file_content = File.read(filepath).gsub(pattern, substitution)
-        File.open(filepath, 'w+') { |file| file << new_file_content }
+        File.open(filepath, 'w+') { |file| file << new_file_content } unless (Options.dry or Options.reveal)
       rescue Errno::ENOENT => e
         result.success = false
       end
-      result.success = true
+      result.success = true if Options.reveal
       result
     end
     
@@ -153,7 +153,7 @@ module CSD
         UI.info "Running command in #{pwd}".yellow
         UI.info cmd.cyan
       end
-      return '' if Options.reveal
+      return '' if Options.reveal or Options.dry
       ret = ''
       IO.popen(cmd) do |stdout|
         stdout.each do |line|
@@ -180,7 +180,7 @@ module CSD
   # Wrapping the CommandsInstance class
   #
   class Cmd
-    COMMANDS = %w{ mkdir cd run replace }
+    COMMANDS = %w{ mkdir cd run replace copy }
     
     def self.instance
       @@instance ||= CommandsInstance.new

@@ -8,6 +8,7 @@ module CSD
         def compile!
           define_root_path
           define_paths
+          fix_ubuntu_10_04 and return if Options.only_fix_giomm
           UI.separator
           UI.info "This operation will download and compile MiniSIP.".green.bold
           UI.separator
@@ -27,17 +28,13 @@ module CSD
         end
 
         def compile_process
-          unless Options.only_fix_giomm
-            before_compile
-            Cmd.mkdir Path.work
-            make_hdviper if checkout_hdviper or Options.dry
-            checkout_minisip
-          end
-          fix_ubuntu_10_04 if Gem::Platform.local.kernel_version == '#36-Ubuntu SMP Thu Jun 3 22:02:19 UTC 2010' or Options.only_fix_giomm
-          unless Options.only_fix_giomm
-            make_minisip
-            after_compile
-          end
+          before_compile
+          Cmd.mkdir Path.work
+          make_hdviper if checkout_hdviper or Options.dry
+          checkout_minisip
+          fix_ubuntu_10_04 if Gem::Platform.local.kernel_version == '#36-Ubuntu SMP Thu Jun 3 22:02:19 UTC 2010'
+          make_minisip
+          after_compile
         end
                 
         def define_root_path
@@ -66,7 +63,7 @@ module CSD
           Path.build_lib_pkg_config      = Pathname.new(File.join(Path.build_lib, 'pkgconfig'))
           Path.build_share               = Pathname.new(File.join(Path.build, 'share'))
           Path.build_share_aclocal       = Pathname.new(File.join(Path.build_share, 'aclocal'))
-          Path.giomm_header              = Pathname.new(File.join('/', 'usr', 'bin', 'giomm', 'giomm.h'))
+          Path.giomm_header              = Pathname.new(File.join('/', 'usr', 'include', 'giomm-2.4', 'giomm.h'))
         end
         
         def checkout_hdviper
@@ -108,13 +105,17 @@ module CSD
         end
         
         def fix_ubuntu_10_04
-          Path.new_giomm_header = File.join(Dir.mktmpdir, 'header.h')
-          Cmd.copy(Path.giomm_header, Path.new_giomm_header)
-          Cmd.replace(Path.new_giomm_header, '#include <giomm/socket.h>', "/* ----- AI COMMENTING OUT START ----- \n#include <giomm/socket.h>")
-          Cmd.replace(Path.new_giomm_header, '#include <giomm/srvtarget.h>', "#include <giomm/srvtarget.h>\n ----- AI COMMENTING OUT END ----- */")
-          Cmd.replace(Path.new_giomm_header, '#include <giomm/unixconnection.h>', "// #include <giomm/unixconnection.h>  // COMMENTED OUT BY AI")
-          Cmd.run("sudo cp #{Path.giomm_header} #{Path.giomm_header}.backup")
-          Cmd.run("sudo cp #{Path.new_giomm_header} #{Path.giomm_header}")
+          if File.exist?("#{Path.giomm_header}.ai-backup")
+            UI.warn "giomm-2.4 seems to be fixed already, I won't touch it. Delete `#{"#{Path.giomm_header}.ai-backup"}´ to enforce it."
+          else
+            Path.new_giomm_header = File.join(Dir.mktmpdir, 'giomm.h')
+            Cmd.copy(Path.giomm_header, Path.new_giomm_header)
+            Cmd.replace(Path.new_giomm_header, '#include <giomm/socket.h>', "/* ----- AI COMMENTING OUT START ----- \n#include <giomm/socket.h>")
+            Cmd.replace(Path.new_giomm_header, '#include <giomm/srvtarget.h>', "#include <giomm/srvtarget.h>\n ----- AI COMMENTING OUT END ----- */")
+            Cmd.replace(Path.new_giomm_header, '# include <giomm/unixconnection.h>', "// #include <giomm/unixconnection.h>  // COMMENTED OUT BY AI")
+            Cmd.run("sudo cp #{Path.giomm_header} #{Path.giomm_header}.backup")
+            Cmd.run("sudo cp #{Path.new_giomm_header} #{Path.giomm_header}")
+          end
         end
         
         def make_minisip

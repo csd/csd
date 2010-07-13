@@ -35,7 +35,7 @@ class TestPathname < Test::Unit::TestCase
   
       should "return all subdirectory names as an array" do
         result = Pathname.new(@tmp).children_directories.map { |pathname| pathname }
-        assert_equal @subdirs.sort, result
+        assert_equal @subdirs.sort, result.sort
       end
       
       should "yield all subdirectories in a block" do
