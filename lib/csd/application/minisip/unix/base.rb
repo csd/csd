@@ -43,7 +43,7 @@ module CSD
           end
 
           def ldconfig_and_gtkgui
-            Cmd.run(File.join(Path.build, "minisip_gtkgui"))
+            Cmd.run(Path.build_gtkgui)
           end
         
         end

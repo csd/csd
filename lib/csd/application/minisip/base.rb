@@ -58,6 +58,7 @@ module CSD
           Path.hdviper_x264_test_x264api = Pathname.new(File.join(Path.hdviper_x264, 'test', 'x264API'))
           Path.build                     = Pathname.new(File.join(Path.work, 'build'))
           Path.build_bin                 = Pathname.new(File.join(Path.build, 'bin'))
+          Path.build_gtkgui              = Pathname.new(File.join(Path.build_bin, 'minisip_gtkgui'))
           Path.build_include             = Pathname.new(File.join(Path.build, 'include'))
           Path.build_lib                 = Pathname.new(File.join(Path.build, 'lib'))
           Path.build_lib_pkg_config      = Pathname.new(File.join(Path.build_lib, 'pkgconfig'))
