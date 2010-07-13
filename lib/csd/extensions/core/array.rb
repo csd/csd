@@ -1,4 +1,4 @@
-module CSD
+# encoding: utf-8module CSD
   module Extensions
     module Core
       module Array

@@ -1,3 +1,4 @@
+# encoding: utf-8
 require File.join(File.dirname(__FILE__), 'default')
 Dir.glob(File.join(File.dirname(__FILE__), 'minisip', '*.rb')) { |file| require file }
 Dir.glob(File.join(File.dirname(__FILE__), 'minisip', 'unix', '*.rb')) { |file| require file }

@@ -1,3 +1,4 @@
+# encoding: utf-8
 # Ruby standard library
 require 'optparse'
 require 'optparse/time'

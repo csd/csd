@@ -1,3 +1,4 @@
+# encoding: utf-8
 # Loading all files in CSD
 require 'csd/error'
 require 'csd/options'

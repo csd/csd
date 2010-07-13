@@ -1,3 +1,4 @@
+# encoding: utf-8
 require File.join(File.dirname(__FILE__), '..', 'base')
 
 module CSD
@@ -21,7 +22,7 @@ module CSD
 
           def install_aptitude_dependencies
             DEBIAN_DEPENDENCIES.each do |apt|
-              Cmd.run("sudo apt-get --yes install #{apt}")
+              Cmd.run("sudo apt-get install #{apt} --yes --fix-missing", :die_on_failure => true)
             end
           end
         

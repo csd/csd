@@ -1,3 +1,4 @@
+# encoding: utf-8
 module CSD
   # This namespace holds all individual application Modules
   #

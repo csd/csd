@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'pathname'
 require 'ostruct'
 
@@ -147,6 +148,7 @@ module CSD
     # [+:exit_on_failure+] If the exit code of the command was not 0, exit the CSD application.
     #
     def run(cmd, params={})
+      cmd = cmd.to_s
       default_params = { :die_on_failure => true, :silent => false }
       params = default_params.merge(params)
       unless params[:silent]

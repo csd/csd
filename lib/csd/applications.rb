@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'ostruct'
 require 'active_support/inflector'
 require 'active_support/core_ext/string/inflections'

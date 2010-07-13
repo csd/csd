@@ -1,3 +1,4 @@
+# encoding: utf-8
 require File.join(File.dirname(__FILE__), '..', 'default', 'base')
 
 module CSD
@@ -106,6 +107,7 @@ module CSD
         end
         
         def fix_ubuntu_10_04
+          # TODO put backup file in Path.xxx
           if File.exist?("#{Path.giomm_header}.ai-backup")
             UI.warn "giomm-2.4 seems to be fixed already, I won't touch it. Delete `#{"#{Path.giomm_header}.ai-backup"}´ to enforce it."
           else
