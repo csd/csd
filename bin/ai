@@ -15,5 +15,5 @@ rescue CSD::Error::CSDError => e
   exit e.status_code
 rescue Interrupt
   CSD.ui.error "\nQuitting AI..."
-  exit 1
+  abort
 end

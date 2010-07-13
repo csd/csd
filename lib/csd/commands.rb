@@ -96,6 +96,12 @@ module CSD
       result
     end
     
+    # Copies one or several files to the destination
+    #
+    def copy(src, dest)
+      FileUtils.cp(src, dest)
+    end
+    
     # This returns the current pwd. However, it will return a fake result if we are in reveal-commands-mode.
     #
     def pwd
@@ -141,15 +147,17 @@ module CSD
     # [+:exit_on_failure+] If the exit code of the command was not 0, exit the CSD application.
     #
     def run(cmd, params={})
-      default_params = { :die_on_failure => true }
+      default_params = { :die_on_failure => true, :silent => false }
       params = default_params.merge(params)
-      UI.info "Running command in #{pwd}".yellow
-      UI.info cmd.cyan
+      unless params[:silent]
+        UI.info "Running command in #{pwd}".yellow
+        UI.info cmd.cyan
+      end
       return '' if Options.reveal
       ret = ''
       IO.popen(cmd) do |stdout|
         stdout.each do |line|
-          UI.info "       #{line}"
+          UI.info "       #{line}" unless params[:silent]
           ret << line
         end
       end

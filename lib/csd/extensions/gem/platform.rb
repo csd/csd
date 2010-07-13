@@ -7,6 +7,10 @@ module CSD
           version_string = version ? ", version #{version}" : ''
           "#{os} (CPU: #{cpu}#{version_string})"
         end
+        
+        def kernel_version
+          Cmd.run('uname -v', :silent => true).chop if os == 'linux'
+        end
   
       end
     end

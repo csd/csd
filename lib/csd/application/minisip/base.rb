@@ -4,7 +4,7 @@ module CSD
   module Application
     module Minisip
       class Base < CSD::Application::Base
-                
+        
         def compile!
           define_root_path
           define_paths
@@ -31,10 +31,11 @@ module CSD
           Cmd.mkdir Path.work
           make_hdviper if checkout_hdviper or Options.dry
           checkout_minisip
+          fix_ubuntu_10_04 if Gem::Platform.local.kernel_version == '#36-Ubuntu SMP Thu Jun 3 22:02:19 UTC 2010'
           make_minisip
           after_compile
         end
-        
+                
         def define_root_path
           if Options.path
             if File.directory?(Options.path)
@@ -55,11 +56,13 @@ module CSD
           Path.hdviper_x264              = Pathname.new(File.join(Path.hdviper, 'x264'))
           Path.hdviper_x264_test_x264api = Pathname.new(File.join(Path.hdviper_x264, 'test', 'x264API'))
           Path.build                     = Pathname.new(File.join(Path.work, 'build'))
+          Path.build_bin                 = Pathname.new(File.join(Path.build, 'bin'))
           Path.build_include             = Pathname.new(File.join(Path.build, 'include'))
           Path.build_lib                 = Pathname.new(File.join(Path.build, 'lib'))
           Path.build_lib_pkg_config      = Pathname.new(File.join(Path.build_lib, 'pkgconfig'))
           Path.build_share               = Pathname.new(File.join(Path.build, 'share'))
           Path.build_share_aclocal       = Pathname.new(File.join(Path.build_share, 'aclocal'))
+          Path.giomm_header              = Pathname.new(File.join('/', 'usr', 'bin', 'giomm', 'giomm.h'))
         end
         
         def checkout_hdviper
@@ -100,6 +103,16 @@ module CSD
           end
         end
         
+        def fix_ubuntu_10_04
+          Path.new_giomm_header = File.join(Dir.mktmpdir, 'header.h')
+          Cmd.copy(Path.giomm_header, Path.new_giomm_header)
+          Cmd.replace(Path.new_giomm_header, '#include <giomm/socket.h>', "/* ----- AI COMMENTING OUT START ----- \n#include <giomm/socket.h>")
+          Cmd.replace(Path.new_giomm_header, '#include <giomm/srvtarget.h>', "#include <giomm/srvtarget.h>\n ----- AI COMMENTING OUT END ----- */")
+          Cmd.replace(Path.new_giomm_header, '#include <giomm/unixconnection.h>', "// #include <giomm/unixconnection.h>  // COMMENTED OUT BY AI")
+          Cmd.run("sudo cp #{Path.giomm_header} #{Path.giomm_header}.backup")
+          Cmd.run("sudo cp #{Path.new_giomm_header} #{Path.giomm_header}")
+        end
+        
         def make_minisip
           [Path.build, Path.build_include, Path.build_lib, Path.build_share, Path.build_share_aclocal].each { |target| Cmd.mkdir target }
           ['libmutil', 'libmnetutil', 'libmcrypto', 'libmikey', 'libmsip', 'libmstun', 'libminisip', 'minisip'].each do |library|
@@ -128,8 +141,9 @@ module CSD
                 Cmd.run("make", :die_on_failure => true)
               end
               if Options.make_install
-                UI.info "Make install #{library}".green.bold
-                Cmd.run("make install", :die_on_failure => true)
+                maker_command = Options.make_dist ? 'dist' : 'install'
+                UI.info "Make #{maker_command} #{library}".green.bold
+                Cmd.run("make #{maker_command}", :die_on_failure => true)
               end
             else
               UI.warn "Skipping minisip library #{library} because it not be found: #{directory}".green.bold

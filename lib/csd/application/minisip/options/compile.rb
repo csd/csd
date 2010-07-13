@@ -49,6 +49,11 @@ opts.on("--no-make-install","Don't run any make install commands") do |value|
   self.make_install = value
 end
 
-opts.on("--only libmcrypto,libmnetuli,etc.", Array, "Include only these libraries") do |list|
+self.make_dist = false
+opts.on("--make-dist","Use `make dist´ instead of `make install´") do |value|
+  self.make_dist = value
+end
+
+opts.on("--only libmcrypto,libmnetuli,etc.", Array, "Process only these libraries") do |list|
   self.only = list
 end
