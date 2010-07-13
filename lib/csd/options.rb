@@ -102,7 +102,7 @@ module CSD
         # TODO: There must be a better way for this in general than to eval the raw ruby code
         begin
           unless Applications.current.options(self.action).size.blank?
-            opts.headline "#{self.action.upcase} #{Applications.current.name.upcase} OPTIONS".green.bold
+            opts.headline "#{self.action.to_s.upcase} #{Applications.current.name.upcase} OPTIONS".green.bold
             eval Applications.current.options(self.action)
           else
             UI.debug "There were no options to be loaded from #{Applications.current}" 
@@ -139,7 +139,7 @@ module CSD
           self.help = value
         end
         opts.on_tail("-v", "--version", "Show version") do
-          print "CSD Gem Version: #{opts.version}".blue
+          puts "CSD Gem Version: #{CSD::VERSION}".blue
           exit
         end
         self.helptext = opts.help
