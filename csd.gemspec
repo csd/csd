@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{csd}
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Technology Transfer Alliance Team"]
@@ -271,20 +271,18 @@ Gem::Specification.new do |s|
   ]
   s.homepage = %q{http://github.com/csd/csd}
   s.post_install_message = %q{
-    ==================================================================================
+================================================================================================
 
-    Thank you for installing the Communication Systems and Design Automated Installer!
-    You can run it by just typing `ai´ in your command line.
-    
-    . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-    
-    Note: On Debian and Ubuntu the executable `ai´ is not in your PATH by default.
-          You can fix this problem by creating a symlink with these two commands:
-          
-          GEMBIN=$(gem env | grep "E D" | sed "s/[^\w]* //")
-          sudo ln -s "${GEMBIN}/ai" /usr/local/bin/ai
-          
-    ==================================================================================
+  Thank you for installing the Communication Systems and Design Automated Installer!
+
+  You can run it by just typing `ai´ in your command line.
+
+  Note: On Debian and Ubuntu the executable `ai´ is not in your PATH by default.
+        You can fix this by adding it to your .bashrc file with this command:
+      
+  echo "export PATH=\$PATH:$(gem env | grep "E D" | sed "s/[^\w]* //")" >> ~/.bashrc;. ~/.bashrc
+       
+================================================================================================
     }
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
