@@ -1,8 +1,8 @@
-Copyright (C) Technology Transfer Alliance
+Copyright (C) Communication Systems Design
 
 "CSD gem" refers to every file in this software, except the
 file "lib/active_support.rb", and the directories
-"lib/active_support" and "lib/term" and all its contents.
+"lib/active_support" and "lib/term" and their contents, respectively.
 
 The CSD gem is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

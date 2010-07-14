@@ -13,10 +13,13 @@ module CSD
     #
     def self.find(app_name)
       begin
+        UI.debug "Applications.find: Attempting to require `#{File.join(Path.applications, app_name.to_s)}´."
         require File.join(Path.applications, app_name.to_s)
-        ActiveSupport::Inflector.constantize "CSD::Application::#{ActiveSupport::Inflector.camelize app_name}"
-      rescue LoadError
-        UI.debug "The Application `#{app_name}´ could not be loaded properly."
+        UI.debug "Applications.find: Attempting to load `#{app_name}´."
+        ActiveSupport::Inflector.constantize "CSD::Application::#{app_name.camelize}"
+      rescue LoadError => e
+        UI.debug "Applications.find: The Application `#{app_name}´ could not be loaded properly."
+        UI.debug "                   Reason: #{e}"
         nil
       end
     end
@@ -25,7 +28,9 @@ module CSD
       result = []
       Dir.directories(Path.applications) do |dir|
         next if dir == 'default'
+        UI.debug "Applications.all: Identified application directory `#{dir}´."
         if app = find(dir)
+          UI.debug "Applications.all: The application `#{dir}´ is valid."
           block_given? ? yield(app) : result << app
         end
       end

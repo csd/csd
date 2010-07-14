@@ -1,7 +1,13 @@
 # encoding: utf-8
-# Loading all files in CSD
-require 'csd/error'
-require 'csd/options'
+
+# Loading vendor libraries
+require 'active_support'
+require 'term/ansicolor'
+
+# Loading all files in the subdirectory `csd´
+Dir[File.join(File.dirname(__FILE__), 'csd', '*.rb')].sort.each do |path|
+  require "csd/#{File.basename(path, '.rb')}"
+end
 
 # The CSD namespace is given to the entire gem.
 #
@@ -17,7 +23,7 @@ module CSD
       @executable = options[:executable]
       Options.parse!
       respond_to_incomplete_arguments
-      Applications.current.instance.send("#{Options.action}!".to_sym)
+      Applications.current.instance.send("#{Options.action}".to_sym)
     end
     
     # This method chooses and holds the user interface instance

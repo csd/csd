@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{csd}
-  s.version = "0.1.4"
+  s.version = "0.1.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Technology Transfer Alliance Team"]
-  s.date = %q{2010-07-13}
+  s.date = %q{2010-07-14}
   s.default_executable = %q{ai}
   s.description = %q{CSD stands for Communication Systems Design and is a project of the Telecommunication Systems Laboratory (TSLab) of the Royal Institute of Technology in Stockholm, Sweden. Within CSD many software tools are used to build up various networks and services. This gem is supposed to automate processes to handle the compilation and installation of these software tools. Technology Transfer Alliance (TTA) is the project team, which maintains this code.}
   s.email = %q{mtoday11@gmail.com}
@@ -237,7 +237,6 @@ Gem::Specification.new do |s|
      "lib/csd/application/minisip/error.rb",
      "lib/csd/application/minisip/options/common.rb",
      "lib/csd/application/minisip/options/compile.rb",
-     "lib/csd/application/minisip/unix/base.rb",
      "lib/csd/application/opensips/about.yml",
      "lib/csd/applications.rb",
      "lib/csd/commands.rb",
@@ -275,7 +274,7 @@ Gem::Specification.new do |s|
 
   Thank you for installing the Communication Systems and Design Automated Installer!
 
-  You can run it by just typing `ai´ in your command line.
+  You can run it by typing `ai´ in your command line.
 
   Note: On Debian and Ubuntu the executable `ai´ is not in your PATH by default.
         You can fix this by adding it to your .bashrc file with this command:

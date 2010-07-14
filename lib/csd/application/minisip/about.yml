@@ -8,7 +8,7 @@ actions:
     #- check: Checks whether the environment dependencies for the application are satisfied
   :developer:
     - compile: Downloads and compiles MiniSIP from scratch
-    #- package: Packages a compiled application
+    - package: Downloads, compiles and packages MiniSIP from scratch
     #- publish: Submits a compiled package to the CSD package repository
 scopes:
   --- {}

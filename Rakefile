@@ -17,7 +17,7 @@ begin
 
   Thank you for installing the Communication Systems and Design Automated Installer!
 
-  You can run it by just typing `ai´ in your command line.
+  You can run it by typing `ai´ in your command line.
 
   Note: On Debian and Ubuntu the executable `ai´ is not in your PATH by default.
         You can fix this by adding it to your .bashrc file with this command:
@@ -58,9 +58,9 @@ task :default => :test
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
-
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title = "csd #{version}"
   rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
+  rdoc.rdoc_files.include('lib/csd.rb')
+  rdoc.rdoc_files.include('lib/csd/**/*.rb')
 end

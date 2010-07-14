@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'test/unit'
-require 'shoulda'
 require 'tmpdir'
+require 'shoulda'
 require 'redgreen'
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))

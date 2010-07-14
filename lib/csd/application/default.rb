@@ -1,4 +1,6 @@
 # encoding: utf-8
+require File.join(File.dirname(__FILE__), 'default', 'base')
+
 module CSD
   # This namespace holds all individual application Modules
   #

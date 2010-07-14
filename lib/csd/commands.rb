@@ -100,7 +100,25 @@ module CSD
     # Copies one or several files to the destination
     #
     def copy(src, dest)
-      FileUtils.cp(src, dest) unless (Options.dry or Options.reveal)
+      begin
+        UI.info "Copying `#{src}´ to `#{dest}´".cyan
+        FileUtils.cp(src, dest) unless (Options.dry or Options.reveal)
+        true
+      rescue Exception => e
+        nil
+      end
+    end
+    
+    # Moves one or several files to the destination
+    #
+    def move(src, dest)
+      begin
+        UI.info "Moving `#{src}´ to `#{dest}´".cyan
+        FileUtils.mv(src, dest) unless (Options.dry or Options.reveal)
+        true
+      rescue Exception => e
+        nil
+      end
     end
     
     # This returns the current pwd. However, it will return a fake result if we are in reveal-commands-mode.
@@ -182,7 +200,7 @@ module CSD
   # Wrapping the CommandsInstance class
   #
   class Cmd
-    COMMANDS = %w{ mkdir cd run replace copy }
+    COMMANDS = %w{ mkdir cd run replace copy move }
     
     def self.instance
       @@instance ||= CommandsInstance.new
