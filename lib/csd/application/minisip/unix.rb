@@ -100,8 +100,10 @@ module CSD
                 if Cmd.cd(File.join(Path.packaging, tar_dirname))
                   Cmd.run("dpkg-buildpackage -rfakeroot")
                   if library == 'minisip'
-                    package = File.basename(Dir[File.join(Path.packaging, "#{library}*.deb")].first)
-                    Cmd.run("sudo apt-get install #{package}") if package or Options.reveal
+                    if Cmd.cd(Path.packaging)
+                      package = File.basename(Dir[File.join(Path.packaging, "#{library}*.deb")].first)
+                      Cmd.run("sudo dpkg -i #{package}") if package or Options.reveal
+                    end
                   else
                     if Cmd.cd(Path.packaging)
                       package = File.basename(Dir[File.join(Path.packaging, "#{library}0*.deb")].first)

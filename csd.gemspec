@@ -237,6 +237,7 @@ Gem::Specification.new do |s|
      "lib/csd/application/minisip/error.rb",
      "lib/csd/application/minisip/options/common.rb",
      "lib/csd/application/minisip/options/compile.rb",
+     "lib/csd/application/minisip/options/package.rb",
      "lib/csd/application/minisip/unix.rb",
      "lib/csd/application/minisip/unix/linux.rb",
      "lib/csd/application/minisip/unix/linux/debian.rb",

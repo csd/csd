@@ -190,7 +190,7 @@ module CSD
   # Wrapping the CommandsInstance class
   #
   class Cmd
-    COMMANDS = %w{ mkdir cd run replace copy move }
+    COMMANDS = %w{ mkdir cd run replace copy move } unless defined?(COMMANDS)
     
     def self.instance
       @@instance ||= CommandsInstance.new

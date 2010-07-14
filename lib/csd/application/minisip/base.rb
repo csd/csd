@@ -6,7 +6,7 @@ module CSD
     module Minisip
       class Base < CSD::Application::Base
         
-        LIBRARIES = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip minisip }
+        LIBRARIES = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip minisip } unless defined?(LIBRARIES)
 
         def package
           UI.error 'Currently not supported for this platform. Sorry.'

@@ -21,18 +21,16 @@ module CSD
     end
     
     def warn(message)
-      say 'WARNING: '.yellow.blink + message.yellow if !Options.silent
+      say 'NOTE: '.red + message.red if !Options.silent
     end
 
     def error(message)
-      if !Options.silent
-        say 'ERROR: '.red.blink + message.red
-      end
+      say('ERROR: '.red.blink + message.red) if !Options.silent
     end
     
     def die(message)
-      say message.red.blink if !Options.silent
-      exit
+      say('ERROR: '.red.blink + message.red) if !Options.silent
+      abort
     end
     
     protected
