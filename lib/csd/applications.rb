@@ -14,7 +14,7 @@ module CSD
     def self.find(app_name)
       begin
         require File.join(Path.applications, app_name.to_s)
-        ActiveSupport::Inflector.constantize "CSD::Application::#{app_name.camelize}"
+        ActiveSupport::Inflector.constantize "CSD::Application::#{ActiveSupport::Inflector.camelize app_name}"
       rescue LoadError
         UI.debug "The Application `#{app_name}´ could not be loaded properly."
         nil
