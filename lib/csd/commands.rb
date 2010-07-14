@@ -100,25 +100,15 @@ module CSD
     # Copies one or several files to the destination
     #
     def copy(src, dest)
-      begin
-        UI.info "Copying `#{src}´ to `#{dest}´".cyan
-        FileUtils.cp(src, dest) unless (Options.dry or Options.reveal)
-        true
-      rescue Exception => e
-        nil
-      end
+      UI.info "Copying `#{src}´ to `#{dest}´".cyan
+      FileUtils.cp(src, dest) unless (Options.dry or Options.reveal)
     end
     
     # Moves one or several files to the destination
     #
     def move(src, dest)
-      begin
-        UI.info "Moving `#{src}´ to `#{dest}´".cyan
-        FileUtils.mv(src, dest) unless (Options.dry or Options.reveal)
-        true
-      rescue Exception => e
-        nil
-      end
+      UI.info "Moving `#{src}´ to `#{dest}´".cyan
+      FileUtils.mv(src, dest) unless (Options.dry or Options.reveal)
     end
     
     # This returns the current pwd. However, it will return a fake result if we are in reveal-commands-mode.
@@ -181,12 +171,12 @@ module CSD
           ret << line
         end
       end
-      die_if_last_command_had_errors if params[:exit_on_failure]
+      die_if_last_command_had_errors if params[:die_on_failure]
       ret
     end
     
     def die_if_last_command_had_errors
-      UI.die "The last command was unsuccessful." unless $?.try(:success?)
+      UI.die "The last command was unsuccessful." unless $?.success?
     end
   
   end

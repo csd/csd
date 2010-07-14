@@ -6,19 +6,9 @@ module CSD
     module Minisip
       class Unix < Base
         
-        def package
+        def introduction
           define_root_path
           define_paths
-          #compile
-          package!
-        end
-        
-        def compile
-          define_root_path
-          define_paths
-          fix_ubuntu_10_04 and return if Options.only_fix_giomm
-          UI.separator
-          UI.info "This operation will download and compile MiniSIP.".green.bold
           UI.separator
           UI.info " Working directory:   ".green + Path.work.to_s.yellow
           UI.info " Your Platform:       ".green + Gem::Platform.local.humanize.to_s.yellow
@@ -26,13 +16,24 @@ module CSD
           UI.separator
           if Options.help
             UI.info Options.helptext
+            exit
           else
-            unless Options.yes
-              exit unless UI.ask_yes_no("Continue?".red.bold, true)
-            end
-            compile!
+            exit unless (Options.yes or UI.ask_yes_no("Continue?".red.bold, true))
           end
+        end
+        
+        def package
           UI.separator
+          UI.info("This operation will package ".green.bold + "an already compiled".red.bold + " MiniSIP.".green.bold)
+          introduction
+          package!
+        end
+        
+        def compile
+          UI.separator
+          UI.info "This operation will download and compile MiniSIP.".green.bold
+          introduction
+          compile!
         end
         
         def make_hdviper
@@ -51,7 +52,7 @@ module CSD
             if Cmd.cd(directory) or Options.dry or Options.reveal
               if Options.bootstrap
                 UI.info "Bootstrapping #{library}".green.bold
-                Cmd.run("./bootstrap -I #{Path.build_share_aclocal.enquote}", :die_on_failure => true)
+                Cmd.run("./bootstrap -I #{Path.build_share_aclocal.enquote}")
               end
               if Options.configure
                 UI.info "Configuring #{library}".green.bold
@@ -64,16 +65,16 @@ module CSD
                   else
                     ''
                 end
-                Cmd.run(%Q{./configure #{individual_options} --prefix=#{Path.build.enquote} PKG_CONFIG_PATH=#{Path.build_lib_pkg_config.enquote} ACLOCAL_FLAGS=#{Path.build_share_aclocal} LD_LIBRARY_PATH=#{Path.build_lib.enquote} --silent}, :die_on_failure => true)
+                Cmd.run(%Q{./configure #{individual_options} --prefix=#{Path.build.enquote} PKG_CONFIG_PATH=#{Path.build_lib_pkg_config.enquote} ACLOCAL_FLAGS=#{Path.build_share_aclocal} LD_LIBRARY_PATH=#{Path.build_lib.enquote} --silent})
               end
               if Options.make
                 UI.info "Make #{library}".green.bold
-                Cmd.run("make", :die_on_failure => true)
+                Cmd.run("make")
               end
               if Options.make_install
                 maker_command = Options.make_dist ? 'dist' : 'install'
                 UI.info "Make #{maker_command} #{library}".green.bold
-                Cmd.run("make #{maker_command}", :die_on_failure => true)
+                Cmd.run("make #{maker_command}")
               end
             else
               UI.warn "Skipping minisip library #{library} because it not be found: #{directory}".green.bold
@@ -82,29 +83,32 @@ module CSD
         end
         
         def package!
+          Cmd.mkdir(Path.packaging)
           LIBRARIES.each do |library|
             directory = Pathname.new(File.join(Path.repository, library))
             next if Options.only and !Options.only.include?(library)
             UI.info "Making #{library} with target dist".green.bold
             if Cmd.cd(directory) or Options.dry or Options.reveal
-              Cmd.run("make dist", :die_on_failure => true)
+              Cmd.run("make dist")
               
-              tar_filename = Dir[File.join(directory, '*.tar.gz')].first
+              tar_filename = File.basename(Dir[File.join(directory, '*.tar.gz')].first)
               Cmd.move(File.join(directory, tar_filename.to_s), Path.packaging) if tar_filename or Options.reveal
               
               if Cmd.cd(Path.packaging) or Options.dry or Options.reveal
-                Cmd.run("tar -xzf #{tar_filename}", :die_on_failure => true)
+                Cmd.run("tar -xzf #{tar_filename}")
                 tar_dirname = File.basename(tar_filename.to_s, '.tar.gz')
                 if Cmd.cd(File.join(Path.packaging, tar_dirname))
-                  Cmd.run("dpkg-buildpackage -rfakeroot", :die_on_failure => true)
+                  Cmd.run("dpkg-buildpackage -rfakeroot")
                   if library == 'minisip'
-                    package = Dir[File.join(Path.packaging, "#{library}*.deb")].first
-                    Cmd.run("sudo apt-get install #{package}", :die_on_failure => true) if package or Options.reveal
+                    package = File.basename(Dir[File.join(Path.packaging, "#{library}*.deb")].first)
+                    Cmd.run("sudo apt-get install #{package}") if package or Options.reveal
                   else
-                    dev_package = Dir[File.join(Path.packaging, "#{library}-dev*.deb")].first
-                    Cmd.run("sudo apt-get install #{dev_package}", :die_on_failure => true) if dev_package or Options.reveal
-                    package = Dir[File.join(Path.packaging, "#{library}0*.deb")].first
-                    Cmd.run("sudo apt-get install #{package}", :die_on_failure => true) if package or Options.reveal
+                    if Cmd.cd(Path.packaging)
+                      package = File.basename(Dir[File.join(Path.packaging, "#{library}0*.deb")].first)
+                      Cmd.run("sudo dpkg -i #{package}") if package or Options.reveal
+                      dev_package = File.basename(Dir[File.join(Path.packaging, "#{library}-dev*.deb")].first)
+                      Cmd.run("sudo dpkg -i #{dev_package}") if dev_package or Options.reveal
+                    end
                   end
                 else
                   UI.error "Could not enter #{File.join(Path.packaging, tar_dirname)}."

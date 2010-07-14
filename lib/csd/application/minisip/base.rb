@@ -54,7 +54,7 @@ module CSD
           else
             if Path.repository.parent.writable? or Options.dry
               UI.info "Downloading minisip repository to: #{Path.repository}".green.bold
-              Cmd.run("git clone http://github.com/csd/minisip.git #{Path.repository}", :die_on_failure => true)
+              Cmd.run("git clone http://github.com/csd/minisip.git #{Path.repository}")
               # Fixing hard-coded stuff
               Cmd.replace(Path.open_gl_display, '/home/erik', Path.build)
             else
@@ -69,7 +69,7 @@ module CSD
           else
             if Path.plugins.parent.writable? or Options.dry
               UI.info "Downloading minisip plugins to: #{Path.plugins}".green.bold
-              Cmd.run("git clone http://github.com/csd/minisip-plugins.git #{Path.plugins}", :die_on_failure => true)
+              Cmd.run("git clone http://github.com/csd/minisip-plugins.git #{Path.plugins}")
             else
               UI.error "Could not download minisip plugins (no permission): #{Path.plugins}"
             end
@@ -82,7 +82,7 @@ module CSD
           else
             if Path.hdviper.parent.writable? or Options.dry
               UI.info "Downloading hdviper to: #{Path.hdviper}".green.bold
-              Cmd.run("git clone http://github.com/csd/libraries.git #{Path.hdviper}", :die_on_failure => true)
+              Cmd.run("git clone http://github.com/csd/libraries.git #{Path.hdviper}")
               #Cmd.run("svn co --quiet svn://hdviper.org/hdviper/wp3/src #{Path.hdviper}")
               return true
             else

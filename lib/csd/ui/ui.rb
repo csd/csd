@@ -6,7 +6,7 @@ module CSD
     
     # These are all possible user interactions provided by the UI
     #
-    INTERACTIONS = %w{ separator debug info warn error ask ask_yes_no }
+    INTERACTIONS = %w{ separator debug info warn error ask ask_yes_no die }
     
     def separator
       say
@@ -21,7 +21,7 @@ module CSD
     end
     
     def warn(message)
-      say message.red if !Options.silent
+      say 'WARNING: '.yellow.blink + message.yellow if !Options.silent
     end
 
     def error(message)

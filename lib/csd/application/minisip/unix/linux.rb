@@ -12,7 +12,6 @@ module CSD
           make_hdviper if checkout_hdviper or Options.dry
           checkout_minisip
           checkout_plugins
-          fix_ubuntu_10_04 if Gem::Platform.local.kernel_version == '#36-Ubuntu SMP Thu Jun 3 22:02:19 UTC 2010'
           make_minisip
           after_compile
         end

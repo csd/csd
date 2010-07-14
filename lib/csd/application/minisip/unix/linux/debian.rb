@@ -20,8 +20,9 @@ module CSD
         end
         
         def install_aptitude_dependencies
+          Cmd.run("sudo apt-get update")
           DEBIAN_DEPENDENCIES.each do |apt|
-            Cmd.run("sudo apt-get install #{apt} --yes --fix-missing", :die_on_failure => true)
+            Cmd.run("sudo apt-get install #{apt} --yes --fix-missing")
           end
         end
         

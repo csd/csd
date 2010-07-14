@@ -15,11 +15,17 @@ module CSD
         def instance
           @instance ||= case Gem::Platform.local.os
             when 'linux'
+              UI.debug "Analyzing kernel version: #{Gem::Platform.local.kernel_version}"
               case Gem::Platform.local.kernel_version
-                when '#36-Ubuntu SMP Thu Jun 3 22:02:19 UTC 2010' then Ubuntu10.new
-                else Debian.new
+                when /(36-Ubuntu)|(37-Ubuntu)/
+                  UI.debug "Ubuntu 10.04 identified"
+                  Ubuntu10.new
+                else
+                  UI.debug "Debian identified"
+                  Debian.new
               end
             else
+              UI.debug "Nothing identified"
               Base.new
           end
         end

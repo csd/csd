@@ -9,6 +9,7 @@ module CSD
         def before_compile
           super
           fix_ubuntu_10_04
+          exit if Options.only_fix_giomm
         end
         
         def fix_ubuntu_10_04
