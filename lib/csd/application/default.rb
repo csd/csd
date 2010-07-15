@@ -11,7 +11,7 @@ module CSD
     module Default
         
       def name
-        ActiveSupport::Inflector.underscore self.to_s.demodulize
+        self.to_s.demodulize.underscorize
       end
       
       def description
@@ -27,7 +27,8 @@ module CSD
       end
       
       def scopes(action)
-        about.scopes[:action]
+        # TODO: about.scopes[:action]
+        []
       end
       
       def options(action='')

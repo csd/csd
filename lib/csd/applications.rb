@@ -1,7 +1,6 @@
 # encoding: utf-8
 require 'ostruct'
-require 'active_support/inflector'
-require 'active_support/core_ext/string/inflections'
+require 'csd/extensions/core/string'
 
 module CSD
   
@@ -16,7 +15,7 @@ module CSD
         UI.debug "Applications.find: Attempting to require `#{File.join(Path.applications, app_name.to_s)}´."
         require File.join(Path.applications, app_name.to_s)
         UI.debug "Applications.find: Attempting to load `#{app_name}´."
-        ActiveSupport::Inflector.constantize "CSD::Application::#{app_name.camelize}"
+        "CSD::Application::#{app_name.camelize}".constantize
       rescue LoadError => e
         UI.debug "Applications.find: The Application `#{app_name}´ could not be loaded properly."
         UI.debug "                   Reason: #{e}"

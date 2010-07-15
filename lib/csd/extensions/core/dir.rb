@@ -14,29 +14,6 @@ module CSD
           end
         end
         
-        # Returns all direct subdirectories of +path+ with their entire path
-        #
-        #def directories(path, &block)
-        #  result = []
-        #  glob(::File.join(path, '*')).each do |dir|
-        #    if (::File.directory?(dir) and dir != '.' and dir != '..')
-        #      block_given? ? yield(dir) : result << dir
-        #    end
-        #  end
-        #  result
-        #end
-        
-        #def directories(path, absolute=false, &block)
-        #  result = []
-        #  entries(path) do |entry|
-        #    if (::File.directory?(entry) and entry != '.' and entry != '..')
-        #      dir = absolute? ? File.join(path, entry) : entry
-        #      block_given? ? yield(dir) : result << dir
-        #    end
-        #  end
-        #  result
-        #end
-        
       end
     end
   end

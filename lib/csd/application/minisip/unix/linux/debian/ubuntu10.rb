@@ -13,12 +13,17 @@ module CSD
         end
         
         def fix_ubuntu_10_04
-          # TODO put backup file in Path.xxx
           if File.exist?("#{Path.giomm_header}.ai-backup")
-            UI.warn "giomm-2.4 seems to be fixed already, I won't touch it. Delete `#{"#{Path.giomm_header}.ai-backup"}´ to enforce it."
+            UI.warn "giomm-2.4 seems to be fixed already, I won't touch it now. Delete `#{"#{Path.giomm_header}.ai-backup"}´ to enforce it."
           else
             Path.new_giomm_header = File.join(Dir.mktmpdir, 'giomm.h')
             Cmd.copy(Path.giomm_header, Path.new_giomm_header)
+            
+            Cmd.replace Path.new_fiomm_header do |r|
+              r.replace '#include <giomm/socket.h>', "/* ----- AI COMMENTING OUT START ----- \n#include <giomm/socket.h>"
+              
+            end
+            
             Cmd.replace(Path.new_giomm_header, '#include <giomm/socket.h>', "/* ----- AI COMMENTING OUT START ----- \n#include <giomm/socket.h>")
             Cmd.replace(Path.new_giomm_header, '#include <giomm/tcpconnection.h>', "#include <giomm/tcpconnection.h>\n ----- AI COMMENTING OUT END ----- */")
             Cmd.replace(Path.new_giomm_header, '# include <giomm/unixconnection.h>', "// #include <giomm/unixconnection.h>  // COMMENTED OUT BY AI")
@@ -26,7 +31,6 @@ module CSD
             Cmd.run("sudo cp #{Path.new_giomm_header} #{Path.giomm_header}")
           end
         end
-      
       
       end
     end

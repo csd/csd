@@ -5,9 +5,7 @@ require 'active_support'
 require 'term/ansicolor'
 
 # Loading all files in the subdirectory `csd´
-Dir[File.join(File.dirname(__FILE__), 'csd', '*.rb')].sort.each do |path|
-  require "csd/#{File.basename(path, '.rb')}"
-end
+Dir[File.join(File.dirname(__FILE__), 'csd', '*.rb')].sort.each { |path| require "csd/#{File.basename(path, '.rb')}" }
 
 # The CSD namespace is given to the entire gem.
 #
@@ -24,12 +22,6 @@ module CSD
       Options.parse!
       respond_to_incomplete_arguments
       Applications.current.instance.send("#{Options.action}".to_sym)
-    end
-    
-    # This method chooses and holds the user interface instance
-    #
-    def ui
-      @@ui ||= CLI.new
     end
     
     private
@@ -86,4 +78,5 @@ module CSD
     end
 
   end
+  
 end

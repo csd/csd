@@ -1,4 +1,5 @@
 # encoding: utf-8
+
 module CSD
   # In this module we will keep all types of errors in a readable hierarchy
   #
@@ -24,8 +25,16 @@ module CSD
       class NoAction < CSDError; status_code(12); end
     end
     
+    # Errors in this module are related to the Application Module Framework
+    #
     module Application
       class OptionsSyntax < CSDError; status_code(200); end
+    end
+    
+    # Errors in this module are raised by the User Interface
+    # TODO: This has to go :)
+    module UI
+      class Die < CSDError; status_code(1000); end
     end
   
   end

@@ -1,2 +1,3 @@
 # encoding: utf-8
-Dir.glob(File.join(File.dirname(__FILE__), 'extensions', '**', '*.rb')) { |file| require file }
+Dir[File.join(File.dirname(__FILE__), 'extensions', 'core', '*.rb')].sort.each { |path| require "csd/extensions/core/#{File.basename(path, '.rb')}" }
+Dir[File.join(File.dirname(__FILE__), 'extensions', 'gem', '*.rb')].sort.each { |path| require "csd/extensions/gem/#{File.basename(path, '.rb')}" }

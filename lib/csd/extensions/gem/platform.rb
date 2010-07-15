@@ -1,4 +1,5 @@
 # encoding: utf-8
+
 module CSD
   module Extensions
     module Gem
@@ -10,7 +11,7 @@ module CSD
         end
         
         def kernel_version
-          Cmd.run('uname -v', :silent => true).chop if os == 'linux'
+          Cmd.run('uname -v', :show_output => false).chop if os == 'linux'
         end
   
       end
