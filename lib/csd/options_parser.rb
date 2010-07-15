@@ -47,9 +47,10 @@ module CSD
       self.dry       = false
       self.reveal    = false
       self.verbose   = false
-      self.debug     = ARGV.include?('--debug') # Shortcut to allow for debugging the options parser itself
       self.silent    = false
       self.developer = false
+      # Shortcut to allow for debugging the options parser itself
+      self.debug     = (ARGV.include?('--debug') or ARGV.include?('-d'))
     end
 
     # Here we check for literals, i.e. "help", ACTION and APPLICATION.
@@ -135,7 +136,7 @@ module CSD
           self.help = value
         end
         opts.on_tail("-v", "--version", "Show version") do
-          puts "CSD Gem Version: #{CSD::VERSION}".blue
+          puts "CSD Gem Version: #{CSD::Version}".blue
           exit
         end
         self.helptext = opts.help

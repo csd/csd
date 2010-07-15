@@ -67,32 +67,14 @@ class TestApplications < Test::Unit::TestCase
     
     context "find" do
       
-      should "evaluate to +false+ for an empty application search term" do
+      should "do not evaluate to +true+ for an invalid application search term" do
+        assert !Applications.find(nil)
         assert !Applications.find('')
-      end
-      
-      should "evaluate to +false+ for an invalid application search term" do
         assert !Applications.find('i-for-sure-do-not-exist')
       end
       
     end
       
   end # context "When analyzing arguments"
-
-    #context "all" do
-
-      #should "return all apropriete Application objects as an array" do
-      #  dirs = Dir.directories(Path.applications)
-      #  apps = Applications.all
-      #  assert_equal dirs.size, apps.size
-      #  Applications.all do |app|
-      #    assert_includes directories, 'app'
-      #  end
-      #  
-      #end
-      
-    #end # context "directories"
-  
-  #end # context "As a Dir function"
 
 end
