@@ -95,7 +95,7 @@ module CSD
         # Here we load application-specific options file.
         # TODO: There must be a better way for this in general than to eval the raw ruby code
         begin
-          unless Applications.current.options(self.action).size.blank?
+          unless Applications.current.options(self.action).size == 0
             opts.headline "#{self.action.to_s.upcase} #{Applications.current.name.upcase} OPTIONS".green.bold
             eval Applications.current.options(self.action)
           else
