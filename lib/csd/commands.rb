@@ -171,16 +171,16 @@ module CSD
     # [+:exit_on_failure+] If the exit code of the command was not 0, exit the CSD application.
     #
     def run(cmd, params={})
-      default_params = { :die_on_failure => true, :show_output => false }
+      default_params = { :die_on_failure => true, :silent => false }
       params = default_params.merge(params)
       cmd = cmd.to_s
-      UI.info "Running command in #{pwd}".yellow
-      UI.info cmd.cyan
+      UI.info "Running command in #{pwd}".yellow unless params[:silent]
+      UI.info cmd.cyan unless params[:silent]
       return '' if Options.reveal
       ret = ''
       IO.popen(cmd) do |stdout|
         stdout.each do |line|
-          UI.info "       #{line}" unless params[:show_output]
+          UI.info "       #{line}" unless params[:silent]
           ret << line
         end
       end
