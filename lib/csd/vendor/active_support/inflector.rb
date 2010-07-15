@@ -1,8 +1,14 @@
 module CSD
   module Vendor
+    # Author
+    # 
+    # Copyright (c) 2005-2010 David Heinemeier Hansson
     # This module is taken from Ruby on Rails' ActiveSupport
-    # Active Support is released under the MIT license.
     # Link: http://github.com/rails/rails/tree/master/activesupport
+    #
+    # License
+    # 
+    # Active Support is released under the MIT license.
     #
     module ActiveSupport
       # The Inflector transforms words from singular to plural, class names to table names, modularized class names to ones without,

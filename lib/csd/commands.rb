@@ -146,7 +146,7 @@ module CSD
         params = default_params.merge(params)
         begin
           UI.info "Replacing all occurences of `#{pattern}´ with `#{substitution}´".blue
-          new_file_content = File.read(filepath).gsub(pattern, substitution)
+          new_file_content = File.read(filepath).gsub(pattern.to_s, substitution.to_s)
           File.open(filepath, 'w+') { |file| file << new_file_content } unless Options.reveal
           result.success = true
         rescue Errno::ENOENT => e

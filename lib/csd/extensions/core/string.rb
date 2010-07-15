@@ -1,5 +1,5 @@
 # encoding: utf-8
-require 'term/ansicolor'
+require 'csd/vendor/term/ansicolor'
 require 'csd/vendor/active_support/inflector'
 
 module CSD
@@ -44,6 +44,6 @@ module CSD
 end
 
 class String #:nodoc:
-  include Term::ANSIColor
+  include CSD::Vendor::Term::ANSIColor
   include CSD::Extensions::Core::String
 end
