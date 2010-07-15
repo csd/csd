@@ -47,7 +47,7 @@ module CSD
       self.dry       = false
       self.reveal    = false
       self.verbose   = false
-      self.debug     = false
+      self.debug     = ARGV.include?('--debug') # Shortcut to allow for debugging the options parser itself
       self.silent    = false
       self.developer = false
     end

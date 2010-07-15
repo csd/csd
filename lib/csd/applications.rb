@@ -11,7 +11,7 @@ module CSD
     # Returns nil if application could not be found
     #
     def self.find(app_name)
-      return nil if app_name == ''
+      UI.debug "Applications.find: Request for searching Application `#{app_name.inspect}´" + appname.inspect
       begin
         UI.debug "Applications.find: Attempting to require `#{File.join(Path.applications, app_name.to_s)}´."
         require File.join(Path.applications, app_name.to_s)

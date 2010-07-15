@@ -18,7 +18,6 @@ module CSD
     #
     def bootstrap(options={})
       @executable = options[:executable]
-      Options.debug = true if ARGV.include?('--debug')
       Options.parse!
       respond_to_incomplete_arguments
       Applications.current.instance.send("#{Options.action}".to_sym)
