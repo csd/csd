@@ -18,15 +18,9 @@ module CSD
           else
             Path.new_giomm_header = File.join(Dir.mktmpdir, 'giomm.h')
             Cmd.copy(Path.giomm_header, Path.new_giomm_header)
-            
-            Cmd.replace Path.new_fiomm_header do |r|
+            Cmd.replace Path.new_giomm_header do |r|
               r.replace '#include <giomm/socket.h>', "/* ----- AI COMMENTING OUT START ----- \n#include <giomm/socket.h>"
-              
             end
-            
-            Cmd.replace(Path.new_giomm_header, '#include <giomm/socket.h>', "/* ----- AI COMMENTING OUT START ----- \n#include <giomm/socket.h>")
-            Cmd.replace(Path.new_giomm_header, '#include <giomm/tcpconnection.h>', "#include <giomm/tcpconnection.h>\n ----- AI COMMENTING OUT END ----- */")
-            Cmd.replace(Path.new_giomm_header, '# include <giomm/unixconnection.h>', "// #include <giomm/unixconnection.h>  // COMMENTED OUT BY AI")
             Cmd.run("sudo cp #{Path.giomm_header} #{Path.giomm_header}.ai-backup")
             Cmd.run("sudo cp #{Path.new_giomm_header} #{Path.giomm_header}")
           end

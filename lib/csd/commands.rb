@@ -145,7 +145,7 @@ module CSD
         default_params = { :die_on_failure => true }
         params = default_params.merge(params)
         begin
-          UI.info "Replacing all occurences of `#{pattern}´ with `#{substitution}´".blue
+          UI.info "   `#{pattern}´  =>  `#{substitution}´".blue
           new_file_content = File.read(self.filepath).gsub(pattern.to_s, substitution.to_s)
           File.open(self.filepath, 'w+') { |file| file << new_file_content } unless Options.reveal
           result.success = true

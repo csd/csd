@@ -7,7 +7,7 @@ class TestString < Test::Unit::TestCase
     should "be enquotable" do
       assert_equal '"wow it works"', 'wow it works'.enquote
     end
-  
+    
   end
 
 end
