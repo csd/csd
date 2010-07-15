@@ -9,9 +9,9 @@ module CSD
   module Application
     module Minisip
       class << self
-        
+
         include CSD::Application::Default
-        
+
         def instance
           @instance ||= case Gem::Platform.local.os
             when 'linux'

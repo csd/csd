@@ -1,7 +1,6 @@
 # encoding: utf-8
 
 # Loading vendor libraries
-require 'active_support'
 require 'term/ansicolor'
 
 # Loading all files in the subdirectory `csd´
@@ -19,6 +18,7 @@ module CSD
     #
     def bootstrap(options={})
       @executable = options[:executable]
+      Options.debug = true if ARGV.include?('--debug')
       Options.parse!
       respond_to_incomplete_arguments
       Applications.current.instance.send("#{Options.action}".to_sym)

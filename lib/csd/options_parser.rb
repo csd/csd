@@ -26,8 +26,10 @@ module CSD
     def define_actions_and_scopes
       if Applications.current
         # Here we overwrite the default supported actions and scopes with the application specific ones
+        UI.debug "Loading actions of #{Applications.current}."
         self.actions = Applications.current.actions
         # At this point we know that the first argument is no option, but *some* action (may it be valid or not)
+        UI.debug "Loading scopes of #{Applications.current}."
         self.scopes  = Applications.current.scopes(self.action)
       end
     end

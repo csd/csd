@@ -64,6 +64,18 @@ class TestApplications < Test::Unit::TestCase
       end # context "the application module"
       
     end # context "and considering a valid application, find"
+    
+    context "find" do
+      
+      should "evaluate to +false+ for an empty application search term" do
+        assert !Applications.find('')
+      end
+      
+      should "evaluate to +false+ for an invalid application search term" do
+        assert !Applications.find('i-for-sure-do-not-exist')
+      end
+      
+    end
       
   end # context "When analyzing arguments"
 

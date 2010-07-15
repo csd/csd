@@ -11,11 +11,12 @@ module CSD
     # Returns nil if application could not be found
     #
     def self.find(app_name)
+      return nil if app_name == ''
       begin
         UI.debug "Applications.find: Attempting to require `#{File.join(Path.applications, app_name.to_s)}´."
         require File.join(Path.applications, app_name.to_s)
         UI.debug "Applications.find: Attempting to load `#{app_name}´."
-        "CSD::Application::#{app_name.camelize}".constantize
+        "CSD::Application::#{app_name.to_s.camelize}".constantize
       rescue LoadError => e
         UI.debug "Applications.find: The Application `#{app_name}´ could not be loaded properly."
         UI.debug "                   Reason: #{e}"
