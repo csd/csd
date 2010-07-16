@@ -1,11 +1,11 @@
 # -*- encoding: UTF-8 -*-
-require File.join(File.dirname(__FILE__), '..', 'debian')
+require 'csd/application/minisip/unix/linux/debian'
 
 module CSD
   module Application
     module Minisip
       class Ubuntu10 < Debian
-      
+        
         def before_compile
           super
           fix_ubuntu_10_04

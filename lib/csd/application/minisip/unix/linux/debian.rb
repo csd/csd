@@ -1,5 +1,5 @@
 # -*- encoding: UTF-8 -*-
-require File.join(File.dirname(__FILE__), '..', 'linux')
+require 'csd/application/minisip/unix/linux'
 
 module CSD
   module Application

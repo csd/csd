@@ -1,9 +1,10 @@
-# -*- encoding: UTF-8 -*-
+#-- encoding: UTF-8
 
 # Loading all files in the subdirectory `csd´
 Dir[File.join(File.dirname(__FILE__), 'csd', '*.rb')].sort.each { |path| require "csd/#{File.basename(path, '.rb')}" }
 
 # The CSD namespace is given to the entire gem.
+# It stands for Communication Systems Design (see http://www.tslab.ssvl.kth.se/csd).
 #
 module CSD
   class << self
@@ -59,8 +60,8 @@ module CSD
       UI.info "  The AI can assist you with the following tasks regarding #{Applications.current.human}: "
       OptionParser.new do |opts|
         opts.banner = ''
-        actions = Applications.current.actions[:public]
-        actions << Applications.current.actions[:developer] if Options.developer
+        actions = Applications.current.actions['public']
+        actions << Applications.current.actions['developer'] if Options.developer
         actions.flatten.each { |action| opts.list_item(action.keys.first, action.values.first) }
         UI.info opts.help
       end

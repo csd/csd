@@ -1,14 +1,14 @@
 human: MiniSIP
 description: An open-source SIP client for high-definition video conferencing.
 actions:
-  :public:
+  public:
     #- show: Shows further information about MiniSIP
-    - download: Downloads MiniSIP components (e.g. source code, configurations, docs,...)
-    #- install: Installs an application
-    #- check: Checks whether the environment dependencies for the application are satisfied
-  :developer:
+    #- download: Downloads MiniSIP components (e.g. source code, configurations, docs,...)
     - compile: Downloads and compiles MiniSIP from scratch
     - package: Downloads, compiles and packages MiniSIP from scratch
+    #- install: Installs an application
+    #- check: Checks whether the environment dependencies for the application are satisfied
+  developer:
     #- publish: Submits a compiled package to the CSD package repository
 scopes:
   --- {}

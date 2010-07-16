@@ -1,18 +1,18 @@
 # -*- encoding: UTF-8 -*-
-require File.join(File.dirname(__FILE__), '..', 'default', 'base')
+require 'csd/application/default/base'
 
 module CSD
   module Application
     module Minisip
       class Base < CSD::Application::Base
         
-        LIBRARIES = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip minisip } unless defined?(LIBRARIES)
+        LIBRARIES = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip minisip }
 
-        def package
+        def compile
           UI.error 'Currently not supported for this platform. Sorry.'
         end
-        
-        def compile
+
+        def package
           UI.error 'Currently not supported for this platform. Sorry.'
         end
         

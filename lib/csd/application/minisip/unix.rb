@@ -1,5 +1,5 @@
 # -*- encoding: UTF-8 -*-
-require File.join(File.dirname(__FILE__), 'base')
+require 'csd/application/minisip/base'
 
 module CSD
   module Application
@@ -34,6 +34,16 @@ module CSD
           UI.info "This operation will download and compile MiniSIP.".green.bold
           introduction
           compile!
+        end
+        
+        def compile!
+          before_compile
+          Cmd.mkdir Path.work
+          make_hdviper if checkout_hdviper or Options.dry
+          checkout_minisip
+          checkout_plugins
+          make_minisip
+          after_compile
         end
         
         def make_hdviper

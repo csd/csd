@@ -8,7 +8,13 @@ CSD stands for Communication Systems Design and is a project of the Telecommunic
 
 == Installation
 
-  gem install csd
+  (sudo) gem install csd
+
+== Usage
+
+In a console, type
+
+  ai
 
 == Note on Patches/Pull Requests
 

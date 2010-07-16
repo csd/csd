@@ -17,8 +17,8 @@ module CSD
     end
     
     def valid_action?
-      public_actions    = actions[:public] ? self.actions[:public].map { |pair| pair.keys.first } : []
-      developer_actions = actions[:developer] ? self.actions[:developer].map { |pair| pair.keys.first } : []
+      public_actions    = actions['public'] ? self.actions['public'].map { |pair| pair.keys.first } : []
+      developer_actions = actions['developer'] ? self.actions['developer'].map { |pair| pair.keys.first } : []
       all_actions = public_actions + developer_actions
       all_actions.include?(self.action)
     end
