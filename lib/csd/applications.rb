@@ -1,4 +1,4 @@
-# encoding: utf-8
+# -*- encoding: UTF-8 -*-
 require 'ostruct'
 require 'csd/extensions/core/string'
 

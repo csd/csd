@@ -19,8 +19,8 @@ begin
 
   You can run it by typing `ai´ in your command line.
 
-  Note: On Debian and Ubuntu the executable `ai´ is not in your PATH by default.
-        You can fix this by adding it to your .bashrc file with this command:
+  Note: On Debian and Ubuntu the executable `ai´ is maybe not in your PATH by default.
+        If that is the case, you can fix it by running this command:
       
   echo "export PATH=\$PATH:$(gem env | grep "E D" | sed "s/[^\w]* //")" >> ~/.bashrc;. ~/.bashrc
        

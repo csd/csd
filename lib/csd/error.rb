@@ -1,4 +1,4 @@
-# encoding: utf-8
+# -*- encoding: UTF-8 -*-
 
 module CSD
   # In this module we will keep all types of errors in a readable hierarchy

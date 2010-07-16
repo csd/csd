@@ -1,7 +1,4 @@
-# encoding: utf-8
-
-# Loading vendor libraries
-require 'term/ansicolor'
+# -*- encoding: UTF-8 -*-
 
 # Loading all files in the subdirectory `csd´
 Dir[File.join(File.dirname(__FILE__), 'csd', '*.rb')].sort.each { |path| require "csd/#{File.basename(path, '.rb')}" }

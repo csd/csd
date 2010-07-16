@@ -1,4 +1,4 @@
-# encoding: utf-8
+# -*- encoding: UTF-8 -*-
 require 'csd/vendor/term/ansicolor'
 require 'csd/vendor/active_support/inflector'
 

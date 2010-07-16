@@ -1,4 +1,4 @@
-# encoding: utf-8
+# -*- encoding: UTF-8 -*-
 # This file gets eval'ed by the global options parser in lib/csd/rb
 # TODO: There must be a nicer solution for this.
 

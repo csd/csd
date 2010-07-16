@@ -1,4 +1,4 @@
-# encoding: utf-8
+# -*- encoding: UTF-8 -*-
 require File.join(File.dirname(__FILE__), '..', 'default', 'base')
 
 module CSD

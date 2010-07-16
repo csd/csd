@@ -1,3 +1,5 @@
+# -*- encoding: UTF-8 -*-
+
 module CSD
   class << self
     # This method chooses and holds the user interface instance.
