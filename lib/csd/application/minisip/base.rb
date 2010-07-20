@@ -47,7 +47,7 @@ module CSD
         end
 
         def checkout_plugins
-          Cmd.git_clone('MiniSIP additional plugins', 'http://github.com/csd/minisip-plugins.git', Path.plugins)
+          Cmd.git_clone('additional MiniSIP plugins', 'http://github.com/csd/minisip-plugins.git', Path.plugins)
         end
 
         def checkout_hdviper

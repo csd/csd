@@ -65,6 +65,7 @@ Gem::Specification.new do |s|
      "lib/csd/vendor/term/GPL2-LICENSE",
      "lib/csd/vendor/term/ansicolor.rb",
      "lib/csd/version.rb",
+     "test/application/test_minisip.rb",
      "test/functional/test_applications.rb",
      "test/functional/test_commands.rb",
      "test/functional/test_options.rb",

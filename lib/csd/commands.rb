@@ -191,12 +191,19 @@ module CSD
       $stderr.reopen '/dev/null' if params[:silent] # This prevents even output of error messages from the executed commands
       IO.popen(cmd) do |stdout|
         stdout.each do |line|
-          UI.info "       #{line}" unless params[:silent]
+          if Options.verbose
+            UI.info "       #{line}" unless params[:silent]
+          else
+            stdout.putc '.' unless params[:silent]
+          end
           result.output << line
         end
       end
       result.success = $?.success?
-      UI.die "The last command was unsuccessful." if params[:die_on_failure] and !result.success
+      if params[:die_on_failure] and !result.success
+        UI.info result.output
+        UI.die "The last command was unsuccessful." 
+      end
       result
     end
     
