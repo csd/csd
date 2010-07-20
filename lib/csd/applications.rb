@@ -8,7 +8,7 @@ module CSD
   #
   class Applications
 
-    # Returns nil if application could not be found
+    # Returns the application module instance of +app_name+. Returns +nil+ if the application could not be found or loaded.
     #
     def self.find(app_name)
       return nil if app_name.to_s.empty?

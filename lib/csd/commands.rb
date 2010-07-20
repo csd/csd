@@ -101,10 +101,15 @@ module CSD
     # This returns the current pwd. However, it will return a fake result if we are in reveal-commands-mode.
     #
     def pwd
-      if Options.reveal
-        @pwd ||= Dir.pwd
-      else
-        Dir.pwd
+      begin
+        if Options.reveal
+          @pwd ||= Dir.pwd
+        else
+          Dir.pwd
+        end
+      rescue Errno::ENOENT => e
+        UI.debug "The current pwd could not be located. Was the directory removed?"
+        nil
       end
     end
     
@@ -171,21 +176,28 @@ module CSD
     # [+:exit_on_failure+] If the exit code of the command was not 0, exit the CSD application.
     #
     def run(cmd, params={})
-      default_params = { :die_on_failure => true, :silent => false }
+      default_params = { :die_on_failure => true, :silent => false, :announce_pwd => true }
       params = default_params.merge(params)
+      result = CommandResult.new
       cmd = cmd.to_s
-      UI.info "Running command in #{pwd}".yellow unless params[:silent]
+      UI.error "The current working directory (aka 'pwd') could not be identified. It was probably deleted." and return unless pwd
+      UI.info "Running command in #{pwd}".yellow unless (!params[:announce_pwd] or params[:silent])
       UI.info cmd.cyan unless params[:silent]
-      return '' if Options.reveal
-      ret = ''
+      if Options.reveal
+        result.success = true
+        return result
+      end
+      result.output = ''
+      $stderr.reopen '/dev/null' if params[:silent] # This prevents even output of error messages from the executed commands
       IO.popen(cmd) do |stdout|
         stdout.each do |line|
           UI.info "       #{line}" unless params[:silent]
-          ret << line
+          result.output << line
         end
       end
-      UI.die "The last command was unsuccessful." if params[:die_on_failure] and !$?.success?
-      ret
+      result.success = $?.success?
+      UI.die "The last command was unsuccessful." if params[:die_on_failure] and !result.success
+      result
     end
     
     private
@@ -204,6 +216,29 @@ module CSD
         result.success = false
         result.reason = "Could not perform #{action} operation! #{e.message}"
         params[:die_on_failure] ? UI.die(result.reason) : UI.error(result.reason)
+      end
+      result
+    end
+    
+    # Clones the master branch of a repository using +git+. +name+ is a +String+ used for UI outputs,
+    # +repository+ is the URL/path to the repository, +destination+ is an absolute or relative
+    # path to where the repository should be downloaded to.
+    #
+    # This command will not do anything if the destination already exists.
+    #
+    def git_clone(name, repository, destination, params={})
+      default_params = { :announce_pwd => false, :silent => true }
+      params = default_params.merge(params)
+      result = CommandResult.new
+      destination = destination.pathnamify
+      # At this point we break off if the destination already exists, but in reveal-mode we want to continue.
+      UI.warn "Skipping #{name} download, because the directory already exists: #{destination.enquote}" and return if (destination.directory? and !Options.reveal)
+      if destination.parent.writable? or Options.reveal
+        UI.info "Downloading #{name} to #{destination.enquote}".green.bold
+        result.success = Cmd.run("git clone #{repository} #{destination} #{('--quiet' if params[:silent])}", params.merge({:die_on_failure => false})).success?
+      else
+        UI.error "Could not download #{name} (no permission): #{destination.enquote}"
+        result.success = false
       end
       result
     end

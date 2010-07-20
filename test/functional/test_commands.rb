@@ -5,7 +5,7 @@ class TestCommands < Test::Unit::TestCase
   
   include CSD
   
-  DUMMY = %q{PART I
+  DUMMY_TEXT = %q{PART I
 
 NIGHT
 
@@ -25,13 +25,14 @@ Already these ten years I lead,
 Up, down, across, and to and fro,
 My pupils by the nose,--and learn,
 That we in truth can nothing know!}
+
+  DUMMY_GIT = 'http://github.com/csd/dummy.git'
   
   context "As a directory function" do
   
     setup do
       Options.silent = true
       Options.reveal = false
-      Options.dry    = false
       @tmp    = Pathname.new Dir.mktmpdir
       @dir    = Pathname.new File.join(@tmp, 'folder')
       @subdir = Pathname.new File.join(@dir, 'subfolder')
@@ -141,7 +142,6 @@ That we in truth can nothing know!}
       end
       
       should "actually change the directory in dry mode" do
-        Options.dry = true
         assert_not_equal '/', Dir.pwd
         assert result = Cmd.cd('/')
         assert result.success?
@@ -247,7 +247,7 @@ That we in truth can nothing know!}
       context "replace" do
       
         setup do
-          File.open(@file1, 'w') { |f| assert f.write(DUMMY) }
+          File.open(@file1, 'w') { |f| assert f.write(DUMMY_TEXT) }
         end
 
         should "be unsuccessful if the file doesn't exist without die_on_failure" do
@@ -264,19 +264,19 @@ That we in truth can nothing know!}
         should "do a simple replacement in a file" do
           assert_kind_of(CommandResult, result = Cmd.replace(@file1, 'FAUST', 'GOETHE'))
           assert result.success?
-          assert_equal DUMMY.gsub('FAUST', 'GOETHE'), File.read(@file1)
+          assert_equal DUMMY_TEXT.gsub('FAUST', 'GOETHE'), File.read(@file1)
         end
         
         should "do nothing if the file doesnt have anything to replace" do
           assert_kind_of(CommandResult, result = Cmd.replace(@file1, 'ASDF', 'FDSA'))
-          assert_equal DUMMY, File.read(@file1)
+          assert_equal DUMMY_TEXT, File.read(@file1)
           assert result.success?
         end
         
         should "replace multiple items in one file" do
           Cmd.replace @file1 do |r|
             assert_kind_of(CommandResult, r.replace('FAUST', 'GOETHE'))
-            assert_equal DUMMY.gsub('FAUST', 'GOETHE'), File.read(@file1)
+            assert_equal DUMMY_TEXT.gsub('FAUST', 'GOETHE'), File.read(@file1)
             assert_kind_of(CommandResult, r.replace("Philosophy,\n", 'Philosophy, '))
             assert File.read(@file1).scan('Philosophy, Medicine')
           end
@@ -290,7 +290,57 @@ That we in truth can nothing know!}
   
   context "run" do
 
-    should "die on an invalid command" do
+    setup do
+      Options.silent = true
+      Options.reveal = false
+    end
+    
+    should "return a successfull CommandResult if the command was OK" do
+      assert_kind_of(CommandResult, result = Cmd.run('cd'))
+      assert result.success?
+    end
+
+    should "return a non-successfull CommandResult if the command was bad without die_on_failure" do
+      assert_kind_of(CommandResult, result = Cmd.run('this-command-does-not-exist', :die_on_failure => false))
+      assert !result.success?
+    end
+    
+  end
+  
+  context "git_clone" do
+    
+    setup do
+      # For some gross reasons the Jeweler::Tasks.new instance modifies the ENV, trying to tell GIT some things
+      # that disturb our testing here. We need to undo this here, and it is not a nice solution, but it works.
+      ENV.keys.select { |k| k =~ /^GIT_/ }.each { |k| ENV.delete(k) }
+      Options.silent = true
+      Options.reveal = false
+      @tmp = Pathname.new Dir.mktmpdir
+      @dir = Pathname.new(File.join(@tmp, 'dummy'))
+      Dir.chdir @tmp # Since we're removing the directory in the teardown, we should better not be in it
+    end
+
+    teardown do
+      assert FileUtils.rm_r(@tmp)
+    end
+    
+    should "not successfully download a non-existent git repository without die_on_failure" do
+      assert_kind_of(CommandResult, result = Cmd.git_clone('an invalid git repository', 'invalid_git_repository.git', @dir, :die_on_failure => false))
+      assert !result.success?
+    end
+    
+    should "download a simple git repository" do
+      assert_kind_of(CommandResult, result = Cmd.git_clone('a sample git repository', DUMMY_GIT, @dir))
+      assert result.success?
+      assert @dir.directory?
+      assert File.exist?(File.join(@dir, 'dummy.txt'))
+    end
+    
+    should "do nothing at the destination in reveal mode" do
+      Options.reveal = true
+      assert_kind_of(CommandResult, result = Cmd.git_clone('a sample git repository', DUMMY_GIT, @dir))
+      assert result.success?
+      assert !@dir.directory?
     end
     
   end

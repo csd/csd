@@ -3,9 +3,16 @@
 module CSD
   module Extensions
     module Core
+      # This module comprises extensions to Object (the parent of all classes).
+      #
       module Object
         
-        # Creates a Pathname object from the current object. Preferrably from Strings and Hashes.
+        # Creates a Pathname object from the current object.
+        #
+        # ==== Examples
+        #
+        #  '/my/path'.pathnamify            # =>  #<Pathname:my/path>
+        #  my_pathname_object.pathnamify    # =>  #<Pathname:my/path>
         #
         def pathnamify
           case self

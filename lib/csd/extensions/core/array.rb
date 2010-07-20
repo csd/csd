@@ -1,8 +1,15 @@
 # -*- encoding: UTF-8 -*-
 
 module CSD
+  # This namespace is given to modifications to the ruby language or other gems. Its purpose is to
+  # simplify working with simple objects, such as Arrays, Files, etc.
+  #
   module Extensions
+    # This namespace is given to all extensions made to the Ruby Core or the Ruby Standard Library.
+    #
     module Core
+      # This module comprises extensions to the Array object.
+      #
       module Array
 
         # Equal to <tt>self[1]</tt>.

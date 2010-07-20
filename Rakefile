@@ -34,6 +34,11 @@ end
 require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
   test.libs << 'lib' << 'test'
+  test.test_files = FileList['test/functional/**/test*.rb', 'test/unit/**/test_*.rb']
+end
+
+Rake::TestTask.new('test:all') do |test|
+  test.libs << 'lib' << 'test'
   test.pattern = 'test/**/test_*.rb'
   test.verbose = true
 end

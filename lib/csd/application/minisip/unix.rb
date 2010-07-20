@@ -6,20 +6,13 @@ module CSD
     module Minisip
       class Unix < Base
         
-        def introduction
-          define_root_path
-          define_paths
+        # OPERATION INTRODUCTION
+        
+        def compile
           UI.separator
-          UI.info " Working directory:   ".green + Path.work.to_s.yellow
-          UI.info " Your Platform:       ".green + Gem::Platform.local.humanize.to_s.yellow
-          UI.info(" Application module:  ".green + self.class.name.to_s.yellow) if Options.developer
-          UI.separator
-          if Options.help
-            UI.info Options.helptext
-            exit
-          else
-            exit unless (Options.yes or UI.ask_yes_no("Continue?".red.bold, true))
-          end
+          UI.info "This operation will download and compile MiniSIP.".green.bold
+          introduction
+          compile!
         end
         
         def package
@@ -29,21 +22,16 @@ module CSD
           package!
         end
         
-        def compile
-          UI.separator
-          UI.info "This operation will download and compile MiniSIP.".green.bold
-          introduction
-          compile!
-        end
+        # OPERATIONS
         
         def compile!
-          before_compile
           Cmd.mkdir Path.work
-          make_hdviper if checkout_hdviper or Options.dry
+          checkout_hdviper
+          make_hdviper
           checkout_minisip
+          modify_minisip
           checkout_plugins
           make_minisip
-          after_compile
         end
         
         def make_hdviper
@@ -54,12 +42,17 @@ module CSD
           Cmd.run('make')
         end
         
-        def make_minisip
+        def create_build_dir
+          UI.info "Creating target build directories".green.bold
           [Path.build, Path.build_include, Path.build_lib, Path.build_share, Path.build_share_aclocal].each { |target| Cmd.mkdir target }
+        end
+        
+        def make_minisip
+          create_build_dir
           LIBRARIES.each do |library|
             directory = Pathname.new(File.join(Path.repository, library))
             next if Options.only and !Options.only.include?(library)
-            if Cmd.cd(directory) or Options.dry or Options.reveal
+            if Cmd.cd(directory) or Options.reveal
               if Options.bootstrap
                 UI.info "Bootstrapping #{library}".green.bold
                 Cmd.run("./bootstrap -I #{Path.build_share_aclocal.enquote}")
@@ -68,7 +61,7 @@ module CSD
                 UI.info "Configuring #{library}".green.bold
                 individual_options = case library
                   when 'libminisip'
-                    %Q{--enable-debug --enable-video --disable-mil --enable-decklink --enable-opengl --disable-sdl CPPFLAGS="-I#{Path.hdviper_x264_test_x264api} -I#{Path.hdviper_x264}" LDFLAGS="#{File.join(Path.hdviper_x264_test_x264api, 'libx264api.a')} #{File.join(Path.hdviper_x264, 'libtidx264.a')} -lpthread -lrt"}
+                    %Q{--enable-debug --enable-video --disable-mil --enable-decklink --enable-opengl --disable-sdl CPPFLAGS="-I#{Path.hdviper_x264_test_x264api} -I#{Path.hdviper_x264}" #{ld_flags}}
                     #%Q{--enable-debug --enable-video --disable-mil --disable-decklink --enable-opengl --disable-sdl CPPFLAGS="-I#{Path.hdviper_x264}" LDFLAGS="#{File.join(Path.hdviper_x264, 'libx264.a')} -lpthread -lrt"}
                   when 'minisip'
                     %Q{--enable-debug --enable-video --enable-textui --enable-opengl}
@@ -98,13 +91,13 @@ module CSD
             directory = Pathname.new(File.join(Path.repository, library))
             next if Options.only and !Options.only.include?(library)
             UI.info "Making #{library} with target dist".green.bold
-            if Cmd.cd(directory) or Options.dry or Options.reveal
+            if Cmd.cd(directory) or Options.reveal
               Cmd.run("make dist")
               
               tar_filename = File.basename(Dir[File.join(directory, '*.tar.gz')].first)
               Cmd.move(File.join(directory, tar_filename.to_s), Path.packaging) if tar_filename or Options.reveal
               
-              if Cmd.cd(Path.packaging) or Options.dry or Options.reveal
+              if Cmd.cd(Path.packaging) or Options.reveal
                 Cmd.run("tar -xzf #{tar_filename}")
                 tar_dirname = File.basename(tar_filename.to_s, '.tar.gz')
                 if Cmd.cd(File.join(Path.packaging, tar_dirname))

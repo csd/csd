@@ -6,10 +6,10 @@ module CSD
     module Minisip
       class Ubuntu10 < Debian
         
-        def before_compile
-          super
+        def compile!
           fix_ubuntu_10_04
           exit if Options.only_fix_giomm
+          super
         end
         
         def fix_ubuntu_10_04
@@ -20,6 +20,7 @@ module CSD
             Cmd.copy(Path.giomm_header, Path.new_giomm_header)
             Cmd.replace Path.new_giomm_header do |r|
               r.replace '#include <giomm/socket.h>', "/* ----- AI COMMENTING OUT START ----- \n#include <giomm/socket.h>"
+              r.replace '#include <giomm/tcpconnection.h>', "#include <giomm/tcpconnection.h>\n ----- AI COMMENTING OUT END ----- */"
             end
             Cmd.run("sudo cp #{Path.giomm_header} #{Path.giomm_header}.ai-backup")
             Cmd.run("sudo cp #{Path.new_giomm_header} #{Path.giomm_header}")
