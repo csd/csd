@@ -8,11 +8,18 @@ module CSD
         
         # OPERATION INTRODUCTION
         
+        def introduction
+          UI.separator
+          UI.info " Libraries to process:   ".green + libraries.join(', ').yellow
+          super
+        end
+        
         def compile
           UI.separator
           UI.info "This operation will download and compile MiniSIP.".green.bold
           introduction
           compile!
+          run_minisip_gtk_gui
         end
         
         def package
@@ -49,7 +56,7 @@ module CSD
         
         def make_minisip
           create_build_dir
-          LIBRARIES.each do |library|
+          libraries.each do |library|
             directory = Pathname.new(File.join(Path.repository, library))
             next if Options.only and !Options.only.include?(library)
             if Cmd.cd(directory) or Options.reveal
@@ -68,7 +75,7 @@ module CSD
                   else
                     ''
                 end
-                Cmd.run(%Q{./configure #{individual_options} --prefix=#{Path.build.enquote} PKG_CONFIG_PATH=#{Path.build_lib_pkg_config.enquote} ACLOCAL_FLAGS=#{Path.build_share_aclocal} LD_LIBRARY_PATH=#{Path.build_lib.enquote} --silent})
+                Cmd.run(%Q{./configure #{individual_options} --prefix=#{Path.build.enquote} PKG_CONFIG_PATH=#{Path.build_lib_pkg_config.enquote} ACLOCAL_FLAGS=#{Path.build_share_aclocal} LD_LIBRARY_PATH=#{Path.build_lib.enquote}})
               end
               if Options.make
                 UI.info "Make #{library}".green.bold
@@ -87,7 +94,7 @@ module CSD
         
         def package!
           Cmd.mkdir(Path.packaging)
-          LIBRARIES.each do |library|
+          libraries.each do |library|
             directory = Pathname.new(File.join(Path.repository, library))
             next if Options.only and !Options.only.include?(library)
             UI.info "Making #{library} with target dist".green.bold
@@ -128,7 +135,10 @@ module CSD
             end
           end
           Cmd.cd Path.root
-          Cmd.run 'minisip_gtkgui'
+        end
+        
+        def run_minisip_gtk_gui
+          Cmd.run(Path.build_gtkgui, :die_on_failure => false)
         end
         
       end

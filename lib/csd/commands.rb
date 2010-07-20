@@ -173,10 +173,14 @@ module CSD
     #
     # The following options can be passed as a hash.
     #
-    # [+:exit_on_failure+] If the exit code of the command was not 0, exit the CSD application.
+    # [+:exit_on_failure+] If the exit code of the command was not 0, exit the CSD application (default: +true+).
+    # [+:silent+] Don't show the command's output prints by any means (default: +false+).
+    # [+:announce_pwd+] Before running the command, say in which path the command will be executed (default: +true+).
+    # [+:verbose+] Instead of printing just one `.´ per command output line, print the original command output lines (default: +false+).
     #
     def run(cmd, params={})
-      default_params = { :die_on_failure => true, :silent => false, :announce_pwd => true }
+      default_params = { :die_on_failure => true, :silent => false, :announce_pwd => true, :verbose => false }
+      params[:verbose] = true if Options.verbose
       params = default_params.merge(params)
       result = CommandResult.new
       cmd = cmd.to_s
@@ -191,17 +195,19 @@ module CSD
       $stderr.reopen '/dev/null' if params[:silent] # This prevents even output of error messages from the executed commands
       IO.popen(cmd) do |stdout|
         stdout.each do |line|
-          if Options.verbose
+          if params[:verbose]
             UI.info "       #{line}" unless params[:silent]
           else
-            stdout.putc '.' unless params[:silent]
+            $stdout.putc '.' unless params[:silent]
+            $stdout.flush
           end
           result.output << line
         end
       end
+      UI.separator if (!params[:silent] and !params[:verbose]) # i.e. if dots are outputted, we should create a new line after them
       result.success = $?.success?
       if params[:die_on_failure] and !result.success
-        UI.info result.output
+        UI.info result.output unless params[:verbose] # In verbose mode, we don't need to repeat the unsuccessful command's output
         UI.die "The last command was unsuccessful." 
       end
       result

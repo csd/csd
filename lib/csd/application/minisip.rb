@@ -47,7 +47,7 @@ module CSD
               UI.debug "Analyzing Linux kernel release: #{Gem::Platform.local.kernel_release}"
               case Gem::Platform.local.kernel_release
                 
-                when /2\.6\.32\-2(1|2)\-generic/
+                when '2.6.32-21-generic', '2.6.32-22-generic'
                   UI.debug "Ubuntu 10.04 identified"
                   Ubuntu10.new
                   

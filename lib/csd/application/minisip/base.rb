@@ -24,9 +24,9 @@ module CSD
           define_root_path
           define_paths
           UI.separator
-          UI.info " Working directory:   ".green + Path.work.to_s.yellow
-          UI.info " Your Platform:       ".green + Gem::Platform.local.humanize.to_s.yellow
-          UI.info(" Application module:  ".green + self.class.name.to_s.yellow) if Options.developer
+          UI.info " Working directory:      ".green + Path.work.to_s.yellow
+          UI.info " Your Platform:          ".green + Gem::Platform.local.humanize.to_s.yellow
+          UI.info(" Application module:     ".green + self.class.name.to_s.yellow)
           UI.separator
           if Options.help
             UI.info Options.helptext
@@ -37,6 +37,10 @@ module CSD
         end
         
         # CROSS-PLATFORM TASKS
+        
+        def libraries
+          Options.only ? LIBRARIES.map { |lib| lib if Options.only.to_a.include?(lib) }.compact : LIBRARIES
+        end
         
         def checkout_minisip
           Cmd.git_clone('MiniSIP repository', 'http://github.com/csd/minisip.git', Path.repository)
@@ -57,7 +61,7 @@ module CSD
         # CROSS-PLATFORM INFORMATION
         
         def cpp_flags
-          "CPPFLAGS=\"-I#{Path.hdviper_x264} -I#{Path.hdviper_x264_test_x264api} -I#{Path.repository_grabber}, -I#{Path.repository_decklinksdk}\""
+          "CPPFLAGS=\"-I#{Path.hdviper_x264} -I#{Path.hdviper_x264_test_x264api} -I#{Path.repository_grabber} -I#{Path.repository_decklinksdk}\""
         end
         
         def ld_flags
@@ -79,28 +83,30 @@ module CSD
         end
         
         def define_paths
-          Path.work                        = Pathname.new(File.join(Path.root, 'minisip'))
-          Path.giomm_header                = Pathname.new(File.join('/', 'usr', 'include', 'giomm-2.4', 'giomm.h'))
-          Path.repository                  = Pathname.new(File.join(Path.work, 'repository'))
-          Path.repository_libminisip_rules = Pathname.new(File.join(Path.repository, 'libminisip', 'debian', 'rules'))
-          Path.repository_grabber          = Pathname.new(File.join(Path.repository, 'libminisip', 'source', 'subsystem_media', 'video', 'grabber'))
-          Path.repository_open_gl_display  = Pathname.new(File.join(Path.repository, 'libminisip', 'source', 'subsystem_media', 'video', 'display', 'OpenGLDisplay.cxx'))
-          Path.repository_decklinksdk      = Pathname.new(File.join(Path.repository_grabber, 'decklinksdk'))
-          Path.plugins                     = Pathname.new(File.join(Path.work, 'plugins'))
-          Path.packaging                   = Pathname.new(File.join(Path.work, 'packaging'))
-          Path.hdviper                     = Pathname.new(File.join(Path.work, 'hdviper'))
-          Path.hdviper_x264                = Pathname.new(File.join(Path.hdviper, 'x264'))
-          Path.hdviper_libtidx264          = Pathname.new(File.join(Path.hdviper_x264, 'libtidx264.a'))
-          Path.hdviper_x264_test_x264api   = Pathname.new(File.join(Path.hdviper_x264, 'test', 'x264API'))
-          Path.hdviper_libx264api          = Pathname.new(File.join(Path.hdviper_x264_test_x264api, 'libx264api.a'))
-          Path.build                       = Pathname.new(File.join(Path.work, 'build'))
-          Path.build_bin                   = Pathname.new(File.join(Path.build, 'bin'))
-          Path.build_gtkgui                = Pathname.new(File.join(Path.build_bin, 'minisip_gtkgui'))
-          Path.build_include               = Pathname.new(File.join(Path.build, 'include'))
-          Path.build_lib                   = Pathname.new(File.join(Path.build, 'lib'))
-          Path.build_lib_pkg_config        = Pathname.new(File.join(Path.build_lib, 'pkgconfig'))
-          Path.build_share                 = Pathname.new(File.join(Path.build, 'share'))
-          Path.build_share_aclocal         = Pathname.new(File.join(Path.build_share, 'aclocal'))
+          Path.work                               = Pathname.new(File.join(Path.root, 'minisip'))
+          Path.giomm_header                       = Pathname.new(File.join('/', 'usr', 'include', 'giomm-2.4', 'giomm.h'))
+          Path.giomm_header_backup                = Pathname.new(File.join('/', 'usr', 'include', 'giomm-2.4', 'giomm.h.ai-backup'))
+          Path.repository                         = Pathname.new(File.join(Path.work, 'repository'))
+          Path.repository_libminisip_rules        = Pathname.new(File.join(Path.repository, 'libminisip', 'debian', 'rules'))
+          Path.repository_libminisip_rules_backup = Pathname.new(File.join(Path.repository, 'libminisip', 'debian', 'rules.ai-backup'))
+          Path.repository_grabber                 = Pathname.new(File.join(Path.repository, 'libminisip', 'source', 'subsystem_media', 'video', 'grabber'))
+          Path.repository_open_gl_display         = Pathname.new(File.join(Path.repository, 'libminisip', 'source', 'subsystem_media', 'video', 'display', 'OpenGLDisplay.cxx'))
+          Path.repository_decklinksdk             = Pathname.new(File.join(Path.repository_grabber, 'decklinksdk'))
+          Path.plugins                            = Pathname.new(File.join(Path.work, 'plugins'))
+          Path.packaging                          = Pathname.new(File.join(Path.work, 'packaging'))
+          Path.hdviper                            = Pathname.new(File.join(Path.work, 'hdviper'))
+          Path.hdviper_x264                       = Pathname.new(File.join(Path.hdviper, 'x264'))
+          Path.hdviper_libtidx264                 = Pathname.new(File.join(Path.hdviper_x264, 'libtidx264.a'))
+          Path.hdviper_x264_test_x264api          = Pathname.new(File.join(Path.hdviper_x264, 'test', 'x264API'))
+          Path.hdviper_libx264api                 = Pathname.new(File.join(Path.hdviper_x264_test_x264api, 'libx264api.a'))
+          Path.build                              = Pathname.new(File.join(Path.work, 'build'))
+          Path.build_bin                          = Pathname.new(File.join(Path.build, 'bin'))
+          Path.build_gtkgui                       = Pathname.new(File.join(Path.build_bin, 'minisip_gtkgui'))
+          Path.build_include                      = Pathname.new(File.join(Path.build, 'include'))
+          Path.build_lib                          = Pathname.new(File.join(Path.build, 'lib'))
+          Path.build_lib_pkg_config               = Pathname.new(File.join(Path.build_lib, 'pkgconfig'))
+          Path.build_share                        = Pathname.new(File.join(Path.build, 'share'))
+          Path.build_share_aclocal                = Pathname.new(File.join(Path.build_share, 'aclocal'))
         end
         
       end

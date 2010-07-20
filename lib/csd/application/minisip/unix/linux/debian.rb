@@ -8,12 +8,16 @@ module CSD
         
         # A list of apt-get packages that are required by this application. 
         #
-        DEBIAN_DEPENDENCIES = %w{ libssl-dev libgtkmm-2.4-dev libglademm-2.4-dev libsdl-dev git-core subversion automake libtool libltdl3-dev build-essential libavcodec-dev libswscale-dev libasound2-dev libsdl-ttf2.0-dev nasm yasm ffmpeg }
+        DEBIAN_DEPENDENCIES = %w{ libxv-dev libssl-dev libgtkmm-2.4-dev libglademm-2.4-dev libsdl-dev git-core subversion automake libtool libltdl3-dev build-essential libavcodec-dev libswscale-dev libasound2-dev libsdl-ttf2.0-dev nasm yasm ffmpeg }
         
         def compile!
           install_aptitude_dependencies if Options.apt_get
           super
-          run_minisip_gtk_gui
+        end
+        
+        def package!
+          modify_libminisip_rules
+          super
         end
         
         def install_aptitude_dependencies
@@ -24,11 +28,12 @@ module CSD
         end
         
         def modify_libminisip_rules
-          Cmd.replace(Path.repository_libminisip_rules, 'AUTOMATED_INSTALLER_PLACEHOLDER=""', [cpp_flags, ld_flags].join(' '))
-        end
-        
-        def run_minisip_gtk_gui
-          Cmd.run(Path.build_gtkgui)
+          if File.exist? Path.repository_libminisip_rules_backup
+            UI.warn "The libminisip rules seem to be fixed already, I won't touch them now. Delete #{Path.repository_libminisip_rules_backup.enquote} to enforce it."
+          else
+            Cmd.copy Path.repository_libminisip_rules, Path.repository_libminisip_rules_backup
+            Cmd.replace Path.repository_libminisip_rules, 'AUTOMATED_INSTALLER_PLACEHOLDER=""', [cpp_flags, ld_flags].join(' ')
+          end
         end
         
       end
