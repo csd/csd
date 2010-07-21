@@ -8,7 +8,7 @@ module CSD
         
         # A list of apt-get packages that are required by this application. 
         #
-        DEBIAN_DEPENDENCIES = %w{ libxv-dev libssl-dev libgtkmm-2.4-dev libglademm-2.4-dev libsdl-dev git-core subversion automake libtool libltdl3-dev build-essential libavcodec-dev libswscale-dev libasound2-dev libsdl-ttf2.0-dev nasm yasm ffmpeg }
+        DEBIAN_DEPENDENCIES = %w{ automake build-essential ffmpeg git-core libasound2-dev libavcodec-dev libglademm-2.4-dev libgtkmm-2.4-dev libltdl3-dev libsdl-dev libsdl-ttf2.0-dev libssl-dev libswscale-dev libtool libxv-dev nasm subversion yasm }
         
         def compile!
           install_aptitude_dependencies if Options.apt_get
