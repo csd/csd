@@ -6,7 +6,7 @@ module CSD
     module Minisip
       class Ubuntu10 < Debian
         
-        def compile!
+        def after_aptitude_dependencies
           fix_ubuntu_10_04
           exit if Options.only_fix_giomm
           super
