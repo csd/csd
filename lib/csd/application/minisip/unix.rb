@@ -33,19 +33,37 @@ module CSD
         
         def compile!
           Cmd.mkdir Path.work
-          checkout_hdviper
-          make_hdviper
+          make_hdviper unless checkout_hdviper.already_exists?
+          make_x264    unless checkout_x264.already_exists?
+          unless checkout_ffmpeg.already_exists?
+            checkout_libswscale
+            make_ffmpeg
+          end
           checkout_minisip
-          modify_minisip
           checkout_plugins
+          modify_minisip
           make_minisip
         end
         
-        def make_hdviper
-          Cmd.cd Path.hdviper_x264
+        def make_ffmpeg
+          Cmd.cd Path.ffmpeg_repository, :internal => true
+          Cmd.run('./configure --enable-gpl --enable-pthreads --enable-libx264 --enable-x11grab')
+          Cmd.run('make')
+          Cmd.run('sudo checkinstall --pkgname=ffmpeg --pkgversion "4:ai-`git log -1 --pretty=format:%h`" --backup=no --default')
+        end
+        
+        def make_x264
+          Cmd.cd Path.x264_repository, :internal => true
           Cmd.run('./configure')
           Cmd.run('make')
-          Cmd.cd Path.hdviper_x264_test_x264api
+          Cmd.run('sudo checkinstall --pkgname=x264 --pkgversion "2:0.`grep X264_BUILD x264.h -m1 | cut -d' ' -f3`.`git rev-list HEAD | wc -l`+git`git rev-list HEAD -n 1 | head -c 7`" --backup=no --default')
+        end
+        
+        def make_hdviper
+          Cmd.cd Path.hdviper_x264, :internal => true
+          Cmd.run('./configure')
+          Cmd.run('make')
+          Cmd.cd Path.hdviper_x264_test_x264api, :internal => true
           Cmd.run('make')
         end
         
@@ -68,7 +86,7 @@ module CSD
                 UI.info "Configuring #{library}".green.bold
                 individual_options = case library
                   when 'libminisip'
-                    %Q{--enable-debug --enable-video --disable-mil --enable-decklink --enable-opengl --disable-sdl CPPFLAGS="-I#{Path.hdviper_x264_test_x264api} -I#{Path.hdviper_x264}" #{ld_flags}}
+                    %Q{--enable-debug --enable-video --disable-mil --enable-decklink --enable-opengl --disable-sdl CPPFLAGS="-I#{Path.hdviper_x264_test_x264api} -I#{Path.hdviper_x264}" #{minisip_ld_flags}}
                     #%Q{--enable-debug --enable-video --disable-mil --disable-decklink --enable-opengl --disable-sdl CPPFLAGS="-I#{Path.hdviper_x264}" LDFLAGS="#{File.join(Path.hdviper_x264, 'libx264.a')} -lpthread -lrt"}
                   when 'minisip'
                     %Q{--enable-debug --enable-video --enable-textui --enable-opengl}
@@ -135,6 +153,7 @@ module CSD
             end
           end
           Cmd.cd Path.root
+          Cmd.run('minisip_gtk_gui')
         end
         
         def run_minisip_gtk_gui

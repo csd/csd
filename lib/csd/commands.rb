@@ -35,7 +35,7 @@ module CSD
     #  mkdir('i/can/create/directories/recursively')
     #
     def mkdir(target, params={})
-      default_params = { :die_on_failure => true, :show_output => false }
+      default_params = { :die_on_failure => true, :internal => false }
       params = default_params.merge(params)
       target = target.pathnamify
       result = CommandResult.new
@@ -44,7 +44,7 @@ module CSD
         result.already_existed = true
       else
         begin
-          UI.info "Creating directory: #{target}".cyan
+          UI.info "Creating directory: #{target}".cyan unless params[:internal]
           # Try to create the directory
           target.mkpath unless Options.reveal
         rescue Errno::EACCES => e
@@ -66,11 +66,11 @@ module CSD
     # [+success?+] +true+ if pwd is where it was requested to be after the operation, +nil+ if not.
     #
     def cd(target, params={})
-      default_params = { :die_on_failure => true, :show_output => false }
+      default_params = { :die_on_failure => true, :internal => false }
       params = default_params.merge(params)
       target = target.pathnamify
       result = CommandResult.new
-      UI.info "cd #{target}".yellow
+      UI.info "cd #{target}".yellow unless params[:internal]
       if Options.reveal
         # We need to fake changing the directory in reveal mode.
         @pwd = target.to_s

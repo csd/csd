@@ -13,18 +13,19 @@ begin
     gemspec.authors = ["Technology Transfer Alliance Team"]
     gemspec.executables = ["ai"]
     gemspec.post_install_message = %q{
-================================================================================================
+=========================================================
 
-  Thank you for installing the Communication Systems and Design Automated Installer!
+  Thank you for installing the TTA Automated Installer!
 
   You can run it by typing `ai´ in your command line.
 
-  NOTE: On DEBIAN and UBUNTU the executable `ai´ is maybe not in your PATH by default.
-        If that is the case, you can fix it by running this command:
+  NOTE: On DEBIAN and UBUNTU the executable `ai´ is maybe
+        not in your PATH by default. If that is the case,
+        you can fix it by running this command:
       
   echo "export PATH=\$PATH:$(gem env | grep "E D" | sed "s/[^\w]* //")" >> ~/.bashrc;. ~/.bashrc
        
-================================================================================================
+=========================================================
     }
   end
 rescue LoadError

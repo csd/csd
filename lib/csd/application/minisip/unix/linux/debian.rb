@@ -8,7 +8,7 @@ module CSD
         
         # A list of apt-get packages that are required to compile minisip including hdviper and ffmpeg
         #
-        DEBIAN_DEPENDENCIES = %w{ automake build-essential ffmpeg git-core libasound2-dev libavcodec-dev libglademm-2.4-dev libgtkmm-2.4-dev libltdl3-dev libsdl-dev libsdl-ttf2.0-dev libssl-dev libswscale-dev libtool libxv-dev nasm subversion yasm }
+        DEBIAN_DEPENDENCIES = %w{ automake build-essential checkinstall git-core libasound2-dev libavcodec-dev libglademm-2.4-dev libgtkmm-2.4-dev libltdl3-dev libsdl-dev libsdl-ttf2.0-dev libssl-dev libswscale-dev libtool libx11-dev libxv-dev nasm subversion yasm }
 
         def compile!
           install_aptitude_dependencies if Options.apt_get
@@ -38,7 +38,7 @@ module CSD
             UI.warn "The libminisip rules seem to be fixed already, I won't touch them now. Delete #{Path.repository_libminisip_rules_backup.enquote} to enforce it."
           else
             Cmd.copy Path.repository_libminisip_rules, Path.repository_libminisip_rules_backup
-            Cmd.replace Path.repository_libminisip_rules, 'AUTOMATED_INSTALLER_PLACEHOLDER=""', [cpp_flags, ld_flags].join(' ')
+            Cmd.replace Path.repository_libminisip_rules, 'AUTOMATED_INSTALLER_PLACEHOLDER=""', [minisip_cpp_flags, minisip_ld_flags].join(' ')
           end
         end
         

@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "bin/ai",
+     "bin/tta",
      "csd.gemspec",
      "lib/csd.rb",
      "lib/csd/application.rb",
@@ -64,6 +65,7 @@ Gem::Specification.new do |s|
      "lib/csd/vendor/active_support/inflector.rb",
      "lib/csd/vendor/term/GPL2-LICENSE",
      "lib/csd/vendor/term/ansicolor.rb",
+     "lib/csd/vendor/zentest/zentest_assertions.rb",
      "lib/csd/version.rb",
      "test/application/test_minisip.rb",
      "test/functional/test_applications.rb",
@@ -76,18 +78,19 @@ Gem::Specification.new do |s|
   ]
   s.homepage = %q{http://github.com/csd/csd}
   s.post_install_message = %q{
-================================================================================================
+=========================================================
 
-  Thank you for installing the Communication Systems and Design Automated Installer!
+  Thank you for installing the TTA Automated Installer!
 
   You can run it by typing `ai´ in your command line.
 
-  NOTE: On DEBIAN and UBUNTU the executable `ai´ is maybe not in your PATH by default.
-        If that is the case, you can fix it by running this command:
+  NOTE: On DEBIAN and UBUNTU the executable `ai´ is maybe
+        not in your PATH by default. If that is the case,
+        you can fix it by running this command:
       
   echo "export PATH=\$PATH:$(gem env | grep "E D" | sed "s/[^\w]* //")" >> ~/.bashrc;. ~/.bashrc
        
-================================================================================================
+=========================================================
     }
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]

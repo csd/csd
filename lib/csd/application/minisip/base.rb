@@ -58,13 +58,25 @@ module CSD
           Cmd.git_clone('HDVIPER', 'http://github.com/csd/libraries.git', Path.hdviper)
         end
         
+        def checkout_ffmpeg
+          Cmd.git_clone('ffmpeg repository', 'http://github.com/csd/ffmpeg.git', Path.ffmpeg_repository)
+        end
+        
+        def checkout_libswscale
+          Cmd.git_clone('ffmpeg libswscale sub-repository', 'http://github.com/csd/libswscale.git', Path.ffmpeg_libswscale)
+        end
+        
+        def checkout_x264
+          Cmd.git_clone('x264 repository', 'http://github.com/csd/x264.git', Path.x264_repository)
+        end
+        
         # CROSS-PLATFORM INFORMATION
         
-        def cpp_flags
+        def minisip_cpp_flags
           "CPPFLAGS=\"-I#{Path.hdviper_x264} -I#{Path.hdviper_x264_test_x264api} -I#{Path.repository_grabber} -I#{Path.repository_decklinksdk}\""
         end
         
-        def ld_flags
+        def minisip_ld_flags
           "LDFLAGS=\"#{Path.hdviper_libx264api} #{Path.hdviper_libtidx264} -lpthread -lrt\""
         end
         
@@ -92,6 +104,9 @@ module CSD
           Path.repository_grabber                 = Pathname.new(File.join(Path.repository, 'libminisip', 'source', 'subsystem_media', 'video', 'grabber'))
           Path.repository_open_gl_display         = Pathname.new(File.join(Path.repository, 'libminisip', 'source', 'subsystem_media', 'video', 'display', 'OpenGLDisplay.cxx'))
           Path.repository_decklinksdk             = Pathname.new(File.join(Path.repository_grabber, 'decklinksdk'))
+          Path.ffmpeg_repository                  = Pathname.new(File.join(Path.work, 'ffmpeg'))
+          Path.ffmpeg_libswscale                  = Pathname.new(File.join(Path.ffmpeg_repository, 'libswscale'))
+          Path.x264_repository                    = Pathname.new(File.join(Path.work, 'x264'))
           Path.plugins                            = Pathname.new(File.join(Path.work, 'plugins'))
           Path.packaging                          = Pathname.new(File.join(Path.work, 'packaging'))
           Path.hdviper                            = Pathname.new(File.join(Path.work, 'hdviper'))
