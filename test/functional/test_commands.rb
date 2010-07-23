@@ -163,6 +163,7 @@ That we in truth can nothing know!}
 
       teardown do
         assert FileUtils.rm_r(@tmp)
+        Dir.chdir '/' # Since we're removing the current directory, we should better not be in it
         @tmp = Pathname.new Dir.mktmpdir
       end
       
@@ -293,11 +294,30 @@ That we in truth can nothing know!}
     setup do
       Options.silent = true
       Options.reveal = false
+      Options.online = true # Some tests need an uplink to the Internet. For now, we will hardcode here so that they should be executed.
+      Options.testmode = true # This puts us in test-mode, basically to prevent STDOUT and STDERR to show unnecessary output.
     end
     
     should "return a successfull CommandResult if the command was OK" do
       assert_kind_of(CommandResult, result = Cmd.run('cd'))
+      assert_kind_of(Process::Status, result.status)
       assert result.success?
+    end
+    
+    should "not produce any output in :internal mode" do
+      Options.testmode = false
+      out, err = capture do
+        assert_kind_of(CommandResult, result = Cmd.run('ls', :internal => true))
+      end
+      assert_equal '', out
+    end
+    
+    should "should produce output in NON-:internal mode" do
+      Options.testmode = false
+      out, err = capture do
+        assert_kind_of(CommandResult, result = Cmd.run('ls'))
+      end
+      assert !out.empty?
     end
 
     should "return a non-successfull CommandResult if the command was bad without die_on_failure" do
@@ -317,24 +337,19 @@ That we in truth can nothing know!}
       Options.reveal = false
       @tmp = Pathname.new Dir.mktmpdir
       @dir = Pathname.new(File.join(@tmp, 'dummy'))
-      Dir.chdir @tmp # Since we're removing the directory in the teardown, we should better not be in it
     end
 
     teardown do
       assert FileUtils.rm_r(@tmp)
+      Dir.chdir '/' # Since we're removing the current directory, we should better not be in it
     end
-    
-    should "not successfully download a non-existent git repository without die_on_failure" do
-      assert_kind_of(CommandResult, result = Cmd.git_clone('an invalid git repository', 'invalid_git_repository.git', @dir, :die_on_failure => false))
-      assert !result.success?
-    end
-    
+
     should "download a simple git repository" do
       assert_kind_of(CommandResult, result = Cmd.git_clone('a sample git repository', DUMMY_GIT, @dir))
       assert result.success?
       assert @dir.directory?
       assert File.exist?(File.join(@dir, 'dummy.txt'))
-    end
+    end if Options.online
     
     should "do nothing at the destination in reveal mode" do
       Options.reveal = true

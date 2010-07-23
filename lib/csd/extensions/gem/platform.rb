@@ -19,13 +19,13 @@ module CSD
         # On linux systems, this method returns the current kernel version.
         #
         def kernel_version
-          Cmd.run('uname --kernel-version', :silent => true).output.to_s.chop if os == 'linux'
+          Cmd.run('uname --kernel-version', :internal => true).output.to_s.chop if os == 'linux'
         end
         
         # On linux systems, this method returns the current kernel release.
         #
         def kernel_release
-          Cmd.run('uname --kernel-release', :silent => true).output.to_s.chop if os == 'linux'
+          Cmd.run('uname --kernel-release', :internal => true).output.to_s.chop if os == 'linux'
         end
   
       end

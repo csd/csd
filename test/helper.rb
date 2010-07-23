@@ -7,6 +7,7 @@ require 'redgreen'
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'csd'
+require 'csd/vendor/zentest/zentest_assertions'
 
 class Test::Unit::TestCase
 

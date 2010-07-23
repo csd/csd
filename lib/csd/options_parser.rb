@@ -44,7 +44,7 @@ module CSD
       self.action      = nil
       # Now we define the default options
       self.yes       = false
-      self.dry       = false
+      self.local     = false
       self.reveal    = false
       self.verbose   = false
       self.silent    = false
@@ -114,9 +114,9 @@ module CSD
         opts.on("-y", "--yes", "Answer all questions with `yes´ (batch mode)") do |value|
           self.yes = value
         end
-        opts.on("-p", "--dry","Don't actually execute any commands (preview mode)") do |value|
-          self.dry = value
-        end
+        #opts.on("-l", "--local","Assume that there is no uplink to the Internet") do |value|
+        #  self.online = !value
+        #end
         opts.on("-r", "--reveal","List all commands that normally would be executed in this operation") do |value|
           self.reveal = value
         end

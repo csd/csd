@@ -1,6 +1,7 @@
 # -*- encoding: UTF-8 -*-
 require 'pathname'
 require 'ostruct'
+require 'open3'
 
 module CSD
   # This class contains wrapper methods for standard file system operations. They are meant to be
@@ -165,48 +166,46 @@ module CSD
     
     # Runs a command on the system.
     #
-    # ==== Returns
-    #
-    # The command's output as a +String+ (with newline delimiters). Note that the exit code can be accessed via the global variable <tt>$?</tt>
-    #
     # ==== Options
     #
     # The following options can be passed as a hash.
     #
-    # [+:exit_on_failure+] If the exit code of the command was not 0, exit the CSD application (default: +true+).
-    # [+:silent+] Don't show the command's output prints by any means (default: +false+).
-    # [+:announce_pwd+] Before running the command, say in which path the command will be executed (default: +true+).
-    # [+:announce_cmd+] Before running the command, state the command to be executed. Used to overwrite the +silent+ parameter (default: +true+).
-    # [+:verbose+] Instead of printing just one `.´ per command output line, print the original command output lines (default: +false+).
+    # [+:die_on_failure+] If the exit code of the command was not 0, exit the CSD application (default: +true+).
+    # [+:announce_pwd+] Before running the command, announce in which path the command will be executed (default: +true+).
+    # [+:verbose+] Instead of printing just one `.´ per command output line, print the full command output lines (default: +false+).
+    # [+:internal+] If this parameter is +true+, there will be no output what-so-ever for running this command. (default: +false+).
+    #
+    # ==== Returns
+    #
+    # This method returns a CommandResult object with the following values:
+    #
+    # [+success?+] +true+ if the command was successful, +nil+ if not.
+    # [+output?+] The command's output as a +String+ (with newline delimiters). Note that the exit code can be accessed via the global variable <tt>$?</tt>
     #
     def run(cmd, params={})
-      default_params = { :die_on_failure => true, :silent => false, :announce_pwd => true, :announce_cmd => true, :verbose => false }
-      params[:verbose] = true if Options.verbose
+      default_params = { :die_on_failure => true, :announce_pwd => true, :verbose => Options.verbose, :internal => Options.testmode }
       params = default_params.merge(params)
       result = CommandResult.new
       cmd = cmd.to_s
-      UI.error "The current working directory (a.k.a. 'pwd') could not be identified. It was probably deleted." and return unless pwd
-      UI.info "Running command in #{pwd}".yellow unless (!params[:announce_pwd] or params[:silent])
-      UI.info cmd.cyan if (!params[:silent] or params[:announce_cmd])
+      UI.info "Running command in #{pwd}".yellow if params[:announce_pwd] and !params[:internal]
+      UI.info cmd.cyan unless params[:internal]
       if Options.reveal
         result.success = true
         return result
       end
       result.output = ''
-      #$stderr.reopen '/dev/null' if params[:silent] # This prevents even output of error messages from the executed commands
-      IO.popen(cmd) do |stdout|
-        stdout.each do |line|
-          if params[:verbose]
-            UI.info "       #{line}" unless params[:silent]
-          else
-            $stdout.putc '.' unless params[:silent]
-            $stdout.flush
+      STDOUT.sync = true # Because we redirect stderr into stdout to get the output and it needs to be flushing automatically
+      IO.popen("#{cmd} 2>&1") do |pipe| # IO redirection is performed using operators
+        pipe.sync = true
+        while line = pipe.gets
+          unless params[:internal] # No output needed for the unit-tests and AI-internal use
+            params[:verbose] ? UI.info("       #{line}") : UI.indicate_activity
           end
           result.output << line
         end
       end
-      #$stderr.reopen STDERR if params[:silent] # Setting the error output back to normal
-      UI.separator if (!params[:silent] and !params[:verbose]) # i.e. if dots are outputted, we should create a new line after them
+      UI.separator unless params[:verbose] or params[:internal] # i.e. if dots are concatenated in the same line, we should create a new line after them
+      result.status = $?
       result.success = $?.success?
       if params[:die_on_failure] and !result.success
         UI.info result.output unless params[:verbose] # In verbose mode, we don't need to repeat the unsuccessful command's output
@@ -241,24 +240,22 @@ module CSD
     #
     # This command will not do anything if the destination already exists.
     #
-    def git_clone(name, repository, destination, params={})
-      default_params = { :die_on_failure => false, :announce_cmd => true, :announce_pwd => false, :silent => false }
-      params = default_params.merge(params)
+    def git_clone(name, repository, destination)
       result = CommandResult.new
       destination = destination.pathnamify
-      # At this point we break off if the destination already exists, but in reveal-mode we want to continue.
-      if (destination.directory? and !Options.reveal)
+      if destination.directory? and !Options.reveal
         UI.warn "Skipping #{name} download, because the directory already exists: #{destination.enquote}"
-      else
-        if destination.parent.writable? or Options.reveal
-          UI.info "Downloading #{name} to #{destination.enquote}".green.bold
-          result.success = Cmd.run("git clone #{repository} #{destination} #{('--quiet' if params[:silent])}", params).success?
-        else
-          UI.error "Could not download #{name} (no permission): #{destination.enquote}"
-          result.success = false
-        end
-        result
+        result.already_exists = true
+        return result
       end
+      unless destination.parent.writable? or Options.reveal
+        UI.error "Could not download #{name} (no permission): #{destination.enquote}"
+        result.no_permission = true
+        return result
+      end
+      UI.info "Downloading #{name} to #{destination.enquote}".green.bold
+      # We will simply return the CommandResult of the run-method.
+      Cmd.run("git clone #{repository} #{destination}", :announce_pwd => false, :verbose => true)
     end
   
   end

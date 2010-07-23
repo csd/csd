@@ -10,6 +10,11 @@ module CSD
       def separator
         say
       end
+      
+      def indicate_activity
+        $stdout.putc '.'
+        $stdout.flush
+      end
     
       def debug(message)
         say "DEBUG: #{message}".magenta if Options.debug and !Options.silent

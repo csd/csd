@@ -30,7 +30,7 @@ module CSD
           UI.separator
           if Options.help
             UI.info Options.helptext
-            abort
+            exit
           else
             raise(Interrupt) unless (Options.yes or UI.ask_yes_no("Continue?".red.bold, true))
           end
