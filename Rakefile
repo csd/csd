@@ -11,21 +11,21 @@ begin
     gemspec.email = "mtoday11@gmail.com"
     gemspec.homepage = "http://github.com/csd/csd"
     gemspec.authors = ["Technology Transfer Alliance Team"]
-    gemspec.executables = ["ai"]
+    gemspec.executables = ['tta', 'ai']
     gemspec.post_install_message = %q{
-=========================================================
+============================================================
 
-  Thank you for installing the TTA Automated Installer!
+ Thank you for installing the TTA Automated Installer!
 
-  You can run it by typing `ai´ in your command line.
+ You can run it by typing `tta´ in your command line.
 
-  NOTE: On DEBIAN and UBUNTU the executable `ai´ is maybe
-        not in your PATH by default. If that is the case,
-        you can fix it by running this command:
+ NOTE: On DEBIAN and UBUNTU the executable `tta´ is *maybe*
+       not in your PATH by default. If that is the case,
+       you can fix it by running this command:
       
-  echo "export PATH=\$PATH:$(gem env | grep "E D" | sed "s/[^\w]* //")" >> ~/.bashrc;. ~/.bashrc
+ echo "export PATH=\$PATH:$(gem env | grep "E D" | sed "s/[^\w]* //")" >> ~/.bashrc;. ~/.bashrc
        
-=========================================================
+============================================================
     }
   end
 rescue LoadError
@@ -53,7 +53,7 @@ begin
   end
 rescue LoadError
   task :rcov do
-    abort "RCov is not available. In order to run rcov, you must: sudo gem install spicycode-rcov"
+    abort "RCov is not available. In order to run rcov, you must: sudo gem install rcov"
   end
 end
 

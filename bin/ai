@@ -5,9 +5,8 @@
 # This executable is DEPRECATED
 # Please use 'tta' instead.
 
-
-
-
+puts
+puts "`ai´ is DEPRECATED. Please use `tta´ instead."
 
 require 'rubygems'
 require 'csd'

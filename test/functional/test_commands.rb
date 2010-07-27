@@ -304,7 +304,7 @@ That we in truth can nothing know!}
       assert result.success?
     end
     
-    should "not produce any output in :internal mode" do
+    should "not produce any output in :internal mode and in non-verbose mode" do
       Options.testmode = false
       out, err = capture do
         assert_kind_of(CommandResult, result = Cmd.run('ls', :internal => true))
@@ -312,12 +312,11 @@ That we in truth can nothing know!}
       assert_equal '', out
     end
     
-    should "should produce output in NON-:internal mode" do
-      Options.testmode = false
+    should "should produce output in NON-:internal mode and in non-verbose mode" do
       out, err = capture do
-        assert_kind_of(CommandResult, result = Cmd.run('ls'))
+        assert_kind_of(CommandResult, result = Cmd.run('which ls', :internal => false))
       end
-      assert !out.empty?
+      assert_equal('.', out)
     end
 
     should "return a non-successfull CommandResult if the command was bad without die_on_failure" do

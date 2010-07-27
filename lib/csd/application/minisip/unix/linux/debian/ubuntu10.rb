@@ -13,7 +13,7 @@ module CSD
         end
         
         def fix_ubuntu_10_04
-          if File.exist? Path.giomm_header_backup
+          if Path.giomm_header_backup.file?
             UI.warn "giomm-2.4 seems to be fixed already, I won't touch it now. Delete #{Path.giomm_header_backup.enquote} to enforce it."
           else
             Path.new_giomm_header = File.join(Dir.mktmpdir, 'giomm.h')

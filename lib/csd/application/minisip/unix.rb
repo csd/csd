@@ -33,21 +33,32 @@ module CSD
         
         def compile!
           Cmd.mkdir Path.work
-          make_hdviper unless checkout_hdviper.already_exists?
-          make_x264    unless checkout_x264.already_exists?
+          make_hdviper   unless checkout_hdviper.already_exists?
+          modify_minisip unless checkout_minisip.already_exists?
+          checkout_plugins
+          if Options.ffmpeg_first
+            make_x264 unless checkout_x264.already_exists?
+            compile_ffmpeg
+            make_minisip
+          else
+            make_minisip
+            make_x264 unless checkout_x264.already_exists?
+            compile_ffmpeg
+          end
+          copy_plugins
+        end
+        
+        def compile_ffmpeg
           unless checkout_ffmpeg.already_exists?
+            modify_libavutil
             checkout_libswscale
             make_ffmpeg
           end
-          checkout_minisip
-          checkout_plugins
-          modify_minisip
-          make_minisip
         end
         
         def make_ffmpeg
           Cmd.cd Path.ffmpeg_repository, :internal => true
-          Cmd.run('./configure --enable-gpl --enable-pthreads --enable-libx264 --enable-x11grab')
+          Cmd.run('./configure --enable-gpl --enable-libx264 --enable-x11grab')
           Cmd.run('make')
           Cmd.run('sudo checkinstall --pkgname=ffmpeg --pkgversion "4:ai-`git log -1 --pretty=format:%h`" --backup=no --default')
         end
@@ -72,6 +83,12 @@ module CSD
           [Path.build, Path.build_include, Path.build_lib, Path.build_share, Path.build_share_aclocal].each { |target| Cmd.mkdir target }
         end
         
+        def copy_plugins
+          UI.info "Creating plugin target directory".green.bold
+          result = Path.plugins_destination.parent.directory? ? Cmd.run("sudo mkdir #{Path.plugins_destination}") : CommandResult.new
+          Cmd.copy Dir[File.join('Path.plugins', '*.{l,la,so}')], Path.plugins_destination if result.success?
+        end
+        
         def make_minisip
           create_build_dir
           libraries.each do |library|
@@ -86,8 +103,7 @@ module CSD
                 UI.info "Configuring #{library}".green.bold
                 individual_options = case library
                   when 'libminisip'
-                    %Q{--enable-debug --enable-video --disable-mil --enable-decklink --enable-opengl --disable-sdl CPPFLAGS="-I#{Path.hdviper_x264_test_x264api} -I#{Path.hdviper_x264}" #{minisip_ld_flags}}
-                    #%Q{--enable-debug --enable-video --disable-mil --disable-decklink --enable-opengl --disable-sdl CPPFLAGS="-I#{Path.hdviper_x264}" LDFLAGS="#{File.join(Path.hdviper_x264, 'libx264.a')} -lpthread -lrt"}
+                    %Q{--enable-debug --enable-video --disable-mil --enable-decklink --enable-opengl --disable-sdl #{libminisip_c_flags} #{libminisip_cpp_flags} #{libminisip_ld_flags}}
                   when 'minisip'
                     %Q{--enable-debug --enable-video --enable-textui --enable-opengl}
                   else

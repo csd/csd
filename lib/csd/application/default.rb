@@ -1,5 +1,6 @@
 # -*- encoding: UTF-8 -*-
 require 'csd/application/default/base'
+require 'yaml'
 
 module CSD
   # This namespace holds all individual application Modules

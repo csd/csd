@@ -151,7 +151,10 @@ module CSD
         default_params = { :die_on_failure => true }
         params = default_params.merge(params)
         begin
-          UI.info "   `#{pattern}´  =>  `#{substitution}´".blue
+          UI.info "   Modifying".yellow
+          UI.info "   `#{pattern}´".blue
+          UI.info "   to".yellow
+          UI.info "   `#{substitution.to_s.gsub("\n", "\n    ")}´".white
           new_file_content = File.read(self.filepath).gsub(pattern.to_s, substitution.to_s)
           File.open(self.filepath, 'w+') { |file| file << new_file_content } unless Options.reveal
           result.success = true
@@ -204,7 +207,7 @@ module CSD
           result.output << line
         end
       end
-      UI.separator unless params[:verbose] or params[:internal] # i.e. if dots are concatenated in the same line, we should create a new line after them
+      UI.separator unless params[:verbose] or params[:internal] or Options.testmode # i.e. if dots are concatenated in the same line, we should create a new line after them
       result.status = $?
       result.success = $?.success?
       if params[:die_on_failure] and !result.success
