@@ -1,12 +1,9 @@
 # -*- encoding: UTF-8 -*-
+require 'csd/user_interface/base'
 
 module CSD
-  # User Interaction is performed within this namespace.
-  #
   module UserInterface
-    # This is the parent class of all user interfaces.
-    #
-    class Base
+    class Silent < Base
       
       def separator
       end
@@ -25,7 +22,7 @@ module CSD
 
       def error(message)
       end
-
+      
     end
   end
 end

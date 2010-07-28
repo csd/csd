@@ -10,6 +10,13 @@ require 'csd'
 require 'csd/vendor/zentest/zentest_assertions'
 
 class Test::Unit::TestCase
+  
+  # Even though the CSD library offers this function as an Kernel extension, we override it here.
+  # It must be guaranteed it works during running the tests.
+  #
+  def superuser?
+    Process.uid == 0
+  end
 
   def ensure_mkdir(target)
     target = Pathname.new(target) unless target.is_a?(Pathname)

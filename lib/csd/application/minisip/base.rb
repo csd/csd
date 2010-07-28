@@ -6,6 +6,9 @@ module CSD
     module Minisip
       class Base < CSD::Application::Base
         
+        # This is an +Array+ containing the names of the internal MiniSIP libraries. Note that they
+        # are sorted according to the sequence in which they need to be compiled.
+        #
         LIBRARIES = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip minisip }
         
         # MAIN APPLICATION OPERATIONS

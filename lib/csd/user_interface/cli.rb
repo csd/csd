@@ -6,35 +6,30 @@ module CSD
     class CLI < Base
     
       include Gem::UserInteraction
-    
+      
       def separator
-        say
+        $stdout.puts
       end
       
       def indicate_activity
         $stdout.putc '.'
         $stdout.flush
       end
-    
+      
       def debug(message)
-        say "DEBUG: #{message}".magenta if Options.debug and !Options.silent
+        $stdout.puts "DEBUG: #{message}".magenta if Options.debug
       end
-    
+      
       def info(message)
-        say message if !Options.silent
+        $stdout.puts message
       end
-    
+      
       def warn(message)
-        say 'NOTE: '.red + message.red if !Options.silent
+        $stdout.puts 'NOTE: '.red + message.red
       end
-
+      
       def error(message)
-        say('ERROR: '.red.blink + message.red) if !Options.silent
-      end
-    
-      def die(message)
-        say('ERROR: '.red.blink + message.red) if !Options.silent
-        raise Error::UI::Die
+        $stderr.puts('ERROR: '.red.blink + message.red)
       end
 
     end

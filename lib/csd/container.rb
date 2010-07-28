@@ -2,10 +2,22 @@
 
 module CSD
   class << self
-    # This method chooses and holds the user interface instance.
+    
+    # This method holds the user interface instance.
     #
     def ui
-      @@ui ||= UserInterface::CLI.new
+      return choose_ui if Options.testmode # No caching in testmode
+      @@ui ||= choose_ui
+    end
+    
+    # This method chooses an user interface instance according to the Options and returns a new instance of it.
+    #
+    def choose_ui
+      if Options.silent
+        UserInterface::Silent.new
+      else
+        UserInterface::CLI.new
+      end
     end
   
     # This method chooses and holds the command execution instance.

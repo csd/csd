@@ -49,7 +49,7 @@ module CSD
           target.mkpath unless Options.reveal
         rescue Errno::EACCES => e
           result.reason = "Cannot create directory (no permission): #{target}"
-          params[:die_on_failure] ? UI.die(result.reason) : UI.error(result.reason)
+          params[:die_on_failure] ? raise(CSD::Error::Command::MkdirFailed, result.reason) : UI.error(result.reason)
         end
       end
       result.success  = (target.directory? or Options.reveal)
@@ -81,7 +81,7 @@ module CSD
           result.success = target.current_path?
         rescue Exception => e
           result.reason = "Cannot change to directory `#{target}´. Reason: #{e.message}"
-          params[:die_on_failure] ? UI.die(result.reason) : UI.error(result.reason)
+          params[:die_on_failure] ? raise(CSD::Error::Command::CdFailed, result.reason) : UI.error(result.reason)
         end
       end
       result
@@ -165,7 +165,7 @@ module CSD
           end
           result.success = false
           result.reason = "Could not perform replace operation! #{e.message}"
-          params[:die_on_failure] ? UI.die(result.reason) : UI.error(result.reason)
+          params[:die_on_failure] ? raise(CSD::Error::Command::ReplaceFailed, result.reason) : UI.error(result.reason)
         end
         result
       end
@@ -216,7 +216,7 @@ module CSD
       result.success = $?.success?
       if params[:die_on_failure] and !result.success
         UI.info result.output unless params[:verbose] # In verbose mode, we don't need to repeat the unsuccessful command's output
-        UI.die "The last command was unsuccessful." 
+        raise CSD::Error::Command::RunFailed, "The last command was unsuccessful." 
       end
       result
     end
@@ -236,7 +236,14 @@ module CSD
       rescue Exception => e
         result.success = false
         result.reason = "Could not perform #{action} operation! #{e.message}"
-        params[:die_on_failure] ? UI.die(result.reason) : UI.error(result.reason)
+        if params[:die_on_failure]
+          case action
+            when :copy then raise CSD::Error::Command::CopyFailed, result.reason
+            when :move then raise CSD::Error::Command::MoveFailed, result.reason
+          end
+        else
+          UI.error result.reason
+        end
       end
       result
     end
@@ -262,7 +269,7 @@ module CSD
       end
       UI.info "Downloading #{name} to #{destination.enquote}".green.bold
       # We will simply return the CommandResult of the run-method.
-      Cmd.run("git clone #{repository} #{destination}", :announce_pwd => false, :verbose => true)
+      Cmd.run("git clone #{repository} #{destination}", :announce_pwd => false)
     end
   
   end

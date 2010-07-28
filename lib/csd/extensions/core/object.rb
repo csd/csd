@@ -1,4 +1,5 @@
 # -*- encoding: UTF-8 -*-
+require 'csd/vendor/active_support/object_extensions'
 
 module CSD
   module Extensions

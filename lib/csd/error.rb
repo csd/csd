@@ -25,16 +25,21 @@ module CSD
       class NoAction < CSDError; status_code(12); end
     end
     
+    # Errors in this module are raised by the Command module
+    #
+    module Command
+      class RunFailed < CSDError; status_code(50); end
+      class CdFailed < CSDError; status_code(51); end
+      class CopyFailed < CSDError; status_code(52); end
+      class MoveFailed < CSDError; status_code(53); end
+      class ReplaceFailed < CSDError; status_code(54); end
+      class MkdirFailed < CSDError; status_code(55); end
+    end
+    
     # Errors in this module are related to the Application Module Framework
     #
     module Application
-      class OptionsSyntax < CSDError; status_code(200); end
-    end
-    
-    # Errors in this module are raised by the User Interface
-    # TODO: This has to go :)
-    module UI
-      class Die < CSDError; status_code(1000); end
+      class OptionsSyntax < CSDError; status_code(100); end
     end
   
   end
