@@ -100,7 +100,7 @@ module CSD
           UI.info "Creating plugin target directory".green.bold
           # result = Path.plugins_destination.parent.directory? ? Cmd.run("sudo mkdir #{Path.plugins_destination}") : CommandResult.new
           # TODO: This will maybe need sudo rights in the future
-          Cmd.copy(Dir[File.join('Path.plugins', '*.{l,la,so}')], Path.plugins_destination) if Path.plugins_destination.directory?
+          Cmd.copy(Dir[File.join(Path.plugins, '*.{l,la,so}')], Path.plugins_destination) if Path.plugins_destination.directory?
         end
         
         # Iteratively configures and compiles the internal MiniSIP libraries.
