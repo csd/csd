@@ -159,6 +159,10 @@ module CSD
           File.open(self.filepath, 'w+') { |file| file << new_file_content } unless Options.reveal
           result.success = true
         rescue Errno::ENOENT => e
+          if Options.reveal
+            result.success = true
+            return result
+          end
           result.success = false
           result.reason = "Could not perform replace operation! #{e.message}"
           params[:die_on_failure] ? UI.die(result.reason) : UI.error(result.reason)

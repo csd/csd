@@ -24,21 +24,21 @@ module CSD
           define_root_path
           define_paths
           UI.separator
-          UI.info " Working directory:      ".green + Path.work.to_s.yellow
-          UI.info " Your Platform:          ".green + Gem::Platform.local.humanize.to_s.yellow
-          UI.info(" Application module:     ".green + self.class.name.to_s.yellow)
+          UI.info " Working directory:              ".green + Path.work.to_s.yellow
+          UI.info " Your Platform:                  ".green + Gem::Platform.local.humanize.to_s.yellow
+          UI.info(" Application module:             ".green + self.class.name.to_s.yellow)
           UI.separator
           if Options.help
             UI.info Options.helptext
             exit
           else
-            raise(Interrupt) unless (Options.yes or UI.ask_yes_no("Continue?".red.bold, true))
+            raise Interrupt unless (Options.yes or Options.reveal or UI.ask_yes_no("Continue?".red.bold, true))
           end
         end
         
         # OTHER CROSS-PLATFORM TASKS
         
-        # Determines which libraries of MiniSIP should be processed, given that the --only parameter might be set.
+        # Determines which libraries of MiniSIP should be processed, because the --only parameter might be set.
         #
         def libraries
           Options.only ? LIBRARIES.map { |lib| lib if Options.only.to_a.include?(lib) }.compact : LIBRARIES
@@ -74,14 +74,15 @@ module CSD
         
         def modify_minisip
           Cmd.replace(Path.repository_open_gl_display, '/home/erik', Path.build)
-          # See http://www.howgeek.com/2010/03/01/ffmpeg-php-error-‘pix_fmt_rgba32’-undeclared-first-use-in-this-function/
-          # and http://ffmpeg.org/doxygen/0.5/pixfmt_8h.html#33d341c4f443d24492a95fb7641d0986
-          Cmd.replace(Path.repository_avcoder_cxx,   'PIX_FMT_RGBA32', 'PIX_FMT_RGB32')
-          Cmd.replace(Path.repository_avdecoder_cxx, 'PIX_FMT_RGBA32', 'PIX_FMT_RGB32')
+          if Options.ffmpeg_first
+            # See http://www.howgeek.com/2010/03/01/ffmpeg-php-error-‘pix_fmt_rgba32’-undeclared-first-use-in-this-function/
+            # and http://ffmpeg.org/doxygen/0.5/pixfmt_8h.html#33d341c4f443d24492a95fb7641d0986
+            Cmd.replace(Path.repository_avcoder_cxx,   'PIX_FMT_RGBA32', 'PIX_FMT_RGB32')
+            Cmd.replace(Path.repository_avdecoder_cxx, 'PIX_FMT_RGBA32', 'PIX_FMT_RGB32')
+          end
         end
         
         def modify_libavutil
-          return
           if Path.ffmpeg_libavutil_common_backup.file?
             UI.warn "The libavutil common.h file seems to be fixed already, I won't touch it now. Delete #{Path.ffmpeg_libavutil_common_backup.enquote} to enforce it."
           else

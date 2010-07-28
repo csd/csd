@@ -44,8 +44,8 @@ module CSD
         UI.info opts.help
       end
       UI.separator
-      UI.info '  For more information type:   '.green.bold + "#{executable} [APPLICATION NAME]".cyan.bold
-      UI.info '                For example:   '.green.bold + "#{executable} minisip".cyan.bold
+      UI.info '  For more information type:   '.green.bold + "#{executable} [APPLICATION NAME]".cyan.bold + "     Example: #{executable} minisip".dark
+      #UI.info '                For example:   '.green.bold + "#{executable} minisip".cyan.bold
       UI.separator
       UI.warn "You did not specify a valid application name."
       raise Error::Argument::NoApplication
@@ -66,9 +66,11 @@ module CSD
         UI.info opts.help
       end
       UI.separator
-      UI.info '  To execute the task:   '.green.bold + "#{executable} [TASK] #{Applications.current.name}".cyan.bold
-      UI.info '     For more details:   '.green.bold + "#{executable} help [TASK] #{Applications.current.name}".cyan.bold
-      UI.info '              Example:   '.green.bold + "#{executable} help install #{Applications.current.name}".cyan.bold
+      UI.info '  To execute a task:   '.green.bold + "#{executable} [TASK] #{Applications.current.name}".cyan.bold + "          Example: #{executable} compile minisip".dark
+      #UI.info '  To execute a task:   '.green.bold + "#{executable} [TASK] #{Applications.current.name}".cyan.bold
+      UI.info '   For more details:   '.green.bold + "#{executable} help [TASK] #{Applications.current.name}".cyan.bold + "     Example: #{executable} help compile minisip".dark
+      #UI.info '   For more details:   '.green.bold + "#{executable} help [TASK] #{Applications.current.name}".cyan.bold
+      #UI.info '            Example:   '.green.bold + "#{executable} help install #{Applications.current.name}".cyan.bold
       UI.separator
       UI.warn "You did not specify a valid task name."
       raise Error::Argument::NoAction

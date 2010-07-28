@@ -6,14 +6,16 @@ module CSD
     module Minisip
       class Unix < Base
         
-        # OPERATION INTRODUCTION
-        
+        # This method presents a general overview about the task that is to be performed.
+        #
         def introduction
           UI.separator
-          UI.info " Libraries to process:   ".green + libraries.join(', ').yellow
+          UI.info " MiniSIP libraries to process:   ".green + libraries.join(', ').yellow
           super
         end
         
+        # This method is called by the AI when the user requests the task "compile" for MiniSIP.
+        #
         def compile
           UI.separator
           UI.info "This operation will download and compile MiniSIP.".green.bold
@@ -22,6 +24,8 @@ module CSD
           run_minisip_gtk_gui
         end
         
+        # This method is called by the AI when the user requests the task "package" for MiniSIP.
+        #
         def package
           UI.separator
           UI.info("This operation will package ".green.bold + "an already compiled".red.bold + " MiniSIP.".green.bold)
@@ -29,8 +33,8 @@ module CSD
           package!
         end
         
-        # OPERATIONS
-        
+        # This is the internal compile procedure for MiniSIP
+        #
         def compile!
           Cmd.mkdir Path.work
           make_hdviper   unless checkout_hdviper.already_exists?
@@ -38,38 +42,43 @@ module CSD
           checkout_plugins
           if Options.ffmpeg_first
             make_x264 unless checkout_x264.already_exists?
-            compile_ffmpeg
+            unless checkout_ffmpeg.already_exists?
+              modify_libavutil
+              checkout_libswscale
+              make_ffmpeg
+            end
             make_minisip
           else
             make_minisip
             make_x264 unless checkout_x264.already_exists?
-            compile_ffmpeg
+            unless checkout_ffmpeg.already_exists?
+              checkout_libswscale
+              make_ffmpeg
+            end
           end
           copy_plugins
         end
         
-        def compile_ffmpeg
-          unless checkout_ffmpeg.already_exists?
-            modify_libavutil
-            checkout_libswscale
-            make_ffmpeg
-          end
-        end
-        
+        # This method compiles FFmpeg, given that FFmpeg was downloaded before.
+        #
         def make_ffmpeg
           Cmd.cd Path.ffmpeg_repository, :internal => true
           Cmd.run('./configure --enable-gpl --enable-libx264 --enable-x11grab')
           Cmd.run('make')
-          Cmd.run('sudo checkinstall --pkgname=ffmpeg --pkgversion "4:ai-`git log -1 --pretty=format:%h`" --backup=no --default')
+          Cmd.run('sudo checkinstall --pkgname=ffmpeg --pkgversion "99:-`git log -1 --pretty=format:%h`" --backup=no --default')
         end
         
+        # This method compiles x264, given that x264 was downloaded before.
+        #
         def make_x264
           Cmd.cd Path.x264_repository, :internal => true
           Cmd.run('./configure')
           Cmd.run('make')
-          Cmd.run('sudo checkinstall --pkgname=x264 --pkgversion "2:0.`grep X264_BUILD x264.h -m1 | cut -d' ' -f3`.`git rev-list HEAD | wc -l`+git`git rev-list HEAD -n 1 | head -c 7`" --backup=no --default')
+          Cmd.run('sudo checkinstall --pkgname=x264 --pkgversion "99:-`git log -1 --pretty=format:%h`" --backup=no --default')
         end
         
+        # This method compiles HDVIPER, given that HDVIPER was downloaded before.
+        #
         def make_hdviper
           Cmd.cd Path.hdviper_x264, :internal => true
           Cmd.run('./configure')
@@ -78,17 +87,24 @@ module CSD
           Cmd.run('make')
         end
         
+        # Creates all build directories such as +lib+, +share+, +bin+, etc.
+        #
         def create_build_dir
           UI.info "Creating target build directories".green.bold
           [Path.build, Path.build_include, Path.build_lib, Path.build_share, Path.build_share_aclocal].each { |target| Cmd.mkdir target }
         end
         
+        # Copies the plugins from the repository to the final destination.
+        #
         def copy_plugins
           UI.info "Creating plugin target directory".green.bold
-          result = Path.plugins_destination.parent.directory? ? Cmd.run("sudo mkdir #{Path.plugins_destination}") : CommandResult.new
-          Cmd.copy Dir[File.join('Path.plugins', '*.{l,la,so}')], Path.plugins_destination if result.success?
+          # result = Path.plugins_destination.parent.directory? ? Cmd.run("sudo mkdir #{Path.plugins_destination}") : CommandResult.new
+          # TODO: This will maybe need sudo rights in the future
+          Cmd.copy(Dir[File.join('Path.plugins', '*.{l,la,so}')], Path.plugins_destination) if Path.plugins_destination.directory?
         end
         
+        # Iteratively configures and compiles the internal MiniSIP libraries.
+        #
         def make_minisip
           create_build_dir
           libraries.each do |library|
@@ -126,6 +142,8 @@ module CSD
           end
         end
         
+        # Iteratively makes debian packages of the internal MiniSIP libraries.
+        #
         def package!
           Cmd.mkdir(Path.packaging)
           libraries.each do |library|
@@ -172,6 +190,8 @@ module CSD
           Cmd.run('minisip_gtk_gui')
         end
         
+        # Executed the MiniSIP GTK GUI.
+        #
         def run_minisip_gtk_gui
           Cmd.run(Path.build_gtkgui, :die_on_failure => false)
         end
