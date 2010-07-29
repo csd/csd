@@ -9,13 +9,17 @@ class TestApplicationBase < Test::Unit::TestCase
   context "An application instance" do
   
     setup do
+      ARGV.clear
       Options.clear
-      assert @app = Applications.find('minisip').instance
+      @name = 'minisip'
+      ARGV.push(@name)
+      assert @app = Applications.find(@name).instance
     end
     
     should "use a temporary directory as working directory when the --temp options is given" do
       Options.temp = true
       @app.define_working_directory
+      assert_kind_of Pathname, Path.work
       # We verify whether this is a tempory directory by comparing the first six characters
       # of the working directory path with the path of a freshly created tmp-directory.
       # TODO: Find a better way to test the creation of temporary directories
@@ -26,13 +30,27 @@ class TestApplicationBase < Test::Unit::TestCase
       assert tmp_dir.rmdir
     end
     
+    should "accept a manual working directory parameter" do
+      Options.work_dir = '/my/cool/working/dir'
+      @app.define_working_directory
+      assert_kind_of Pathname, Path.work
+      assert_equal '/my/cool/working/dir', Path.work.to_s
+    end
+    
     should "overwrite the --temp option when the --work-dir option is given" do
       Options.temp = true
       Options.work_dir = '/'
       @app.define_working_directory
+      assert_kind_of Pathname, Path.work
       assert_equal '/', Path.work.to_s
     end
-
+    
+    should "take the current pwd with a subdirectory in the name of the application as working directory by default" do
+      @app.define_working_directory
+      assert_kind_of Pathname, Path.work
+      assert_equal File.join(Dir.pwd, "#{@name}.ai"), Path.work.to_s
+    end
+    
   end # context "An application instance"
 
 end

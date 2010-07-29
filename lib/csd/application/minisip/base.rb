@@ -11,6 +11,13 @@ module CSD
         #
         LIBRARIES = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip minisip }
         
+        # Tasks to be done before the introduction is evoked.
+        #
+        def initialize
+          super
+          define_relative_paths
+        end
+        
         # MAIN APPLICATION OPERATIONS
         
         def compile

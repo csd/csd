@@ -5,10 +5,13 @@ class TestDir < Test::Unit::TestCase
   
   include CSD
   
-  context "The Minisip application" do
+  context "The Minisip Base application" do
   
     setup do
+      ARGV.clear
       Options.clear
+      ARGV.push(@name)
+      Applications.current!
       @app = Application::Minisip::Base.new
     end
     

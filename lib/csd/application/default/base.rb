@@ -9,6 +9,10 @@ module CSD
     #
     class Base
       
+      def initialize
+        define_working_directory
+      end
+      
       # This method chooses the working directory, which will contain downloads needed for various tasks, etc.
       # Note that this directory is *not* removed by the AI in any case. The user has to make sure she knows the
       # location of it (especially if it is a temporary directory which is physically created right here).
@@ -23,7 +27,8 @@ module CSD
           path = Dir.mktmpdir 
         else
           # Other than that, we create a subdirectory in the current directory and use that
-          path = File.join(Dir.pwd, "#{Applications.current.name}.ai")
+          app_name = Applications.current ? Applications.current.name : 'application'
+          path = File.join(Dir.pwd, "#{app_name}.ai")
         end
         Path.work = path.pathnamify
       end
