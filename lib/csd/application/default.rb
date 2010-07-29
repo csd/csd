@@ -11,6 +11,13 @@ module CSD
     #
     module Default
       
+      # This method must be overwritten by the actual application module. It holds the application instance
+      # which was chosen for this operating system.
+      #
+      def instance
+        raise Error::Application::NoInstanceMethod, "The application module must define an method called `instance´."
+      end
+      
       def name
         self.to_s.demodulize.underscorize
       end

@@ -11,15 +11,12 @@ class TestDir < Test::Unit::TestCase
       Options.clear
       @app = Application::Minisip::Base.new
     end
-
-    teardown do
-    end
     
-    should "respond to valid actions" do
+    should "respond to a valid action" do
       assert @app.respond_to?(:compile)
     end
     
-    should "know how to identify a subset of libraries with --only" do
+    should "know how to identify and sort a subset of internal MiniSIP libraries with --only" do
       Options.only = nil
       assert_equal Application::Minisip::Base::LIBRARIES, @app.libraries
       Options.only = %w{ libmcrypto }
@@ -32,8 +29,13 @@ class TestDir < Test::Unit::TestCase
       assert_equal %w{ libmutil minisip }, @app.libraries
     end
     
+
+
+
+
+    
     context "when downloading source code" do
-  
+    
       should "dummy" do
         assert true
       end

@@ -41,22 +41,28 @@ module CSD
           @instance ||= case Gem::Platform.local.os
             
             when 'darwin'
+              # Mac OS X
+              UI.debug "Mac OS X identified"
               Darwin.new
-              
+            
             when 'linux'
+              # Linux
               UI.debug "Analyzing Linux kernel release: #{Gem::Platform.local.kernel_release}"
               case Gem::Platform.local.kernel_release
                 
                 when '2.6.32-21-generic', '2.6.32-22-generic'
+                  # Ubuntu 10.04
                   UI.debug "Ubuntu 10.04 identified"
                   Ubuntu10.new
-                  
+                
                 else
+                  # Any other Linux (currently only Debian is supported)
                   UI.debug "Debian identified"
                   Debian.new
               end
               
             else
+              # Microsoft Windows, Java, Solaris, etc...
               UI.debug "This Operating System is not supported."
               Base.new
           end

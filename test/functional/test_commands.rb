@@ -392,7 +392,7 @@ That we in truth can nothing know!}
       assert result.success?
       assert @dir.directory?
       assert File.exist?(File.join(@dir, 'dummy.txt'))
-    end if Options.online
+    end if ONLINE
     
     should "do nothing at the destination in reveal mode" do
       Options.reveal = true

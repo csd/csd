@@ -186,7 +186,7 @@ module CSD
               UI.error "Could not enter #{directory}."
             end
           end
-          Cmd.cd Path.root
+          Cmd.cd '/'
           Cmd.run('minisip_gtk_gui')
         end
         

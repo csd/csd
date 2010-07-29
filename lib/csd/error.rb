@@ -40,6 +40,7 @@ module CSD
     #
     module Application
       class OptionsSyntax < CSDError; status_code(100); end
+      class NoInstanceMethod < CSDError; status_code(101); end
     end
   
   end

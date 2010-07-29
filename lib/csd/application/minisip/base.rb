@@ -24,8 +24,8 @@ module CSD
         # GENERAL USER INFORMATION
         
         def introduction
-          define_root_path
-          define_paths
+          define_working_directory
+          define_relative_paths
           UI.separator
           UI.info " Working directory:              ".green + Path.work.to_s.yellow
           UI.info " Your Platform:                  ".green + Gem::Platform.local.humanize.to_s.yellow
@@ -115,22 +115,7 @@ module CSD
           %{LDFLAGS="#{Path.hdviper_libx264api} #{Path.hdviper_libtidx264} -lpthread -lrt"}
         end
         
-        # DEFINING PATHS ETC...
-        
-        def define_root_path
-          if Options.path
-            if File.directory?(Options.path)
-              Path.root = File.expand_path(Options.path)
-            else
-              raise Error::Options::PathNotFound, "The path `#{Options.path}´ doesn't exist."
-            end
-          else
-            Path.root = Options.temp ? Dir.mktmpdir : Dir.pwd
-          end
-        end
-        
-        def define_paths
-          Path.work                               = Pathname.new(File.join(Path.root, 'minisip.ai'))
+        def define_relative_paths
           Path.giomm_header                       = Pathname.new(File.join('/', 'usr', 'include', 'giomm-2.4', 'giomm.h'))
           Path.giomm_header_backup                = Pathname.new(File.join('/', 'usr', 'include', 'giomm-2.4', 'giomm.h.ai-backup'))
           Path.repository                         = Pathname.new(File.join(Path.work, 'repository'))

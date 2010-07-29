@@ -68,6 +68,11 @@ module CSD
   # A wrapper for the Options class to be able to run all methods as class methods.
   #
   class Options
+    # Because the Options class will respond to clear, we must pass it on explicitly to the OptionsParser instance residing in CSD.options
+    #
+    def self.clear
+      ::CSD.options.clear
+    end
     def self.method_missing(meth, *args, &block)
       ::CSD.options.send(meth, *args, &block)
     end

@@ -13,7 +13,7 @@ class Test::Unit::TestCase
   
   # This will cause tests to be executed which require Internet connection
   #
-  CSD::Options.online = true
+  ONLINE = true
   
   # Even though the CSD library offers this function as an Kernel extension, we override it here.
   # It must be guaranteed it works during running the tests.

@@ -3,18 +3,16 @@
 # TODO: There must be a nicer solution for this.
 
 self.temp = false
-opts.on("-t", "--temp",
-        "Use a subdirectory in the system's temporary directory",
-        "to download files and not the current directory") do |value|
+opts.on("-t", "--temp", "Use a system's temporary directory as working directory.") do |value|
   self.temp = value
 end
 
-self.path = nil
-opts.on("--path [PATH]",
-        "Defines the working directory manually.",
-        "(This will override the --temp option)") do |value|
-  self.path = value
-end
+#self.path = nil
+#opts.on("--path [PATH]",
+#        "Defines the working directory manually.",
+#        "(This will override the --temp option)") do |value|
+#  self.path = value
+#end
 
 #self.owner = nil
 #opts.on("-o", "--owner [OWNER]","Specify OWNER:GROUP for this operation") do |value|

@@ -35,6 +35,8 @@ module CSD
     end
     
     def clear
+      # Resetting all attributes to nil (because e.g. an application instance might have modified or added some).
+      super
       # First we define all valid actions and scopes
       self.actions = []
       self.scopes  = []

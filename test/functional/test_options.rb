@@ -13,7 +13,7 @@ class TestOptions < Test::Unit::TestCase
     end
   
     context "and identifying just help/action/application, parse_literals" do
-      
+
       teardown do
         assert ARGV.empty?
       end

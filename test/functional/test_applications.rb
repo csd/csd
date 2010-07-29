@@ -1,5 +1,6 @@
 require 'helper'
 require 'ostruct'
+require 'tmpdir'
 
 class TestApplications < Test::Unit::TestCase
   
@@ -13,31 +14,31 @@ class TestApplications < Test::Unit::TestCase
       Options.clear
     end
     
-    context "and considering a valid application" do
+    context "and considering an application module which can be loaded" do
 
       setup do
-        @app = 'minisip'
-        assert Applications.find(@app)
+        @name = 'minisip'
+        assert Applications.find(@name)
       end
       
       context "the find function" do
     
         should "find an application in the first argument" do
-          ARGV.push(@app)
-          assert_equal @app, Applications.current!.name
+          ARGV.push(@name)
+          assert_equal @name, Applications.current!.name
         end
       
         should "find an application in the second argument" do
           ARGV.push('dummy')
-          ARGV.push(@app)
-          assert_equal @app, Applications.current!.name
+          ARGV.push(@name)
+          assert_equal @name, Applications.current!.name
         end
       
         should "find an application in the third argument" do
           ARGV.push('foo')
           ARGV.push('bar')
-          ARGV.push(@app)
-          assert_equal @app, Applications.current!.name
+          ARGV.push(@name)
+          assert_equal @name, Applications.current!.name
         end
       
         should "set nothing, if there is no valid app" do
@@ -50,17 +51,21 @@ class TestApplications < Test::Unit::TestCase
       end # context "the find function"
       
       context "the application module" do
+        
+        should "implement an instance method" do
+          assert Applications.find(@name).respond_to?(:instance)
+        end
       
         should "know its name" do
-          assert_equal @app, Applications.find(@app).name
+          assert_equal @name, Applications.find(@name).name
         end
         
         should "respond to options with a string" do
-          assert_kind_of(String, Applications.find(@app).options)
-          assert_kind_of(String, Applications.find(@app).options('install'))
-          assert_kind_of(String, Applications.find(@app).options('not_a_valid_action'))
+          assert_kind_of(String, Applications.find(@name).options)
+          assert_kind_of(String, Applications.find(@name).options('install'))
+          assert_kind_of(String, Applications.find(@name).options('not_a_valid_action'))
         end
-      
+        
       end # context "the application module"
       
     end # context "and considering a valid application, find"
