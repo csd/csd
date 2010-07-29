@@ -295,40 +295,78 @@ That we in truth can nothing know!}
   end # context "As a directory function"
   
   context "run" do
+    
+    context "in normal mode" do
 
-    setup do
-      Options.silent = true
-      Options.reveal = false
-      Options.online = true # Some tests need an uplink to the Internet. For now, we will hardcode here so that they should be executed.
-      Options.testmode = true # This puts us in test-mode, basically to prevent STDOUT and STDERR to show unnecessary output.
-    end
-    
-    should "return a successfull CommandResult if the command was OK" do
-      assert_kind_of(CommandResult, result = Cmd.run('cd'))
-      assert_kind_of(Process::Status, result.status)
-      assert result.success?
-    end
-    
-    should "not produce any output in :internal mode and in non-verbose mode" do
-      Options.testmode = false
-      out, err = capture do
-        assert_kind_of(CommandResult, result = Cmd.run('ls', :internal => true))
+      setup do
+        Options.clear
+        Options.testmode = true
+        Options.silent = false
       end
-      assert_equal '', out
-    end
     
-    #should "should produce output in NON-:internal mode and in non-verbose mode" do
-    #  Options.silent = false
-    #  out, err = capture do
-    #    assert_kind_of(CommandResult, result = Cmd.run('which ls', :internal => false))
-    #  end
-    #  assert_equal('.', out)
-    #end
+      should "not produce any output in :internal mode" do
+        out, err = capture do
+          assert_kind_of(CommandResult, result = Cmd.run('ls', :internal => true))
+        end
+        assert_equal '', out
+        assert_equal '', err
+      end
+      
+      should "produce output in :internal mode" do
+        out, err = capture do
+          assert_kind_of(CommandResult, result = Cmd.run('ls', :internal => false))
+        end
+        assert_match /\.+/, out # Make sure it contains only periods
+        assert_equal '', err
+      end
+      
+      context "in verbose mode" do
+        
+        setup do
+          Options.verbose = true
+        end
+        
+        should "produce verbose output" do
+          out, err = capture do
+            assert_kind_of(CommandResult, result = Cmd.run('ls', :internal => false))
+          end
+          assert out.size > 0
+          assert_match /[^\.]/, out # Match anything that is not a period
+          assert_equal '', err
+        end
 
-    should "return a non-successfull CommandResult if the command was bad without die_on_failure" do
-      assert_kind_of(CommandResult, result = Cmd.run('this-command-does-not-exist', :die_on_failure => false))
-      assert !result.success?
-    end
+      end # context "in verbose mode"
+    
+    end # context "in normal mode"
+    
+    context "in silent mode" do
+      
+      setup do
+        Options.clear
+        Options.testmode = true
+        Options.silent = true
+      end
+      
+      should "return a successfull CommandResult if the command was OK" do
+        assert_kind_of(CommandResult, result = Cmd.run('cd'))
+        assert_kind_of(Process::Status, result.status)
+        assert result.success?
+      end
+      
+      should "not produce any output" do
+        out, err = capture do
+          assert_kind_of(CommandResult, result = Cmd.run('ls', :internal => false))
+        end
+        assert_equal '', out
+      end
+      
+      should "return a non-successfull CommandResult if the command was bad without die_on_failure" do
+        assert_kind_of(CommandResult, result = Cmd.run('this-command-does-not-exist', :die_on_failure => false))
+        assert !result.success?
+      end
+      
+      
+    end # context "in silent mode"
     
   end
   

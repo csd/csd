@@ -11,20 +11,24 @@ require 'csd/vendor/zentest/zentest_assertions'
 
 class Test::Unit::TestCase
   
+  # This will cause tests to be executed which require Internet connection
+  #
+  CSD::Options.online = true
+  
   # Even though the CSD library offers this function as an Kernel extension, we override it here.
   # It must be guaranteed it works during running the tests.
   #
   def superuser?
     Process.uid == 0
   end
-
+  
   def ensure_mkdir(target)
     target = Pathname.new(target) unless target.is_a?(Pathname)
     target.mkpath
     assert target.directory?
     target
   end
-
+  
   def assert_includes(elem, array, message = nil) 
     message = build_message message, ' is not found in .', elem, array 
     assert_block message do 

@@ -6,7 +6,9 @@ module CSD
     # This method holds the user interface instance.
     #
     def ui
-      return choose_ui if Options.testmode # No caching in testmode
+      # In testmode we don't want to perform caching
+      return choose_ui if Options.testmode
+      # Otherwise we choose and cache the UI here
       @@ui ||= choose_ui
     end
     

@@ -190,7 +190,7 @@ module CSD
     # [+output?+] The command's output as a +String+ (with newline delimiters). Note that the exit code can be accessed via the global variable <tt>$?</tt>
     #
     def run(cmd, params={})
-      default_params = { :die_on_failure => true, :announce_pwd => true, :verbose => Options.verbose, :internal => Options.testmode }
+      default_params = { :die_on_failure => true, :announce_pwd => true, :verbose => Options.verbose, :internal => false }
       params = default_params.merge(params)
       result = CommandResult.new
       cmd = cmd.to_s
@@ -211,7 +211,7 @@ module CSD
           result.output << line
         end
       end
-      UI.separator unless params[:verbose] or params[:internal] or Options.testmode # i.e. if dots are concatenated in the same line, we should create a new line after them
+      UI.separator unless params[:verbose] or params[:internal] # i.e. if dots are concatenated in the same line, we should create a new line after them
       result.status = $?
       result.success = $?.success?
       if params[:die_on_failure] and !result.success
