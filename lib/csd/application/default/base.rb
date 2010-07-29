@@ -30,7 +30,7 @@ module CSD
           app_name = Applications.current ? Applications.current.name : 'application'
           path = File.join(Dir.pwd, "#{app_name}.ai")
         end
-        Path.work = path.pathnamify
+        Path.work = path.pathnamify.expand_path
       end
       
     end

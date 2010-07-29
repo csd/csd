@@ -9,10 +9,11 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Technology Transfer Alliance Team"]
-  s.date = %q{2010-07-28}
+  s.date = %q{2010-07-29}
+  s.default_executable = %q{ai}
   s.description = %q{CSD stands for Communication Systems Design and is a project of the Telecommunication Systems Laboratory (TSLab) of the Royal Institute of Technology in Stockholm, Sweden. Within CSD many software tools are used to build up various networks and services. This gem is supposed to automate processes to handle the compilation and installation of these software tools. Technology Transfer Alliance (TTA) is the project team, which maintains this code.}
   s.email = %q{mtoday11@gmail.com}
-  s.executables = ["tta", "ai"]
+  s.executables = ["ai"]
   s.extra_rdoc_files = [
     "README.rdoc"
   ]
@@ -24,7 +25,6 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "bin/ai",
-     "bin/tta",
      "csd.gemspec",
      "lib/csd.rb",
      "lib/csd/application.rb",
@@ -50,7 +50,9 @@ Gem::Specification.new do |s|
      "lib/csd/extensions.rb",
      "lib/csd/extensions/core/array.rb",
      "lib/csd/extensions/core/dir.rb",
+     "lib/csd/extensions/core/kernel.rb",
      "lib/csd/extensions/core/object.rb",
+     "lib/csd/extensions/core/open_struct.rb",
      "lib/csd/extensions/core/option_parser.rb",
      "lib/csd/extensions/core/pathname.rb",
      "lib/csd/extensions/core/string.rb",
@@ -60,18 +62,26 @@ Gem::Specification.new do |s|
      "lib/csd/user_interface.rb",
      "lib/csd/user_interface/base.rb",
      "lib/csd/user_interface/cli.rb",
+     "lib/csd/user_interface/silent.rb",
      "lib/csd/vendor/active_support/MIT-LICENSE",
      "lib/csd/vendor/active_support/inflector.rb",
+     "lib/csd/vendor/active_support/object_extensions.rb",
      "lib/csd/vendor/term/GPL2-LICENSE",
      "lib/csd/vendor/term/ansicolor.rb",
      "lib/csd/vendor/zentest/zentest_assertions.rb",
      "lib/csd/version.rb",
      "test/application/test_minisip.rb",
+     "test/functional/test_application_base.rb",
+     "test/functional/test_application_default.rb",
      "test/functional/test_applications.rb",
+     "test/functional/test_cli.rb",
      "test/functional/test_commands.rb",
+     "test/functional/test_csd.rb",
      "test/functional/test_options.rb",
      "test/helper.rb",
+     "test/unit/test_container.rb",
      "test/unit/test_dir.rb",
+     "test/unit/test_open_struct.rb",
      "test/unit/test_pathname.rb",
      "test/unit/test_string.rb"
   ]
@@ -86,9 +96,9 @@ Gem::Specification.new do |s|
  NOTE: On DEBIAN and UBUNTU the executable `tta´ is *maybe*
        not in your PATH by default. If that is the case,
        you can fix it by running this command:
-      
+
  echo "export PATH=\$PATH:$(gem env | grep "E D" | sed "s/[^\w]* //")" >> ~/.bashrc;. ~/.bashrc
-       
+
 ============================================================
     }
   s.rdoc_options = ["--charset=UTF-8"]
@@ -97,11 +107,17 @@ Gem::Specification.new do |s|
   s.summary = %q{Installation and compilation handler for software used in CSD projects.}
   s.test_files = [
     "test/application/test_minisip.rb",
+     "test/functional/test_application_base.rb",
+     "test/functional/test_application_default.rb",
      "test/functional/test_applications.rb",
+     "test/functional/test_cli.rb",
      "test/functional/test_commands.rb",
+     "test/functional/test_csd.rb",
      "test/functional/test_options.rb",
      "test/helper.rb",
+     "test/unit/test_container.rb",
      "test/unit/test_dir.rb",
+     "test/unit/test_open_struct.rb",
      "test/unit/test_pathname.rb",
      "test/unit/test_string.rb"
   ]

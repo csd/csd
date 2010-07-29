@@ -85,18 +85,9 @@ module CSD
     #
     def parse_options
       OptionParser.new do |opts|
-        self.banner = Applications.current ? "ADVANCED HELP FOR #{Applications.current.name}" : "Usage: ".bold + "ai [help] [TASK] APPLICATION [OPTIONS]"
+        self.banner = Applications.current ? 'OPTIONS' : "Usage: ".bold + "#{CSD.executable} [help] [TASK] APPLICATION [OPTIONS]"
         opts.banner = self.banner.magenta.bold
 
-        unless Applications.current
-          opts.headline "EXAMPLE COMMANDS".green.bold
-          opts.list_item 'ai', 'Lists all available applications'
-          opts.list_item 'ai minisip', 'Lists available tasks for the application MiniSIP'
-          opts.list_item 'ai minisip --developer', 'Lists advanced AI tasks for the application MiniSIP'
-          opts.list_item 'ai compile minisip', 'Downloads MiniSIP and compiles it'
-          opts.list_item 'ai help compile minisip', 'Shows more details about the different compiling options'
-        end
-      
         # Here we load application-specific options file.
         # TODO: There must be a better way for this in general than to eval the raw ruby code
         begin
@@ -119,30 +110,32 @@ module CSD
         #opts.on("-l", "--local","Assume that there is no uplink to the Internet") do |value|
         #  self.online = !value
         #end
-        opts.on("-r", "--reveal","List all commands that normally would be executed in this operation") do |value|
+        opts.on("-r", "--reveal","List all commands that normally would be executed in this operation (preview-mode)") do |value|
           self.reveal = value
         end
         opts.on("-e", "--verbose","Show more elaborate output") do |value|
           self.verbose = value
         end
-        opts.on("-d", "--debug","Show more elaborate output and debugging information") do |value|
+        opts.on("-d", "--debug","Show more elaborate output and debugging information about the AI") do |value|
           self.debug = value
         end
         opts.on("-s", "--silent","Don't show any output") do |value|
           self.silent = value
         end
-        opts.on_tail("-a", "--developer", "Activating advanced AI functionality (developers only)") do |value|
-          self.developer = value
-        end
+        #opts.on_tail("-a", "--developer", "Activating advanced AI functionality (developers only)") do |value|
+        #  self.developer = value
+        #end
         opts.on_tail("-h", "--help", "Show detailed help (regarding the given ACTION and APPLICATION)") do |value|
           self.help = value
         end
-        opts.on_tail("-v", "--version", "Show version") do
+        opts.on_tail("-v", "--version", "Show the version of this AI") do
           puts "CSD Gem Version: #{CSD::Version}".blue
           exit
         end
         self.helptext = opts.help
       end.parse!
+      rescue OptionParser::InvalidOption => e
+        raise Error::Argument::InvalidOption, e.message.gsub('invalid option: ', 'This option argument seems to be incorrect: ')
     end
 
   end

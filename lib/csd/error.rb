@@ -23,17 +23,18 @@ module CSD
     module Argument
       class NoApplication < CSDError; status_code(11); end
       class NoAction < CSDError; status_code(12); end
+      class InvalidOption < CSDError; status_code(50); end
     end
     
     # Errors in this module are raised by the Command module
     #
     module Command
-      class RunFailed < CSDError; status_code(50); end
-      class CdFailed < CSDError; status_code(51); end
-      class CopyFailed < CSDError; status_code(52); end
-      class MoveFailed < CSDError; status_code(53); end
-      class ReplaceFailed < CSDError; status_code(54); end
-      class MkdirFailed < CSDError; status_code(55); end
+      class RunFailed < CSDError; status_code(60); end
+      class CdFailed < CSDError; status_code(61); end
+      class CopyFailed < CSDError; status_code(62); end
+      class MoveFailed < CSDError; status_code(63); end
+      class ReplaceFailed < CSDError; status_code(64); end
+      class MkdirFailed < CSDError; status_code(65); end
     end
     
     # Errors in this module are related to the Application Module Framework

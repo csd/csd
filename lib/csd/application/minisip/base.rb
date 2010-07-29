@@ -31,8 +31,6 @@ module CSD
         # GENERAL USER INFORMATION
         
         def introduction
-          define_working_directory
-          define_relative_paths
           UI.separator
           UI.info " Working directory:              ".green + Path.work.to_s.yellow
           UI.info " Your Platform:                  ".green + Gem::Platform.local.humanize.to_s.yellow
@@ -40,6 +38,8 @@ module CSD
           UI.separator
           if Options.help
             UI.info Options.helptext
+            # Cleanup in case the working directory was temporary and is empty
+            Path.work.rmdir if Options.temp and Path.work.directory? and Path.work.children.empty?
             exit
           else
             raise Interrupt unless (Options.yes or Options.reveal or UI.ask_yes_no("Continue?".red.bold, true))
@@ -123,6 +123,14 @@ module CSD
         end
         
         def define_relative_paths
+          Path.build                              = Pathname.new(File.join(Path.work, 'build'))
+          Path.build_bin                          = Pathname.new(File.join(Path.build, 'bin'))
+          Path.build_gtkgui                       = Pathname.new(File.join(Path.build_bin, 'minisip_gtkgui'))
+          Path.build_include                      = Pathname.new(File.join(Path.build, 'include'))
+          Path.build_lib                          = Pathname.new(File.join(Path.build, 'lib'))
+          Path.build_lib_pkg_config               = Pathname.new(File.join(Path.build_lib, 'pkgconfig'))
+          Path.build_share                        = Pathname.new(File.join(Path.build, 'share'))
+          Path.build_share_aclocal                = Pathname.new(File.join(Path.build_share, 'aclocal'))
           Path.giomm_header                       = Pathname.new(File.join('/', 'usr', 'include', 'giomm-2.4', 'giomm.h'))
           Path.giomm_header_backup                = Pathname.new(File.join('/', 'usr', 'include', 'giomm-2.4', 'giomm.h.ai-backup'))
           Path.repository                         = Pathname.new(File.join(Path.work, 'repository'))
@@ -146,14 +154,6 @@ module CSD
           Path.hdviper_libtidx264                 = Pathname.new(File.join(Path.hdviper_x264, 'libtidx264.a'))
           Path.hdviper_x264_test_x264api          = Pathname.new(File.join(Path.hdviper_x264, 'test', 'x264API'))
           Path.hdviper_libx264api                 = Pathname.new(File.join(Path.hdviper_x264_test_x264api, 'libx264api.a'))
-          Path.build                              = Pathname.new(File.join(Path.work, 'build'))
-          Path.build_bin                          = Pathname.new(File.join(Path.build, 'bin'))
-          Path.build_gtkgui                       = Pathname.new(File.join(Path.build_bin, 'minisip_gtkgui'))
-          Path.build_include                      = Pathname.new(File.join(Path.build, 'include'))
-          Path.build_lib                          = Pathname.new(File.join(Path.build, 'lib'))
-          Path.build_lib_pkg_config               = Pathname.new(File.join(Path.build_lib, 'pkgconfig'))
-          Path.build_share                        = Pathname.new(File.join(Path.build, 'share'))
-          Path.build_share_aclocal                = Pathname.new(File.join(Path.build_share, 'aclocal'))
           Path.plugins                            = Pathname.new(File.join(Path.work, 'plugins'))
           Path.plugins_destination                = Pathname.new(File.join(Path.build_lib, 'libminisip', 'plugins'))
         end

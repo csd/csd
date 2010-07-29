@@ -132,9 +132,8 @@ module CSD
                 Cmd.run("make")
               end
               if Options.make_install
-                maker_command = Options.make_dist ? 'dist' : 'install'
-                UI.info "Make #{maker_command} #{library}".green.bold
-                Cmd.run("make #{maker_command}")
+                UI.info "Make install #{library}".green.bold
+                Cmd.run("make install")
               end
             else
               UI.warn "Skipping minisip library #{library} because it not be found: #{directory}".green.bold
