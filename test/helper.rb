@@ -2,7 +2,11 @@ require 'rubygems'
 require 'test/unit'
 require 'tmpdir'
 require 'shoulda'
-require 'redgreen'
+begin
+  require 'redgreen'
+rescue LoadError
+  # Does not work on Ruby 1.9.1, but it is not really needed
+end
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
