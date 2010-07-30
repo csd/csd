@@ -33,7 +33,7 @@ module CSD
         def introduction
           UI.separator
           UI.info " Working directory:       ".green.bold + Path.work.to_s.yellow
-          unless Options.debug
+          if Options.debug
             UI.info " Your Platform:           ".green + Gem::Platform.local.humanize.to_s.yellow
             UI.info(" Application module:      ".green + self.class.name.to_s.yellow)
           end
@@ -42,7 +42,7 @@ module CSD
             UI.info Options.helptext
             # Cleanup in case the working directory was temporary and is empty
             Path.work.rmdir if Options.temp and Path.work.directory? and Path.work.children.empty?
-            exit
+            raise CSD::Error::Argument::HelpWasRequested
           else
             raise Interrupt unless (Options.yes or Options.reveal or UI.continue?)
           end

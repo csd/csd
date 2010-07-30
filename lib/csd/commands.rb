@@ -177,17 +177,19 @@ module CSD
     #
     # The following options can be passed as a hash.
     #
-    # [+:die_on_failure+] If the exit code of the command was not 0, exit the CSD application (default: +true+).
+    # [+:die_on_failure+] If the status code of the command was not 0, raise an Command::RunFailed exception (default: +true+).
     # [+:announce_pwd+] Before running the command, announce in which path the command will be executed (default: +true+).
     # [+:verbose+] Instead of printing just one `.´ per command output line, print the full command output lines (default: +false+).
     # [+:internal+] If this parameter is +true+, there will be no output what-so-ever for running this command. (default: +false+).
+    # [+:force_in_reveal+] If this parameter is +true+, the command will be executed, even in <tt>--reveal</tt> mode (default: +false+).
     #
     # ==== Returns
     #
     # This method returns a CommandResult object with the following values:
     #
-    # [+success?+] +true+ if the command was successful, +nil+ if not.
-    # [+output?+] The command's output as a +String+ (with newline delimiters). Note that the exit code can be accessed via the global variable <tt>$?</tt>
+    # [+output?+] The command's output as a +String+ (with newline delimiters). Note that the status code can be accessed via the global variable <tt>$?</tt>.
+    # [+status?+] Contains <tt>$?</tt> and all the methods Ruby provides for it.
+    # [+success?+] +true+ if the command was successful, +nil+ if not (internally <tt>$?.success?</tt> is called).
     #
     def run(cmd, params={})
       default_params = { :die_on_failure => true, :announce_pwd => true, :verbose => Options.verbose, :internal => false, :force_in_reveal => false }

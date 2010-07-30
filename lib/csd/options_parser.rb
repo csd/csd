@@ -130,7 +130,7 @@ module CSD
         end
         opts.on_tail("-v", "--version", "Show the version of this AI") do
           puts "CSD Gem Version: #{CSD::Version}".blue
-          exit
+          raise Error::Argument::VersionWasRequested
         end
         self.helptext = opts.help
       end.parse!
