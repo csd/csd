@@ -190,13 +190,13 @@ module CSD
     # [+output?+] The command's output as a +String+ (with newline delimiters). Note that the exit code can be accessed via the global variable <tt>$?</tt>
     #
     def run(cmd, params={})
-      default_params = { :die_on_failure => true, :announce_pwd => true, :verbose => Options.verbose, :internal => false }
+      default_params = { :die_on_failure => true, :announce_pwd => true, :verbose => Options.verbose, :internal => false, :force_in_reveal => false }
       params = default_params.merge(params)
       result = CommandResult.new
       cmd = cmd.to_s
       UI.info "Running command in #{pwd}".yellow if params[:announce_pwd] and !params[:internal]
       UI.info cmd.cyan unless params[:internal]
-      if Options.reveal
+      if Options.reveal and !params[:force_in_reveal]
         result.success = true
         return result
       end

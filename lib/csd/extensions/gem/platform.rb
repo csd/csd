@@ -19,13 +19,13 @@ module CSD
         # On linux systems, this method returns the current kernel version.
         #
         def kernel_version
-          Cmd.run('uname --kernel-version', :internal => true).output.to_s.chop if os == 'linux'
+          Cmd.run('uname --kernel-version', :internal => true, :force_in_reveal => true).output.to_s.chop if os == 'linux'
         end
         
         # On linux systems, this method returns the current kernel release.
         #
         def kernel_release
-          Cmd.run('uname --kernel-release', :internal => true).output.to_s.chop if os == 'linux'
+          Cmd.run('uname --kernel-release', :internal => true, :force_in_reveal => true).output.to_s.chop if os == 'linux'
         end
   
       end
@@ -33,7 +33,7 @@ module CSD
   end
 end
 
-module Gem
+module Gem #:nodoc:
   class Platform #:nodoc:
     include CSD::Extensions::Gem::Platform
   end

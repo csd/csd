@@ -13,11 +13,11 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'csd'
 require 'csd/vendor/zentest/zentest_assertions'
 
+# This will cause tests to be executed which require Internet connection
+ONLINE = system 'ping -c 1 www.google.com'
+puts "WARNING:".red.blink + " Tests which require Internet connectivity will not be executed!".red unless ONLINE
+
 class Test::Unit::TestCase
-  
-  # This will cause tests to be executed which require Internet connection
-  #
-  ONLINE = true
   
   # Even though the CSD library offers this function as an Kernel extension, we override it here.
   # It must be guaranteed it works during running the tests.

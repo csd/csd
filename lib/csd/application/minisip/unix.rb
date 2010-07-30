@@ -87,13 +87,6 @@ module CSD
           Cmd.run('make')
         end
         
-        # Creates all build directories such as +lib+, +share+, +bin+, etc.
-        #
-        def create_build_dir
-          UI.info "Creating target build directories".green.bold
-          [Path.build, Path.build_include, Path.build_lib, Path.build_share, Path.build_share_aclocal].each { |target| Cmd.mkdir target }
-        end
-        
         # Copies the plugins from the repository to the final destination.
         #
         def copy_plugins
@@ -103,42 +96,82 @@ module CSD
           Cmd.copy(Dir[File.join(Path.plugins, '*.{l,la,so}')], Path.plugins_destination) if Path.plugins_destination.directory?
         end
         
-        # Iteratively configures and compiles the internal MiniSIP libraries.
+        # Iteratively processes the internal MiniSIP libraries (+bootstrap+, +configure+, +make+, +make install+).
         #
         def make_minisip
           create_build_dir
           libraries.each do |library|
             directory = Pathname.new(File.join(Path.repository, library))
-            next if Options.only and !Options.only.include?(library)
             if Cmd.cd(directory) or Options.reveal
-              if Options.bootstrap
-                UI.info "Bootstrapping #{library}".green.bold
-                Cmd.run("./bootstrap -I #{Path.build_share_aclocal.enquote}")
-              end
-              if Options.configure
-                UI.info "Configuring #{library}".green.bold
-                individual_options = case library
-                  when 'libminisip'
-                    %Q{--enable-debug --enable-video --disable-mil --enable-decklink --enable-opengl --disable-sdl #{libminisip_c_flags} #{libminisip_cpp_flags} #{libminisip_ld_flags}}
-                  when 'minisip'
-                    %Q{--enable-debug --enable-video --enable-textui --enable-opengl}
-                  else
-                    ''
-                end
-                Cmd.run(%Q{./configure #{individual_options} --prefix=#{Path.build.enquote} PKG_CONFIG_PATH=#{Path.build_lib_pkg_config.enquote} ACLOCAL_FLAGS=#{Path.build_share_aclocal} LD_LIBRARY_PATH=#{Path.build_lib.enquote}})
-              end
-              if Options.make
-                UI.info "Make #{library}".green.bold
-                Cmd.run("make")
-              end
-              if Options.make_install
-                UI.info "Make install #{library}".green.bold
-                Cmd.run("make install")
-              end
+              UI.info "Processing #{library}".green.bold
+              bootstrap
+              configure library
+              make
+              make_install
             else
-              UI.warn "Skipping minisip library #{library} because it not be found: #{directory}".green.bold
+              UI.warn "Skipping MiniSIP library #{library} because it could not be found in #{directory.enquote}"
             end
           end
+        end
+        
+        # Creates all build directories such as +lib+, +share+, +bin+, etc.
+        #
+        def create_build_dir
+          # In sudo mode, we don't need to create these. They already exist in the OS.
+          return if superuser?
+          UI.info "Creating target build directories".green.bold
+          [Path.build, Path.build_include, Path.build_lib, Path.build_share, Path.build_share_aclocal].each { |target| Cmd.mkdir target }
+        end
+        
+        # This method runs the `bootstrap´ command in the current directory unless --no-bootstrap was given.
+        # It is only used for the internal MiniSIP libraries.
+        #
+        def bootstrap
+          boostrap! if Options.bootstrap
+        end
+        
+        # This method forces running the `bootstrap´ command in the current directory.
+        # It is only used for the internal MiniSIP libraries.
+        #
+        def bootstrap!
+          if superuser?
+            Cmd.run("./bootstrap")
+          else
+            Cmd.run("./bootstrap -I #{Path.build_share_aclocal.enquote}")
+          end
+        end
+        
+        def configure(name='')
+          configure! name if Options.configure
+        end
+        
+        def configure!(name='')
+          individual_options = case name
+            when 'libminisip'
+              %Q{--enable-debug --enable-video --enable-opengl --disable-mil --enable-decklink --disable-sdl #{libminisip_c_flags} #{libminisip_cpp_flags} #{libminisip_ld_flags}}
+            when 'minisip'
+              %Q{--enable-debug --enable-video --enable-opengl --enable-textui}
+            else
+              ''
+          end
+          common_options = superuser? ? %Q{--prefix=#{Path.build.enquote} PKG_CONFIG_PATH=#{Path.build_lib_pkg_config.enquote} ACLOCAL_FLAGS=#{Path.build_share_aclocal} LD_LIBRARY_PATH=#{Path.build_lib.enquote}} : ''
+          Cmd.run ['./configure', common_options, individual_options].join(' ')
+        end
+        
+        def make
+          make! if Options.make
+        end
+        
+        def make!
+          Cmd.run("make")
+        end
+        
+        def make_install
+          make_install! if Options.make_install
+        end
+        
+        def make_install!
+          Cmd.run("make install")
         end
         
         # Iteratively makes debian packages of the internal MiniSIP libraries.

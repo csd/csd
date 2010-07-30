@@ -27,7 +27,7 @@ require 'test/unit/assertions'
 
 # Extra assertions for Test::Unit
 
-module Test::Unit::Assertions
+module Test::Unit::Assertions #:nodoc:
 
   # Captures $stdout and $stderr to StringIO objects and returns them.
   # Restores $stdout and $stderr when done.
