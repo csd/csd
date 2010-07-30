@@ -5,24 +5,26 @@ module CSD
     module Minisip
       module Component
         module HDVIPER
+          class << self
           
-          def introduction
-          end
+            def introduction
+            end
           
-          def checkout_hdviper
-            Cmd.git_clone('HDVIPER', 'http://github.com/csd/libraries.git', Path.hdviper)
-          end
+            def checkout_hdviper
+              Cmd.git_clone('HDVIPER', 'http://github.com/csd/libraries.git', Path.hdviper)
+            end
 
-          # This method compiles HDVIPER, given that HDVIPER was downloaded before.
-          #
-          def make_hdviper
-            Cmd.cd Path.hdviper_x264, :internal => true
-            Cmd.run('./configure')
-            Cmd.run('make')
-            Cmd.cd Path.hdviper_x264_test_x264api, :internal => true
-            Cmd.run('make')
-          end
+            # This method compiles HDVIPER, given that HDVIPER was downloaded before.
+            #
+            def make_hdviper
+              Cmd.cd Path.hdviper_x264, :internal => true
+              Cmd.run('./configure')
+              Cmd.run('make')
+              Cmd.cd Path.hdviper_x264_test_x264api, :internal => true
+              Cmd.run('make')
+            end
           
+          end
         end
       end
     end

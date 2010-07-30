@@ -8,10 +8,10 @@ Dir[File.join(File.dirname(__FILE__), 'csd', '*.rb')].sort.each { |path| require
 #
 module CSD
   class << self
-    
+  
     # This String holds the name of the executable the user used to bootstrap this gem
     attr_reader :executable
-    
+  
     # This method "runs" the whole CSD gem, so to speak.
     #
     def bootstrap(options={})
@@ -20,9 +20,9 @@ module CSD
       respond_to_incomplete_arguments
       Applications.current.instance.send("#{Options.action}".to_sym)
     end
-    
+  
     private
-    
+  
     # This method check the arguments the user has provided and terminates the AI with
     # some helpful message if the arguments are invalid.
     #
@@ -30,7 +30,7 @@ module CSD
       choose_application unless Applications.current
       choose_action unless Options.valid_action?
     end
-    
+  
     # This methods lists all available applications
     #
     def choose_application
@@ -74,5 +74,4 @@ module CSD
     end
 
   end
-  
 end

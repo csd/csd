@@ -5,17 +5,18 @@ module CSD
     module Minisip
       module Component
         module Core
+          
+          # This is an +Array+ containing the names of the internal MiniSIP libraries. Note that they
+          # are sorted according to the sequence in which they need to be compiled.
+          #
+          LIBRARIES = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip minisip }
+          
           class << self
-            
-            # This is an +Array+ containing the names of the internal MiniSIP libraries. Note that they
-            # are sorted according to the sequence in which they need to be compiled.
-            #
-            LIBRARIES = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip minisip }
             
             # Prints information about how Minisip will be processed.
             #
             def introduction
-              UI.info " MiniSIP libraries to process: ".green + Minisip.libraries.join(', ').yellow
+              UI.info " MiniSIP libraries to process: ".green + libraries.join(', ').yellow
             end
             
             # Determines which libraries of MiniSIP should be processed, because the --only parameter might be set.
@@ -30,7 +31,7 @@ module CSD
             def libminisip_c_flags
               %{CFLAGS="-D__STDC_CONSTANT_MACROS"}
             end
-
+            
             def libminisip_cpp_flags
               if Options.ffmpeg_first
                 %{CPPFLAGS="-I#{Path.hdviper_x264} -I#{Path.hdviper_x264_test_x264api} -I#{Path.ffmpeg_libavutil} -I#{Path.ffmpeg_libavcodec} -I#{Path.ffmpeg_libswscale} -I#{Path.repository_grabber} -I#{Path.repository_decklinksdk}"}
@@ -140,7 +141,7 @@ module CSD
             def run_minisip_gtk_gui
               Cmd.run(Path.build_gtkgui, :die_on_failure => false)
             end
-          
+            
             # Iteratively makes debian packages of the internal MiniSIP libraries.
             # TODO: Refactor this, it looks terribly sensitive.
             # TODO: Check for GPL and LGLP license conflicts.
@@ -153,10 +154,10 @@ module CSD
                 UI.info "Making #{library} with target dist".green.bold
                 if Cmd.cd(directory) or Options.reveal
                   Cmd.run("make dist")
-
+                  
                   tar_filename = File.basename(Dir[File.join(directory, '*.tar.gz')].first)
                   Cmd.move(File.join(directory, tar_filename.to_s), Path.packaging) if tar_filename or Options.reveal
-
+                  
                   if Cmd.cd(Path.packaging) or Options.reveal
                     Cmd.run("tar -xzf #{tar_filename}")
                     tar_dirname = File.basename(tar_filename.to_s, '.tar.gz')
@@ -178,11 +179,11 @@ module CSD
                     else
                       UI.error "Could not enter #{File.join(Path.packaging, tar_dirname)}."
                     end
-
+                    
                   else
                     UI.error "Could not enter #{Path.packaging}."
                   end
-
+                  
                 else
                   UI.error "Could not enter #{directory}."
                 end
@@ -190,7 +191,7 @@ module CSD
               Cmd.cd '/'
               Cmd.run('minisip_gtk_gui')
             end
-
+            
           end
         end
       end
