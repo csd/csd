@@ -11,31 +11,23 @@ module CSD
         DEBIAN_DEPENDENCIES = %w{ automake build-essential checkinstall git-core libasound2-dev libavcodec-dev libglademm-2.4-dev libgtkmm-2.4-dev libltdl3-dev libsdl-dev libsdl-ttf2.0-dev libssl-dev libtool libswscale-dev libx11-dev libxv-dev nasm subversion yasm }
 
         def compile!
-          install_aptitude_dependencies if Options.apt_get
-          after_aptitude_dependencies
+          aptitude if Options.apt_get
+          after_aptitude
           super
         end
         
-        def after_aptitude_dependencies
+        def after_aptitude
         end
         
         def package!
-          modify_libminisip_rules
+          Core.modify_libminisip_rules # TODO: Oursource into Component::Core
           super
         end
         
-        def install_aptitude_dependencies
+        def aptitude
+          UI.info "Installing Debian dependencies".green.bold
           Cmd.run("sudo apt-get update")
           Cmd.run("sudo apt-get install #{DEBIAN_DEPENDENCIES.sort.join(' ')} --yes --fix-missing")
-        end
-        
-        def modify_libminisip_rules
-          if Path.repository_libminisip_rules_backup.file?
-            UI.warn "The libminisip rules seem to be fixed already, I won't touch them now. Delete #{Path.repository_libminisip_rules_backup.enquote} to enforce it."
-          else
-            Cmd.copy Path.repository_libminisip_rules, Path.repository_libminisip_rules_backup
-            Cmd.replace Path.repository_libminisip_rules, 'AUTOMATED_INSTALLER_PLACEHOLDER=""', [libminisip_cpp_flags, libminisip_ld_flags].join(' ')
-          end
         end
         
       end

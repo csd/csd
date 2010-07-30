@@ -38,7 +38,11 @@ module CSD
         # TODO: about.scopes[:action]
         []
       end
-    
+      
+      # This method will look for application and task specific optionsfiles of the current application module.
+      # It returns the Ruby code in a +String+ to be eval'd by the OptionsParser.
+      # If there are no files in myapplication/options, an empty +String+ is returned instead.
+      #
       def options(action='')
         options_dir      = File.join(Path.applications, name, 'options')
         common_file      = File.join(options_dir, "common.rb")

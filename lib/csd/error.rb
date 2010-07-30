@@ -1,11 +1,15 @@
 # -*- encoding: UTF-8 -*-
 
 module CSD
-  # In this module we will keep all types of errors in a readable hierarchy
+  # In this module we will keep all types of errors in a readable hierarchy.
+  # The application modules are assigned the following individual error ranges:
+  #
+  # * +minisip+ has been assigned error status codes 200-280
+  # * +decklink+ has been assigned error status codes 280-299
   #
   module Error
     
-    # All Exceptions raised by CSD must be children of this class. 
+    # All Exceptions raised by CSD must be children of this class.
     #
     class CSDError < StandardError
       def self.status_code(code = nil)
@@ -16,6 +20,13 @@ module CSD
       def status_code
         self.class.status_code
       end
+    end
+    
+    # Errors in this module are caused by internal AI failures.
+    #
+    module Internal
+      # Somebody tried to run the .pathnamify method on +nil+. This probably happened in the test-suite when paths are not set.
+      class PathnamifyingNil < CSDError; status_code(1000); end
     end
     
     # Errors in this module are related to command-line options

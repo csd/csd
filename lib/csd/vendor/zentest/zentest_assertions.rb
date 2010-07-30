@@ -1,4 +1,8 @@
 # -*- encoding: UTF-8 -*-
+require 'test/unit/assertions'
+
+# This module is part of the Zentest framework released under the MIT license.
+# It comprises extra assertions for Test::Unit
 #
 # (The MIT License)
 # 
@@ -22,41 +26,41 @@
 # CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+module Test #:nodoc:
+  module Unit #:nodoc:
+    module Assertions #:nodoc:
+      
+      # Captures $stdout and $stderr to StringIO objects and returns them.
+      # Restores $stdout and $stderr when done.
+      #
+      # Usage:
+      #   def test_puts
+      #     out, err = capture do
+      #       puts 'hi'
+      #       STDERR.puts 'bye!'
+      #     end
+      #     assert_equal "hi\n", out.string
+      #     assert_equal "bye!\n", err.string
+      #   end
+      #
+      def capture
+        require 'stringio'
+        orig_stdout = $stdout.dup
+        orig_stderr = $stderr.dup
+        captured_stdout = StringIO.new
+        captured_stderr = StringIO.new
+        $stdout = captured_stdout
+        $stderr = captured_stderr
+        yield
+        captured_stdout.rewind
+        captured_stderr.rewind
+        return captured_stdout.string, captured_stderr.string
+      ensure
+        $stdout = orig_stdout
+        $stderr = orig_stderr
+      end
 
-require 'test/unit/assertions'
-
-# Extra assertions for Test::Unit
-
-module Test::Unit::Assertions #:nodoc:
-
-  # Captures $stdout and $stderr to StringIO objects and returns them.
-  # Restores $stdout and $stderr when done.
-  #
-  # Usage:
-  #   def test_puts
-  #     out, err = capture do
-  #       puts 'hi'
-  #       STDERR.puts 'bye!'
-  #     end
-  #     assert_equal "hi\n", out.string
-  #     assert_equal "bye!\n", err.string
-  #   end
-  #
-  def capture
-    require 'stringio'
-    orig_stdout = $stdout.dup
-    orig_stderr = $stderr.dup
-    captured_stdout = StringIO.new
-    captured_stderr = StringIO.new
-    $stdout = captured_stdout
-    $stderr = captured_stderr
-    yield
-    captured_stdout.rewind
-    captured_stderr.rewind
-    return captured_stdout.string, captured_stderr.string
-  ensure
-    $stdout = orig_stdout
-    $stderr = orig_stderr
+    end
   end
-
 end

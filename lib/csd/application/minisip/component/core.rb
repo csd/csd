@@ -3,30 +3,89 @@
 module CSD
   module Application
     module Minisip
+      # This namespace is reserved for sub-components of this application. This is done for better readability and modularity
+      # (i.e. less risky to fail in production).
+      #
       module Component
+        # This MiniSIP component is the very minisip source code itself.
+        #
         module Core
           
           # This is an +Array+ containing the names of the internal MiniSIP libraries. Note that they
-          # are sorted according to the sequence in which they need to be compiled.
+          # are sorted according to the sequence in which they need to be compiled (because they depend on each other).
           #
           LIBRARIES = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip minisip }
           
           class << self
             
-            # Prints information about how Minisip will be processed.
+            # This method processes the MiniSIP Core component and does everything needed for compiling it. Note that
+            # it is not responsible for checking depenencies here. It will just focus on compiling the internal MiniSIP libraries.
             #
-            def introduction
-              UI.info " MiniSIP libraries to process: ".green + libraries.join(', ').yellow
+            def compile
+              unless Path.repository.directory?
+                checkout
+                modify_source_code
+              end
+              # We would like to re-compile MiniSIP no matter what options were given as command-line arguments.
+              compile_libraries
             end
             
-            # Determines which libraries of MiniSIP should be processed, because the --only parameter might be set.
+            # This method provides upfront information to the user about how the MiniSIP Core component will be processed.
+            #
+            def introduction
+              UI.info " MiniSIP".green.bold
+              # If the repository directory already exists, we indicate that here
+              download_text = Path.repository.directory? ? "  - located at:           " : "  - downloading to:       "
+              UI.info download_text.green + Path.repository.to_s.yellow
+              # Now let's present which libraries will be compiled with which commands
+              UI.info "  - libraries to process: ".green + libraries.join(', ').yellow
+              UI.info "  - with these commands:  ".green + [('bootstrap' if Options.bootstrap), ('configure' if Options.configure), ('make' if Options.make), ('make install' if Options.make_install)].compact.join(', ').yellow
+            end
+            
+            # Determines which libraries of MiniSIP should be processed, because the --only parameter might be set
+            # by the user, requesting for only a subset of the libraries.
             #
             def libraries
               Options.only ? LIBRARIES.map { |lib| lib if Options.only.to_a.include?(lib) }.compact : LIBRARIES
             end
             
-            # See http://code.google.com/p/ffmpegsource/issues/detail?id=11
-            # But for some reason it did not fix tue issue for us :|
+            # This method downloads the minisip source code in the right version. If the <tt>Options.branch</tt>
+            # parameter is set to a branchname of the source code repository, that branch will be downloaded. Currently
+            # this function uses the intermediary Github repository to make sure that
+            # * the downloaded version is not a risky cutting-edge trunk
+            # * the download works even if the vendor's repository is down (again)
+            # That means that the Github repository (or any other intermediary repository) should be manually updated
+            # by an TTA AI developer, after having made sure that that source code version is working properly.
+            #
+            def checkout
+              UI.debug "#{self.class} checkout"
+              Cmd.git_clone 'MiniSIP repository', 'http://github.com/csd/minisip.git', Path.repository
+              if Options.branch
+                Cmd.cd Path.repository, :internal => true
+                Cmd.run "git pull origin #{Options.branch}"
+              end
+            end
+            
+            # Some places in the MiniSIP source code have to be modified before it can be compiled.
+            # In this case, an absolute path must be replaced with the current absolute prefix path.
+            # Furthermore, modifications of some constants will be done, because this is more compatible
+            # with the most recent FFmpeg version. In fact, MiniSIP won't compile if FFmpeg is present
+            # and this has not been modified.
+            # See http://www.howgeek.com/2010/03/01/ffmpeg-php-error-‘pix_fmt_rgba32’-undeclared-first-use-in-this-function
+            # and http://ffmpeg.org/doxygen/0.5/pixfmt_8h.html#33d341c4f443d24492a95fb7641d0986 for more information.
+            #
+            def modify_source_code
+              UI.info "Fixing MiniSIP source code".green.bold
+              Cmd.replace(Path.repository_open_gl_display, '/home/erik', Path.build)
+              if Options.ffmpeg_first
+                Cmd.replace(Path.repository_avcoder_cxx,   'PIX_FMT_RGBA32', 'PIX_FMT_RGB32')
+                Cmd.replace(Path.repository_avdecoder_cxx, 'PIX_FMT_RGBA32', 'PIX_FMT_RGB32')
+              end
+            end
+            
+            # This flag is needed in order for stdint.h (by default in /usr/lib) to define the constant +UINT64_C+.
+            # If it does not do that, libavutil (part of FFmpeg) will not compile correctly.
+            # See http://code.google.com/p/ffmpegsource/issues/detail?id=11 for more details.
             #
             def libminisip_c_flags
               %{CFLAGS="-D__STDC_CONSTANT_MACROS"}
@@ -44,28 +103,14 @@ module CSD
               %{LDFLAGS="#{Path.hdviper_libx264api} #{Path.hdviper_libtidx264} -lpthread -lrt"}
             end
             
-            def checkout_minisip
-              Cmd.git_clone('MiniSIP repository', 'http://github.com/csd/minisip.git', Path.repository)
-            end
-            
-            def modify_minisip
-              Cmd.replace(Path.repository_open_gl_display, '/home/erik', Path.build)
-              if Options.ffmpeg_first
-                # See http://www.howgeek.com/2010/03/01/ffmpeg-php-error-‘pix_fmt_rgba32’-undeclared-first-use-in-this-function/
-                # and http://ffmpeg.org/doxygen/0.5/pixfmt_8h.html#33d341c4f443d24492a95fb7641d0986
-                Cmd.replace(Path.repository_avcoder_cxx,   'PIX_FMT_RGBA32', 'PIX_FMT_RGB32')
-                Cmd.replace(Path.repository_avdecoder_cxx, 'PIX_FMT_RGBA32', 'PIX_FMT_RGB32')
-              end
-            end
-            
             # Iteratively processes the internal MiniSIP libraries (+bootstrap+, +configure+, +make+, +make install+).
             #
-            def make_minisip
+            def compile_libraries
               create_build_dir
               libraries.each do |library|
                 directory = Pathname.new(File.join(Path.repository, library))
                 if Cmd.cd(directory) or Options.reveal
-                  UI.info "Processing #{library}".green.bold
+                  UI.info "Processing MiniSIP -> #{library}".green.bold
                   bootstrap
                   configure library
                   make
@@ -89,7 +134,7 @@ module CSD
             # It is only used for the internal MiniSIP libraries.
             #
             def bootstrap
-              boostrap! if Options.bootstrap
+              bootstrap! if Options.bootstrap
             end
             
             # This method forces running the `bootstrap´ command in the current directory.
@@ -136,10 +181,24 @@ module CSD
               Cmd.run("make install")
             end
           
-            # Executed the MiniSIP GTK GUI.
+            # Execute the MiniSIP GTK GUI.
             #
-            def run_minisip_gtk_gui
-              Cmd.run(Path.build_gtkgui, :die_on_failure => false)
+            def run_gtk_gui
+              UI.info "Executing MiniSIP".green.bold
+              if superuser?
+                Cmd.run('minisip_gtk_gui')
+              else
+                Cmd.run(Path.build_gtkgui, :die_on_failure => false, :verbose => true, :announce_pwd => false)
+              end
+            end
+            
+            def modify_libminisip_rules
+              if Path.repository_libminisip_rules_backup.file?
+                UI.warn "The libminisip rules seem to be fixed already, I won't touch them now. Delete #{Path.repository_libminisip_rules_backup.enquote} to enforce it."
+              else
+                Cmd.copy Path.repository_libminisip_rules, Path.repository_libminisip_rules_backup
+                Cmd.replace Path.repository_libminisip_rules, 'AUTOMATED_INSTALLER_PLACEHOLDER=""', [libminisip_cpp_flags, libminisip_ld_flags].join(' ')
+              end
             end
             
             # Iteratively makes debian packages of the internal MiniSIP libraries.

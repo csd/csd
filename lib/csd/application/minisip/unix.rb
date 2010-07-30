@@ -10,6 +10,10 @@ module CSD
         #
         def introduction
           Core.introduction
+          # FFmpeg.introduction
+          # HDVIPER.introduction
+          # X264.introduction
+          # Plugins.introduction
           super
         end
         
@@ -17,10 +21,10 @@ module CSD
         #
         def compile
           UI.separator
-          UI.info "This operation will download and compile MiniSIP.".green.bold
+          UI.info "This operation will compile MiniSIP using the following components.".green.bold
+          UI.separator
           introduction
           compile!
-          run_minisip_gtk_gui
         end
         
         # This method is called by the AI when the user requests the task "package" for MiniSIP.
@@ -32,30 +36,27 @@ module CSD
           package!
         end
         
-        # This is the internal compile procedure for MiniSIP
+        # This is the internal compile procedure for MiniSIP and its components.
         #
         def compile!
-          Cmd.mkdir Path.work
-          make_hdviper   unless checkout_hdviper.already_exists?
-          modify_minisip unless checkout_minisip.already_exists?
-          checkout_plugins
+          create_working_directory
+          HDVIPER.compile
           if Options.ffmpeg_first
-            make_x264 unless checkout_x264.already_exists?
-            unless checkout_ffmpeg.already_exists?
-              modify_libavutil
-              checkout_libswscale
-              make_ffmpeg
-            end
-            make_minisip
+            X264.compile
+            FFmpeg.compile
+            Core.compile
           else
-            make_minisip
-            make_x264 unless checkout_x264.already_exists?
-            unless checkout_ffmpeg.already_exists?
-              checkout_libswscale
-              make_ffmpeg
-            end
+            Core.compile
+            X264.compile
+            FFmpeg.compile
           end
-          copy_plugins
+          Plugins.compile
+          Core.run_gtk_gui
+        end
+        
+        def create_working_directory
+          UI.info "Creating working directory".green.bold
+          Cmd.mkdir Path.work
         end
         
       end
