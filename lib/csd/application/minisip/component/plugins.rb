@@ -8,9 +8,13 @@ module CSD
           class << self
             
             def compile
-              return if Path.plugins.directory?
-              checkout
-              copy
+              UI.debug "#{self}.compile was called"
+              if Path.plugins.directory? and !Options.reveal
+                UI.warn "The optional MiniSIP plugins will not be installed, because the directory #{Path.plugins.enquote} already exists."
+              else
+                checkout
+                copy
+              end
             end
           
             def introduction
@@ -26,7 +30,7 @@ module CSD
               # TODO: Find out how to determine the destination path for the plugins
               # UI.info "Creating plugin target directory".green.bold
               # result = Path.plugins_destination.parent.directory? ? Cmd.run("sudo mkdir #{Path.plugins_destination}") : CommandResult.new
-              Cmd.copy(Dir[File.join(Path.plugins, '*.{l,la,so}')], Path.plugins_destination) if Path.plugins_destination.directory?
+              Cmd.copy(Dir[File.join(Path.plugins, '{m}*.{l,la,so}')], Path.plugins_destination) if Path.plugins_destination.directory?
             end
           
           end

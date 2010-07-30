@@ -18,6 +18,7 @@ module CSD
       @executable = options[:executable]
       Options.parse!
       respond_to_incomplete_arguments
+      UI.debug "#{self}.bootstrap initializes the task #{Options.action.enquote} of the application #{Applications.current.name.to_s.enquote} now"
       Applications.current.instance.send("#{Options.action}".to_sym)
     end
   

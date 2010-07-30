@@ -12,7 +12,7 @@ class TestMinisip < Test::Unit::TestCase
       ARGV.clear
       Options.clear
       ARGV.push(@name)
-      Applications.current!
+      Applications.current
       @app = Application::Minisip::Base.new
     end
     

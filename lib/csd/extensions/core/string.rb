@@ -13,7 +13,7 @@ module CSD
         #
         # ==== Example
         #
-        #   'Hello World'.enquote    # => '"Hello World"'
+        #   'Hello World'.enquote    # => '`Hello World´'
         #
         def enquote
           %Q{"#{self}"}

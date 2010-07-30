@@ -10,16 +10,19 @@ module CSD
       
       def indicate_activity
       end
-    
+      
+      def continue?
+      end
+      
       def debug(message)
       end
-    
+      
       def info(message)
       end
-    
+      
       def warn(message)
       end
-
+      
       def error(message)
       end
       

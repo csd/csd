@@ -32,9 +32,11 @@ module CSD
         #
         def introduction
           UI.separator
-          UI.info " Working directory:              ".green + Path.work.to_s.yellow
-          UI.info " Your Platform:                  ".green + Gem::Platform.local.humanize.to_s.yellow
-          UI.info(" Application module:             ".green + self.class.name.to_s.yellow)
+          UI.info " Working directory:       ".green.bold + Path.work.to_s.yellow
+          unless Options.debug
+            UI.info " Your Platform:           ".green + Gem::Platform.local.humanize.to_s.yellow
+            UI.info(" Application module:      ".green + self.class.name.to_s.yellow)
+          end
           UI.separator
           if Options.help
             UI.info Options.helptext
@@ -42,7 +44,7 @@ module CSD
             Path.work.rmdir if Options.temp and Path.work.directory? and Path.work.children.empty?
             exit
           else
-            raise Interrupt unless (Options.yes or Options.reveal or UI.ask_yes_no("Continue?".red.bold, true))
+            raise Interrupt unless (Options.yes or Options.reveal or UI.continue?)
           end
         end
         

@@ -8,9 +8,13 @@ module CSD
           class << self
             
             def compile
-              return if Path.x264_repository.directory?
-              checkout
-              make
+              UI.debug "#{self}.compile was called"
+              if Path.x264_repository.directory? and !Options.reveal
+                UI.warn "x264 will not be processed, because the directory #{Path.x264_repository.enquote} already exists."
+              else
+                checkout
+                make
+              end
             end
             
             def introduction

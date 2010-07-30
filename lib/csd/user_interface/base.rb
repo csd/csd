@@ -13,19 +13,22 @@ module CSD
       
       def indicate_activity
       end
-    
+      
+      def ask_yes_no(question, default=nil)
+      end
+      
       def debug(message)
       end
-    
+      
       def info(message)
       end
-    
+      
       def warn(message)
       end
-
+      
       def error(message)
       end
-
+      
     end
   end
 end

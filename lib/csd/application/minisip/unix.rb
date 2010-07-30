@@ -21,7 +21,7 @@ module CSD
         #
         def compile
           UI.separator
-          UI.info "This operation will compile MiniSIP using the following components.".green.bold
+          UI.info "This operation will compile MiniSIP and its dependencies.".green.bold
           UI.separator
           introduction
           compile!
@@ -55,8 +55,10 @@ module CSD
         end
         
         def create_working_directory
-          UI.info "Creating working directory".green.bold
-          Cmd.mkdir Path.work
+          unless Path.work.directory?
+            UI.info "Creating working directory".green.bold
+            Cmd.mkdir Path.work
+          end
         end
         
       end

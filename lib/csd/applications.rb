@@ -7,54 +7,49 @@ module CSD
   # A convenience wrapper to get information about the available applications
   #
   class Applications
-
+    
     # Returns the application module instance of +app_name+. Returns +nil+ if the application could not be found or loaded.
     #
     def self.find(app_name)
       return nil if app_name.to_s.empty?
       begin
-        UI.debug "Applications.find: Attempting to require `#{File.join(Path.applications, app_name.to_s)}´."
+        UI.debug "#{self}.find got a request to see whether `#{app_name}´ is a valid application or not"
         require File.join(Path.applications, app_name.to_s)
-        UI.debug "Applications.find: Attempting to load `#{app_name}´."
+        UI.debug "#{self}.find tries to initialize the loaded application `#{app_name}´ now"
         "CSD::Application::#{app_name.to_s.camelize}".constantize
       rescue LoadError => e
-        UI.debug "Applications.find: The Application `#{app_name}´ could not be loaded properly."
-        UI.debug "                   Reason: #{e}"
+        UI.debug "#{self}.find could not load `#{app_name}´ in #{e.to_s.gsub('no such file to load -- ', '').enquote}"
         nil
       end
     end
-
+    
+    # This method returns instantiated modules of all valid applications in an +Array+ or in a block.
+    #
     def self.all(&block)
       result = []
       Dir.directories(Path.applications) do |dir|
         next if dir == 'default'
-        UI.debug "Applications.all: Identified application directory `#{dir}´."
         if app = find(dir)
-          UI.debug "Applications.all: The application `#{dir}´ is valid."
           block_given? ? yield(app) : result << app
         end
       end
       result
     end
 
-    def self.valid?(name)
-      list.include?(name)
-    end
-    
-    # This method identifies the desired application and initializes it in to +@@current+.
-    # It is meant to be very robust, we expect the application to be any one of the first three arguments.
+    # This method holds the desired application and initializes its module into +@@current+.
     #
     def self.current
-      @@current ||= begin
-        Applications.find(ARGV.first) || Applications.find(ARGV.second) || Applications.find(ARGV.third)
-      end
+      # In testmode we don't want to perform caching
+      return choose_current if Options.testmode
+      # Otherwise we choose and cache the current application module here
+      @@current ||= choose_current
     end
     
-    # Forces a reload of the current application. This method is useful for functional tests.
+    # This method identifies the desired application. No caching takes place here.
+    # It is meant to be very robust, we expect the application to be any one of the first three arguments.
     #
-    def self.current!
-      @@current = false
-      current
+    def self.choose_current
+      Applications.find(ARGV.first) || Applications.find(ARGV.second) || Applications.find(ARGV.third)
     end
     
   end

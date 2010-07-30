@@ -10,7 +10,13 @@ module CSD
             # This method processes HDVIPER.
             #
             def compile
-              configure_and_make unless checkout.already_exists?
+              UI.debug "#{self}.compile was called"
+              if Path.hdviper.directory? and !Options.reveal
+                UI.warn "HDVIPER will not be processed, because the directory #{Path.hdviper.enquote} already exists."
+              else
+                checkout
+                configure_and_make
+              end
             end
             
             # This method informs about the HDVIPER process.

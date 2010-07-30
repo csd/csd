@@ -22,7 +22,10 @@ module CSD
             # it is not responsible for checking depenencies here. It will just focus on compiling the internal MiniSIP libraries.
             #
             def compile
-              unless Path.repository.directory?
+              UI.debug "#{self}.compile was called"
+              if Path.repository.directory? and !Options.reveal
+                UI.warn "The MiniSIP source code will not be downloaded, because the directory #{Path.repository.enquote} already exists."
+              else
                 checkout
                 modify_source_code
               end
@@ -58,7 +61,6 @@ module CSD
             # by an TTA AI developer, after having made sure that that source code version is working properly.
             #
             def checkout
-              UI.debug "#{self.class} checkout"
               Cmd.git_clone 'MiniSIP repository', 'http://github.com/csd/minisip.git', Path.repository
               if Options.branch
                 Cmd.cd Path.repository, :internal => true
@@ -83,14 +85,6 @@ module CSD
               end
             end
             
-            # This flag is needed in order for stdint.h (by default in /usr/lib) to define the constant +UINT64_C+.
-            # If it does not do that, libavutil (part of FFmpeg) will not compile correctly.
-            # See http://code.google.com/p/ffmpegsource/issues/detail?id=11 for more details.
-            #
-            def libminisip_c_flags
-              %{CFLAGS="-D__STDC_CONSTANT_MACROS"}
-            end
-            
             def libminisip_cpp_flags
               if Options.ffmpeg_first
                 %{CPPFLAGS="-I#{Path.hdviper_x264} -I#{Path.hdviper_x264_test_x264api} -I#{Path.ffmpeg_libavutil} -I#{Path.ffmpeg_libavcodec} -I#{Path.ffmpeg_libswscale} -I#{Path.repository_grabber} -I#{Path.repository_decklinksdk}"}
@@ -109,7 +103,7 @@ module CSD
               create_build_dir
               libraries.each do |library|
                 directory = Pathname.new(File.join(Path.repository, library))
-                if Cmd.cd(directory) or Options.reveal
+                if Cmd.cd(directory, :internal => true).success? or Options.reveal
                   UI.info "Processing MiniSIP -> #{library}".green.bold
                   bootstrap
                   configure library
@@ -155,13 +149,13 @@ module CSD
             def configure!(name='')
               individual_options = case name
                 when 'libminisip'
-                  %Q{--enable-debug --enable-video --enable-opengl --disable-mil --enable-decklink --disable-sdl #{libminisip_c_flags} #{libminisip_cpp_flags} #{libminisip_ld_flags}}
+                  %Q{--enable-debug --enable-video --enable-opengl --disable-mil --enable-decklink --disable-sdl #{libminisip_cpp_flags} #{libminisip_ld_flags}}
                 when 'minisip'
                   %Q{--enable-debug --enable-video --enable-opengl --enable-textui}
                 else
                   ''
               end
-              common_options = superuser? ? %Q{--prefix=#{Path.build.enquote} PKG_CONFIG_PATH=#{Path.build_lib_pkg_config.enquote} ACLOCAL_FLAGS=#{Path.build_share_aclocal} LD_LIBRARY_PATH=#{Path.build_lib.enquote}} : ''
+              common_options = superuser? ? '' : %Q{--prefix=#{Path.build.enquote} PKG_CONFIG_PATH=#{Path.build_lib_pkg_config.enquote} ACLOCAL_FLAGS=#{Path.build_share_aclocal} LD_LIBRARY_PATH=#{Path.build_lib.enquote}}
               Cmd.run ['./configure', common_options, individual_options].join(' ')
             end
             

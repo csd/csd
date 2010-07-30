@@ -13,7 +13,7 @@ module CSD
         
         def fix_ubuntu_10_04
           UI.info "Fixing broken Debian libraries (Ubuntu 10.04 only)".green.bold
-          if Path.giomm_header_backup.file?
+          if Path.giomm_header_backup.file? and !Options.reveal
             UI.warn "giomm-2.4 seems to be fixed already, I won't touch it now. Delete #{Path.giomm_header_backup.enquote} to enforce it."
           else
             Path.new_giomm_header = File.join(Dir.mktmpdir, 'giomm.h')
