@@ -6,6 +6,9 @@ module CSD
       module Component
         module FFmpeg
           
+          def introduction
+          end
+          
           def checkout
             UI.debug "#{self}: checkout"
             Cmd.git_clone('ffmpeg repository', 'http://github.com/csd/ffmpeg.git', Path.ffmpeg_repository)

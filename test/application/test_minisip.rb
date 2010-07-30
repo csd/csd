@@ -20,14 +20,15 @@ class TestDir < Test::Unit::TestCase
     end
     
     should "know how to identify and sort a subset of internal MiniSIP libraries with --only" do
+      all_libraries = Application::Minisip::Component::Core::LIBRARIES
       Options.only = nil
-      assert_equal Application::Minisip::Base::LIBRARIES, @app.libraries
+      assert_equal all_libraries, @app::Core.libraries
       Options.only = %w{ libmcrypto }
       assert_equal %w{ libmcrypto }, @app.libraries
       Options.only = %w{ does-not-exist }
       assert @app.libraries == []
-      Options.only = Application::Minisip::Base::LIBRARIES
-      assert_equal Application::Minisip::Base::LIBRARIES, @app.libraries
+      Options.only = all_libraries
+      assert_equal all_libraries, @app.libraries
       Options.only = %w{ minisip libmutil }
       assert_equal %w{ libmutil minisip }, @app.libraries
     end

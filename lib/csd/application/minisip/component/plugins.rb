@@ -6,6 +6,9 @@ module CSD
       module Component
         module Plugins
           
+          def introduction
+          end
+          
           def checkout_plugins
             Cmd.git_clone('additional MiniSIP plugins', 'http://github.com/csd/minisip-plugins.git', Path.plugins)
           end

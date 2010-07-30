@@ -6,6 +6,9 @@ module CSD
       module Component
         module X264
           
+          def introduction
+          end
+          
           def checkout_x264
             Cmd.git_clone('x264 repository', 'http://github.com/csd/x264.git', Path.x264_repository)
           end

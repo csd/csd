@@ -6,6 +6,9 @@ module CSD
       module Component
         module HDVIPER
           
+          def introduction
+          end
+          
           def checkout_hdviper
             Cmd.git_clone('HDVIPER', 'http://github.com/csd/libraries.git', Path.hdviper)
           end

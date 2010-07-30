@@ -11,8 +11,7 @@ module CSD
         # This method presents a general overview about the task that is to be performed.
         #
         def introduction
-          UI.separator
-          UI.info " MiniSIP libraries to process:   ".green + libraries.join(', ').yellow
+          Core.introduction
           super
         end
         
