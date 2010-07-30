@@ -7,6 +7,8 @@ module CSD
     module Minisip
       class Base < CSD::Application::Base
         
+        include Component
+        
         # Tasks to be done before the introduction is evoked by the AI.
         #
         def initialize

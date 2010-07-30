@@ -4,26 +4,26 @@ module CSD
   module Application
     module Minisip
       module Component
-        module Minisip
+        module Core
           class << self
-      
+            
             # This is an +Array+ containing the names of the internal MiniSIP libraries. Note that they
             # are sorted according to the sequence in which they need to be compiled.
             #
             LIBRARIES = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip minisip }
-          
+            
             # Prints information about how Minisip will be processed.
             #
-            def self.introduction
+            def introduction
               UI.info " MiniSIP libraries to process: ".green + Minisip.libraries.join(', ').yellow
             end
-
+            
             # Determines which libraries of MiniSIP should be processed, because the --only parameter might be set.
             #
             def libraries
               Options.only ? LIBRARIES.map { |lib| lib if Options.only.to_a.include?(lib) }.compact : LIBRARIES
             end
-        
+            
             # See http://code.google.com/p/ffmpegsource/issues/detail?id=11
             # But for some reason it did not fix tue issue for us :|
             #
@@ -38,15 +38,15 @@ module CSD
                 %{CPPFLAGS="-I#{Path.hdviper_x264} -I#{Path.hdviper_x264_test_x264api} -I#{Path.repository_grabber} -I#{Path.repository_decklinksdk}"}
               end
             end
-
+            
             def libminisip_ld_flags
               %{LDFLAGS="#{Path.hdviper_libx264api} #{Path.hdviper_libtidx264} -lpthread -lrt"}
             end
-        
+            
             def checkout_minisip
               Cmd.git_clone('MiniSIP repository', 'http://github.com/csd/minisip.git', Path.repository)
             end
-        
+            
             def modify_minisip
               Cmd.replace(Path.repository_open_gl_display, '/home/erik', Path.build)
               if Options.ffmpeg_first
@@ -56,7 +56,7 @@ module CSD
                 Cmd.replace(Path.repository_avdecoder_cxx, 'PIX_FMT_RGBA32', 'PIX_FMT_RGB32')
               end
             end
-        
+            
             # Iteratively processes the internal MiniSIP libraries (+bootstrap+, +configure+, +make+, +make install+).
             #
             def make_minisip
@@ -74,7 +74,7 @@ module CSD
                 end
               end
             end
-
+            
             # Creates all build directories such as +lib+, +share+, +bin+, etc.
             #
             def create_build_dir
@@ -83,14 +83,14 @@ module CSD
               UI.info "Creating target build directories".green.bold
               [Path.build, Path.build_include, Path.build_lib, Path.build_share, Path.build_share_aclocal].each { |target| Cmd.mkdir target }
             end
-
+            
             # This method runs the `bootstrap´ command in the current directory unless --no-bootstrap was given.
             # It is only used for the internal MiniSIP libraries.
             #
             def bootstrap
               boostrap! if Options.bootstrap
             end
-
+            
             # This method forces running the `bootstrap´ command in the current directory.
             # It is only used for the internal MiniSIP libraries.
             #
@@ -101,11 +101,11 @@ module CSD
                 Cmd.run("./bootstrap -I #{Path.build_share_aclocal.enquote}")
               end
             end
-
+            
             def configure(name='')
               configure! name if Options.configure
             end
-
+            
             def configure!(name='')
               individual_options = case name
                 when 'libminisip'
@@ -118,30 +118,29 @@ module CSD
               common_options = superuser? ? %Q{--prefix=#{Path.build.enquote} PKG_CONFIG_PATH=#{Path.build_lib_pkg_config.enquote} ACLOCAL_FLAGS=#{Path.build_share_aclocal} LD_LIBRARY_PATH=#{Path.build_lib.enquote}} : ''
               Cmd.run ['./configure', common_options, individual_options].join(' ')
             end
-
+            
             def make
               make! if Options.make
             end
-
+            
             def make!
               Cmd.run("make")
             end
-
+            
             def make_install
               make_install! if Options.make_install
             end
-
+            
             def make_install!
               Cmd.run("make install")
             end
-        
+          
             # Executed the MiniSIP GTK GUI.
             #
             def run_minisip_gtk_gui
               Cmd.run(Path.build_gtkgui, :die_on_failure => false)
             end
-        
-        
+          
             # Iteratively makes debian packages of the internal MiniSIP libraries.
             # TODO: Refactor this, it looks terribly sensitive.
             # TODO: Check for GPL and LGLP license conflicts.

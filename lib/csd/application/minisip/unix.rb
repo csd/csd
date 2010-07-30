@@ -6,8 +6,6 @@ module CSD
     module Minisip
       class Unix < Base
         
-        include Component
-        
         # This method presents a general overview about the task that is to be performed.
         #
         def introduction
