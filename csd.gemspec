@@ -83,6 +83,7 @@ Gem::Specification.new do |s|
      "test/unit/test_dir.rb",
      "test/unit/test_open_struct.rb",
      "test/unit/test_pathname.rb",
+     "test/unit/test_platform.rb",
      "test/unit/test_string.rb"
   ]
   s.homepage = %q{http://github.com/csd/csd}
@@ -119,6 +120,7 @@ Gem::Specification.new do |s|
      "test/unit/test_dir.rb",
      "test/unit/test_open_struct.rb",
      "test/unit/test_pathname.rb",
+     "test/unit/test_platform.rb",
      "test/unit/test_string.rb"
   ]
 

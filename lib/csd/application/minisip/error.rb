@@ -1,5 +1,5 @@
 # -*- encoding: UTF-8 -*-
-require File.join(File.dirname(__FILE__), '..', '..', 'error')
+require 'csd/error'
 
 module CSD
   module Error
