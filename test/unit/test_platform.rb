@@ -18,6 +18,13 @@ class TestPlatform < Test::Unit::TestCase
       end
     end
     
+    should "know whether it's debian or not" do
+      assert !Gem::Platform.local.debian? if Gem::Platform.local.os == 'darwin'
+      # TODO: This is not the best way to determine debian or red hat
+      assert Gem::Platform.local.debian? if Gem::Platform.local.os == 'linux' and Cmd.run('which dpkg', :internal => true, :die_on_failure => false).success?
+      assert !Gem::Platform.local.debian? if Gem::Platform.local.os == 'linux' and Cmd.run('which rpm', :internal => true, :die_on_failure => false).success?
+    end
+    
   end
 
 end

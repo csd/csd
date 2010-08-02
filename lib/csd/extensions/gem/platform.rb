@@ -16,6 +16,12 @@ module CSD
           "#{os} (#{cpu}#{version_string})"
         end
         
+        # Determines whether the OS is Debian or Ubuntu. Returns +true+ or +false+.
+        #
+        def debian?
+          kernel_version and kernel_version =~ /Debian|Ubuntu/
+        end
+        
         # On linux systems, this method returns the current kernel version.
         #
         def kernel_version
