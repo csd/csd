@@ -44,7 +44,7 @@ module CSD
             Path.work.rmdir if Options.temp and Path.work.directory? and Path.work.children.empty?
             raise CSD::Error::Argument::HelpWasRequested
           else
-            raise Interrupt unless (Options.yes or Options.reveal or UI.continue?)
+            raise Interrupt unless Options.yes or Options.reveal or UI.continue?
           end
         end
         

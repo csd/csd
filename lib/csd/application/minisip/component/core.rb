@@ -182,7 +182,7 @@ module CSD
               if superuser?
                 Cmd.run('minisip_gtk_gui')
               else
-                Cmd.run(Path.build_gtkgui, :die_on_failure => false, :verbose => true, :announce_pwd => false)
+                Cmd.run(Path.build_gtkgui, :die_on_failure => false, :announce_pwd => false)
               end
             end
             

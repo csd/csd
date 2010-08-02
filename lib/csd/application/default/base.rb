@@ -36,6 +36,13 @@ module CSD
         Path.work = path.pathnamify.expand_path
       end
       
+      def create_working_directory
+        unless Path.work.directory?
+          UI.info "Creating working directory".green.bold
+          Cmd.mkdir Path.work
+        end
+      end
+      
     end
   end
 end

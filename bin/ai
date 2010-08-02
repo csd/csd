@@ -20,6 +20,7 @@ rescue CSD::Error::CSDError => e
   exit e.status_code
 rescue Interrupt
   # Lastly, close the AI gracefully on abnormal termination
+  CSD.ui.separator
   CSD.ui.info "Quitting the AI...".red
   exit 1
 end
