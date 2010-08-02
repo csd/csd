@@ -18,6 +18,7 @@ module CSD
         def pathnamify
           case self
             when ::Pathname then self
+            when NilClass then raise ::CSD::Error::Internal::PathnamifyingNil
             else ::Pathname.new(self)
           end
         end

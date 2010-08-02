@@ -6,14 +6,14 @@ module CSD
     module Minisip
       class Ubuntu10 < Debian
         
-        def after_aptitude_dependencies
+        def after_aptitude
           fix_ubuntu_10_04
-          exit if Options.only_fix_giomm
           super
         end
         
         def fix_ubuntu_10_04
-          if Path.giomm_header_backup.file?
+          UI.info "Fixing broken Debian libraries (Ubuntu 10.04 only)".green.bold
+          if Path.giomm_header_backup.file? and !Options.reveal
             UI.warn "giomm-2.4 seems to be fixed already, I won't touch it now. Delete #{Path.giomm_header_backup.enquote} to enforce it."
           else
             Path.new_giomm_header = File.join(Dir.mktmpdir, 'giomm.h')
@@ -26,7 +26,7 @@ module CSD
             Cmd.run("sudo cp #{Path.new_giomm_header} #{Path.giomm_header}")
           end
         end
-      
+        
       end
     end
   end

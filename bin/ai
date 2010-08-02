@@ -22,5 +22,5 @@ rescue Interrupt
   # Lastly, close the AI gracefully on abnormal termination
   CSD.ui.separator
   CSD.ui.info "Quitting the AI...".red
-  exit
+  exit 1
 end

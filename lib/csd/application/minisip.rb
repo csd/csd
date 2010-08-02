@@ -38,32 +38,35 @@ module CSD
         # * +unknown+
         #
         def instance
+          UI.debug "#{self}.instance checks whether MiniSIP is supported for the OS #{Gem::Platform.local.os.enquote}"
           @instance ||= case Gem::Platform.local.os
             
             when 'darwin'
               # Mac OS X
-              UI.debug "Mac OS X identified"
+              UI.debug "#{self}.instance supports Mac OS X"
               Darwin.new
             
             when 'linux'
               # Linux
-              UI.debug "Analyzing Linux kernel release: #{Gem::Platform.local.kernel_release}"
+              UI.debug "#{self}.instance supports Linux"
+              UI.debug "#{self}.instance analyzes the Linux kernel release #{Gem::Platform.local.kernel_release.to_s.enquote}"
               case Gem::Platform.local.kernel_release
                 
                 when '2.6.32-21-generic', '2.6.32-22-generic'
                   # Ubuntu 10.04
-                  UI.debug "Ubuntu 10.04 identified"
+                  UI.debug "#{self}.instance supports Ubuntu 10.04"
                   Ubuntu10.new
                 
                 else
                   # Any other Linux (currently only Debian is supported)
-                  UI.debug "Debian identified"
+                  UI.debug "#{self}.instance supports Debian"
                   Debian.new
               end
               
             else
               # Microsoft Windows, Java, Solaris, etc...
-              UI.debug "This Operating System is not supported."
+              UI.debug "#{self}.instance does not support #{Gem::Platform.local.os.enquote}"
+              # NOTE: The AI should actually abort here as long as there is no MiniSIP for these platforms at all...
               Base.new
           end
         end

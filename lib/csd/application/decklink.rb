@@ -21,10 +21,6 @@ module CSD
           end
         end
 
-        def options(action='')
-          ''
-        end
-        
       end
     end
   end

@@ -1,17 +1,18 @@
 require 'helper'
 require 'csd/application/minisip'
 
-class TestDir < Test::Unit::TestCase
+class TestMinisip < Test::Unit::TestCase
   
   include CSD
+  include Application::Minisip::Component
   
-  context "The Minisip Base application" do
-  
+  context "The MiniSIP instance" do
+    
     setup do
       ARGV.clear
       Options.clear
       ARGV.push(@name)
-      Applications.current!
+      Applications.current
       @app = Application::Minisip::Base.new
     end
     
@@ -19,32 +20,63 @@ class TestDir < Test::Unit::TestCase
       assert @app.respond_to?(:compile)
     end
     
-    should "know how to identify and sort a subset of internal MiniSIP libraries with --only" do
-      Options.only = nil
-      assert_equal Application::Minisip::Base::LIBRARIES, @app.libraries
-      Options.only = %w{ libmcrypto }
-      assert_equal %w{ libmcrypto }, @app.libraries
-      Options.only = %w{ does-not-exist }
-      assert @app.libraries == []
-      Options.only = Application::Minisip::Base::LIBRARIES
-      assert_equal Application::Minisip::Base::LIBRARIES, @app.libraries
-      Options.only = %w{ minisip libmutil }
-      assert_equal %w{ libmutil minisip }, @app.libraries
-    end
-    
+    context "in the Core component" do
 
-
-
-
-    
-    context "when downloading source code" do
-    
-      should "dummy" do
-        assert true
+      setup do
+        Options.clear
       end
-      
-    end # context "when downloading source code"
-  
-  end # context "The Minisip application"
+
+      should "know how to identify and sort a subset of internal MiniSIP libraries with --only" do
+        Options.only = nil
+        assert_equal Core::LIBRARIES, Core.libraries
+        Options.only = %w{ libmcrypto }
+        assert_equal %w{ libmcrypto }, Core.libraries
+        Options.only = %w{ does-not-exist }
+        assert Core.libraries == []
+        Options.only = Core::LIBRARIES
+        assert_equal Core::LIBRARIES, Core.libraries
+        Options.only = %w{ minisip libmutil }
+        assert_equal %w{ libmutil minisip }, Core.libraries
+      end
+
+      context "in theory" do
+
+        setup do
+          Options.clear
+          Options.reveal = true
+        end
+
+        should "know how to checkout the default branch of the source code" do
+          out, err = capture { Core.checkout }
+          assert_match /git clone /, out
+          assert_no_match /git pull/, out
+          assert err.empty?
+        end
+        
+        should "know how to checkout a particular branch of the source code" do
+          Options.branch = 'cuttingedge'
+          out, err = capture { Core.checkout }
+          assert_match /git clone /, out
+          assert_match /git pull .+ cuttingedge/, out
+          assert err.empty?
+        end
+
+      end # context "in theory"
+
+      context "in practice" do
+
+        if ONLINE
+
+          setup do
+            Options.clear
+          end
+
+        end # if ONLINE
+
+      end # context "in practice"
+
+    end # context "The Minisip Core component"
+    
+  end # context "The MiniSIP instance"
   
 end

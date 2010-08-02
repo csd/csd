@@ -25,27 +25,27 @@ class TestApplications < Test::Unit::TestCase
     
         should "find an application in the first argument" do
           ARGV.push(@name)
-          assert_equal @name, Applications.current!.name
+          assert_equal @name, Applications.current.name
         end
       
         should "find an application in the second argument" do
           ARGV.push('dummy')
           ARGV.push(@name)
-          assert_equal @name, Applications.current!.name
+          assert_equal @name, Applications.current.name
         end
       
         should "find an application in the third argument" do
           ARGV.push('foo')
           ARGV.push('bar')
           ARGV.push(@name)
-          assert_equal @name, Applications.current!.name
+          assert_equal @name, Applications.current.name
         end
       
         should "set nothing, if there is no valid app" do
           ARGV.push('foo')
           ARGV.push('bar')
           ARGV.push('bob')
-          assert !Applications.current!
+          assert !Applications.current
         end
         
       end # context "the find function"

@@ -320,7 +320,31 @@ That we in truth can nothing know!}
         assert_equal '', err
       end
       
-      context "in verbose mode" do
+      context "and in reveal mode" do
+        
+        setup do
+          Options.reveal = true
+        end
+
+        should "not really execute the command but announce something" do
+          out, err = capture do
+            assert_kind_of(CommandResult, result = Cmd.run('/this/will//definitely/break/if/executed'))
+            assert result.success?
+          end
+          assert !out.empty?
+        end
+        
+        should "still execute the command if force_in_reveal is true" do
+          out, err = capture do
+            assert_kind_of(CommandResult, result = Cmd.run('/this/will//definitely/break/if/executed', :die_on_failure => false, :force_in_reveal => true))
+            assert !result.success?
+          end
+          assert !out.empty?
+        end
+        
+      end
+      
+      context "and in verbose mode" do
         
         setup do
           Options.verbose = true
@@ -335,7 +359,7 @@ That we in truth can nothing know!}
           assert_equal '', err
         end
 
-      end # context "in verbose mode"
+      end # context "and in verbose mode"
     
     end # context "in normal mode"
     

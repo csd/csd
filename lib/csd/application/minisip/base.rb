@@ -1,127 +1,55 @@
 # -*- encoding: UTF-8 -*-
 require 'csd/application/default/base'
+require 'csd/application/minisip/component'
 
 module CSD
   module Application
     module Minisip
       class Base < CSD::Application::Base
         
-        # This is an +Array+ containing the names of the internal MiniSIP libraries. Note that they
-        # are sorted according to the sequence in which they need to be compiled.
-        #
-        LIBRARIES = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip minisip }
+        include Component
         
-        # Tasks to be done before the introduction is evoked.
+        # Tasks to be done before the introduction is evoked by the AI.
         #
         def initialize
           super
           define_relative_paths
         end
-        
-        # MAIN APPLICATION OPERATIONS
-        
+
+        # Running the compile task.
+        #
         def compile
           UI.error 'Currently not supported for this platform. Sorry.'
         end
         
+        # Running the package task.
+        #
         def package
           UI.error 'Currently not supported for this platform. Sorry.'
         end
         
-        # GENERAL USER INFORMATION
-        
+        # This methods prints general information about this application module.
+        #
         def introduction
           UI.separator
-          UI.info " Working directory:              ".green + Path.work.to_s.yellow
-          UI.info " Your Platform:                  ".green + Gem::Platform.local.humanize.to_s.yellow
-          UI.info(" Application module:             ".green + self.class.name.to_s.yellow)
+          UI.info " Working directory:       ".green.bold + Path.work.to_s.yellow
+          if Options.debug
+            UI.info " Your Platform:           ".green + Gem::Platform.local.humanize.to_s.yellow
+            UI.info(" Application module:      ".green + self.class.name.to_s.yellow)
+          end
           UI.separator
           if Options.help
             UI.info Options.helptext
             # Cleanup in case the working directory was temporary and is empty
             Path.work.rmdir if Options.temp and Path.work.directory? and Path.work.children.empty?
-            exit
+            raise CSD::Error::Argument::HelpWasRequested
           else
-            raise Interrupt unless (Options.yes or Options.reveal or UI.ask_yes_no("Continue?".red.bold, true))
+            raise Interrupt unless Options.yes or Options.reveal or UI.continue?
           end
         end
         
-        # OTHER CROSS-PLATFORM TASKS
-        
-        # Determines which libraries of MiniSIP should be processed, because the --only parameter might be set.
+        # Defines all paths ever needed for the MiniSIP module based on the working directory.
         #
-        def libraries
-          Options.only ? LIBRARIES.map { |lib| lib if Options.only.to_a.include?(lib) }.compact : LIBRARIES
-        end
-
-        # CHECKOUTS
-        
-        def checkout_minisip
-          Cmd.git_clone('MiniSIP repository', 'http://github.com/csd/minisip.git', Path.repository)
-        end
-        
-        def checkout_plugins
-          Cmd.git_clone('additional MiniSIP plugins', 'http://github.com/csd/minisip-plugins.git', Path.plugins)
-        end
-
-        def checkout_hdviper
-          Cmd.git_clone('HDVIPER', 'http://github.com/csd/libraries.git', Path.hdviper)
-        end
-        
-        def checkout_ffmpeg
-          Cmd.git_clone('ffmpeg repository', 'http://github.com/csd/ffmpeg.git', Path.ffmpeg_repository)
-        end
-        
-        def checkout_libswscale
-          Cmd.git_clone('ffmpeg libswscale sub-repository', 'http://github.com/csd/libswscale.git', Path.ffmpeg_libswscale)
-        end
-        
-        def checkout_x264
-          Cmd.git_clone('x264 repository', 'http://github.com/csd/x264.git', Path.x264_repository)
-        end
-        
-        # MODIFYING FILES
-        
-        def modify_minisip
-          Cmd.replace(Path.repository_open_gl_display, '/home/erik', Path.build)
-          if Options.ffmpeg_first
-            # See http://www.howgeek.com/2010/03/01/ffmpeg-php-error-‘pix_fmt_rgba32’-undeclared-first-use-in-this-function/
-            # and http://ffmpeg.org/doxygen/0.5/pixfmt_8h.html#33d341c4f443d24492a95fb7641d0986
-            Cmd.replace(Path.repository_avcoder_cxx,   'PIX_FMT_RGBA32', 'PIX_FMT_RGB32')
-            Cmd.replace(Path.repository_avdecoder_cxx, 'PIX_FMT_RGBA32', 'PIX_FMT_RGB32')
-          end
-        end
-        
-        def modify_libavutil
-          if Path.ffmpeg_libavutil_common_backup.file?
-            UI.warn "The libavutil common.h file seems to be fixed already, I won't touch it now. Delete #{Path.ffmpeg_libavutil_common_backup.enquote} to enforce it."
-          else
-            Cmd.copy Path.ffmpeg_libavutil_common, Path.ffmpeg_libavutil_common_backup
-            Cmd.replace Path.ffmpeg_libavutil_common, '    if ((a+0x80000000u) & ~UINT64_C(0xFFFFFFFF)) return (a>>63) ^ 0x7FFFFFFF;', "    // MODIFIED BY THE AUTOMATED INSTALLER\n    // if ((a+0x80000000u) & ~UINT64_C(0xFFFFFFFF)) return (a>>63) ^ 0x7FFFFFFF;\n    if ((a+0x80000000u) & ~(0xFFFFFFFFULL)) return (a>>63) ^ 0x7FFFFFFF;"
-          end
-        end
-        
-        # FLAGS
-        
-        # See http://code.google.com/p/ffmpegsource/issues/detail?id=11
-        # But for some reason it did not fix tue issue for us :|
-        #
-        def libminisip_c_flags
-          %{CFLAGS="-D__STDC_CONSTANT_MACROS"}
-        end
-
-        def libminisip_cpp_flags
-          if Options.ffmpeg_first
-            %{CPPFLAGS="-I#{Path.hdviper_x264} -I#{Path.hdviper_x264_test_x264api} -I#{Path.ffmpeg_libavutil} -I#{Path.ffmpeg_libavcodec} -I#{Path.ffmpeg_libswscale} -I#{Path.repository_grabber} -I#{Path.repository_decklinksdk}"}
-          else
-            %{CPPFLAGS="-I#{Path.hdviper_x264} -I#{Path.hdviper_x264_test_x264api} -I#{Path.repository_grabber} -I#{Path.repository_decklinksdk}"}
-          end
-        end
-        
-        def libminisip_ld_flags
-          %{LDFLAGS="#{Path.hdviper_libx264api} #{Path.hdviper_libtidx264} -lpthread -lrt"}
-        end
-        
         def define_relative_paths
           Path.build                              = Pathname.new(File.join(Path.work, 'build'))
           Path.build_bin                          = Pathname.new(File.join(Path.build, 'bin'))

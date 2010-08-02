@@ -26,10 +26,10 @@ module CSD
     def define_actions_and_scopes
       if Applications.current
         # Here we overwrite the default supported actions and scopes with the application specific ones
-        UI.debug "Loading actions of #{Applications.current}."
+        UI.debug "#{self.class} loads the actions of #{Applications.current} now"
         self.actions = Applications.current.actions
         # At this point we know that the first argument is no option, but *some* action (may it be valid or not)
-        UI.debug "Loading scopes of #{Applications.current}."
+        UI.debug "#{self.class} loads the scopes of #{Applications.current} now"
         self.scopes  = Applications.current.scopes(self.action)
       end
     end
@@ -130,7 +130,7 @@ module CSD
         end
         opts.on_tail("-v", "--version", "Show the version of this AI") do
           puts "CSD Gem Version: #{CSD::Version}".blue
-          exit
+          raise Error::Argument::VersionWasRequested
         end
         self.helptext = opts.help
       end.parse!
