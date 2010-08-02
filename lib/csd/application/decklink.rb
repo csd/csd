@@ -14,7 +14,7 @@ module CSD
         # This method will check which system we're on and initialize the correct sub-module
         #
         def instance
-          if Gem::Platform.local.os == 'linux'
+          if Gem::Platform.local.debian?
             Base.new
           else
             raise 'Operating system not supported'
