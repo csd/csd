@@ -7,7 +7,7 @@ module CSD
     # This is the Application Module for Decklink, a capture card device used in MiniSIP.
     #
     module Decklink
-      class < self
+      class << self
 
         include CSD::Application::Default
 
