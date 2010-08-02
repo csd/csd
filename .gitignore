@@ -13,6 +13,10 @@ tmtags
 ## VIM
 *.swp
 
+## ECLIPSE
+.loadpath
+.project
+
 ## PROJECT::GENERAL
 coverage
 rdoc
@@ -20,3 +24,5 @@ pkg
 
 ## PROJECT::SPECIFIC
 drop
+csd.gemspec
+
