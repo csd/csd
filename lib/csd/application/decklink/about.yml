@@ -1,7 +1,7 @@
-human: Decklink
+human: DeckLink
 description: A capture card device from Blackmagic Design used by MiniSIP.
 actions:
   public:
-    - install: Download the debian packages and install those packages.
+    - install: Download and install DeckLink drivers.
 scopes:
   --- {}
