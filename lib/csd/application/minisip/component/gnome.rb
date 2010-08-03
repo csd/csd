@@ -10,20 +10,34 @@ module CSD
             DESKTOP_ENTRY = %{
 [Desktop Entry]
 Encoding=UTF-8
-Name=MiniSIP
+Name=MiniSIP Client
 GenericName=Video conferencing client
-Comment=Your open-source, high-definition video conferencing client.
+Comment=Have a video conference in high-definition
 Exec=minisip_gtkgui
-Icon=accessories-calculator
+Icon=minisip_gnome
 Terminal=false
 Type=Application
 StartupNotify=true
-Categories=GNOME;GTK;Utility;Calculator}
+Categories=Application;Internet;Network;Chat;AudioVideo}
             
             def compile
               UI.debug "#{self}.compile was called"
-              Cmd.run "nautilus #{Path.build_bin}" if Gem::Platform.local.debian? and Options.this_user
-              
+              return unless Gem::Platform.local.debian? # TODO: Actually, Ubuntu only, not Debian. But I'm not so sure.
+              if Options.this_user
+                # This command opens the bin directory in Debian/Ubuntu as to show where the executables are located in a single-user mode installation.
+                UI.info "Revealing user-specific MiniSIP exectutables"
+                Cmd.run "nautilus #{Path.build_bin}"
+              else
+                create_desktop_entry
+              end
+            end
+            
+            def create_desktop_entry
+              UI.info "Installing Gnome menu item".green.bold
+              Cmd.run("sudo cp #{Path.minisip_gnome_png} #{Path.minisip_gnome_pixmap}", :announce_pwd => false) unless Path.minisip_gnome_pixmap.file?
+              Path.new_desktop_entry = Pathname.new File.join(Dir.mktmpdir, 'minisip.desktop')
+              Cmd.touch_and_replace_content Path.new_desktop_entry, DESKTOP_ENTRY, :internal => true
+              Cmd.run "sudo mv #{Path.new_desktop_entry} #{Path.minisip_desktop_entry}", :announce_pwd => false
             end
           
           end

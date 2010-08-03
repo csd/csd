@@ -51,7 +51,6 @@ module CSD
             FFmpeg.compile
           end
           Plugins.compile
-          # This command opens the bin directory in Debian/Ubuntu as to show where the executables are located in a single-user mode installation.
           Gnome.compile
           Core.run_gtkgui
         end

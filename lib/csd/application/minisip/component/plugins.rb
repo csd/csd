@@ -33,7 +33,7 @@ module CSD
                 Dir[File.join(Path.plugins, '{md,mg,mvideo}*.{a,la,so}')].each do |plugin|
                   if Gem::Platform.local.os == 'linux' or Gem::Platform.local.os == 'darwin'
                     optional_sudo = Options.this_user ? '' : 'sudo '
-                    UI.info "  #{plugin}"
+                    UI.info "  #{File.basename(plugin)}"
                     Cmd.run("#{optional_sudo}cp #{plugin} #{Path.plugins_destination}", :internal => true)
                   else
                     # On other platforms we will have to do this without superuser privileges for now

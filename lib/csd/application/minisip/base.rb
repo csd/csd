@@ -92,6 +92,9 @@ module CSD
           Path.hdviper_libx264api                 = Pathname.new(File.join(Path.hdviper_x264_test_x264api, 'libx264api.a'))
           Path.plugins                            = Pathname.new(File.join(Path.work, 'plugins'))
           Path.plugins_destination                = Pathname.new(File.join(Path.build_lib, 'libminisip', 'plugins'))
+          Path.minisip_gnome_png                  = Pathname.new(File.join(Path.repository, 'minisip', 'share', 'icon_gnome.png'))
+          Path.minisip_gnome_pixmap               = Pathname.new(File.join('/', 'usr', 'share', 'pixmaps', 'minisip_gnome.png'))
+          Path.minisip_desktop_entry              = Pathname.new(File.join('/', 'usr', 'share', 'applications', 'minisip.desktop'))
         end
         
       end

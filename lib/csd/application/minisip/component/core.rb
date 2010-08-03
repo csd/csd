@@ -27,7 +27,8 @@ module CSD
               if ffmpeg_available and Options.configure and !Options.reveal and libraries.include?('libminisip')
                 if Gem::Platform.local.debian?
                   # Note that FFmpeg must have been installed via apt-get or via the AI in order for this to work!
-                  Cmd.run "sudo apt-get remove ffmpeg"
+                  UI.info "Removing FFmpeg before re-compiling MiniSIP".green.bold
+                  Cmd.run "sudo apt-get remove ffmpeg --yes", :announce_pwd => false
                 else
                   # On other linux distributions we don't know how to remove ffmpeg
                   raise Error::Minisip::Core::FFmpegInstalled, "Please remove ffmpeg from your system first, or run the #{CSD.executable} with --no-configure"
@@ -106,13 +107,13 @@ module CSD
                 UI.info "Fixing broken Debian aclocal path".green.bold
                 Path.new_dirlist = Pathname.new File.join(Dir.mktmpdir, 'dirlist')
                 Cmd.touch_and_replace_content Path.new_dirlist, '/usr/local/share/aclocal'
-                Cmd.run "sudo mv #{Path.new_dirlist} #{Path.dirlist}"
+                Cmd.run "sudo mv #{Path.new_dirlist} #{Path.dirlist}", :announce_pwd => false
               end
             end
             
             def link_libraries
               UI.info "Linking shared MiniSIP libraries"
-              Cmd.run "ldconfig #{Path.build_lib_libminisip_so}"
+              Cmd.run "sudo ldconfig #{Path.build_lib_libminisip_so}", :announce_pwd => false
             end
             
             def libminisip_cpp_flags

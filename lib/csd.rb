@@ -28,8 +28,15 @@ module CSD
     # some helpful message if the arguments are invalid.
     #
     def respond_to_incomplete_arguments
-      choose_application unless Applications.current
-      choose_action unless Options.valid_action?
+      if !Applications.current and ARGV.include?('update')
+        # Updating the AI
+        UI.info "Updating the AI to the newest version".green.bold
+        Cmd.run "sudo gem update csd", :announce_pwd => false, :verbose => true
+        exit # The only smooth status code 0 exit in this whole application :)
+      else
+        choose_application unless Applications.current
+        choose_action unless Options.valid_action?
+      end
     end
   
     # This methods lists all available applications
