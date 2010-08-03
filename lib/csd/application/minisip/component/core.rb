@@ -1,4 +1,5 @@
 # -*- encoding: UTF-8 -*-
+require 'csd/application/minisip/phonebook_example'
 
 module CSD
   module Application
@@ -44,6 +45,7 @@ module CSD
               # We would like to re-compile MiniSIP no matter what options were given as command-line arguments.
               compile_libraries
               link_libraries
+              create_address_book
             end
             
             # This method provides upfront information to the user about how the MiniSIP Core component will be processed.
@@ -228,6 +230,13 @@ module CSD
                 Cmd.copy Path.repository_libminisip_rules, Path.repository_libminisip_rules_backup
                 Cmd.replace Path.repository_libminisip_rules, 'AUTOMATED_INSTALLER_PLACEHOLDER=""', [libminisip_cpp_flags, libminisip_ld_flags].join(' ')
               end
+            end
+            
+            def create_address_book
+              return if Path.phonebook.file?
+              UI.info "Creating default MiniSIP phonebook".green.bold
+              Cmd.touch_and_replace_content Path.phonebook, ::CSD::Application::Minisip::PHONEBOOK_EXAMPLE, :internal => true
+              UI.info "  Phonebook successfully saved in #{Path.phonebook}"
             end
             
             # Iteratively makes debian packages of the internal MiniSIP libraries.

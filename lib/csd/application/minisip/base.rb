@@ -94,6 +94,7 @@ module CSD
           Path.minisip_gnome_png                  = Pathname.new(File.join(Path.repository, 'minisip', 'share', 'icon_gnome.png'))
           Path.minisip_gnome_pixmap               = Pathname.new(File.join('/', 'usr', 'share', 'pixmaps', 'minisip_gnome.png'))
           Path.minisip_desktop_entry              = Pathname.new(File.join('/', 'usr', 'share', 'applications', 'minisip.desktop'))
+          Path.phonebook                          = Pathname.new(File.join(ENV['HOME'], '.minisip.addr'))
         end
         
       end
