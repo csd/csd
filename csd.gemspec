@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "bin/ai",
+     "csd.gemspec",
      "lib/csd.rb",
      "lib/csd/application.rb",
      "lib/csd/application/decklink.rb",
