@@ -30,14 +30,20 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
               else
                 create_desktop_entry
               end
+              send_notification
             end
             
             def create_desktop_entry
+              return if Path.minisip_gnome_pixmap.file? and Path.minisip_desktop_entry.file?
               UI.info "Installing Gnome menu item".green.bold
-              Cmd.run("sudo cp #{Path.minisip_gnome_png} #{Path.minisip_gnome_pixmap}", :announce_pwd => false) unless Path.minisip_gnome_pixmap.file?
+              Cmd.run("sudo cp #{Path.minisip_gnome_png} #{Path.minisip_gnome_pixmap}", :announce_pwd => false)
               Path.new_desktop_entry = Pathname.new File.join(Dir.mktmpdir, 'minisip.desktop')
               Cmd.touch_and_replace_content Path.new_desktop_entry, DESKTOP_ENTRY, :internal => true
               Cmd.run "sudo mv #{Path.new_desktop_entry} #{Path.minisip_desktop_entry}", :announce_pwd => false
+            end
+            
+            def send_notification
+              Cmd.run %{notify-send --icon=minisip_gnome "MiniSIP installation complete" "Please have a look in your Applications menu -> Internet." }, :internal => true, :die_on_failure => false
             end
           
           end

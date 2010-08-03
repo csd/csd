@@ -5,12 +5,17 @@ module CSD
   module Application
     module Decklink
       class Base < CSD::Application::Base
-       
+        
+        # A list of apt-get packages that are required to install the decklink drivers.
+        #
+        DEBIAN_DEPENDENCIES = %w{ libnotify-bin libmng1 dkms }
+        
         def install
           UI.separator
           UI.info "This operation will download and install the DeckLink device drivers.".green.bold
           UI.separator
           introduction
+          install!
         end
         
         def install!
@@ -19,6 +24,7 @@ module CSD
           download
           extract
           apply
+          send_notification
         end
         
         def introduction
@@ -65,8 +71,12 @@ module CSD
           file = Dir[File.join(Path.packages, "Deck*#{archflag}*.deb")]
           UI.debug "#{self.class} identified these applicable packages: #{file.join(', ')}"
           UI.info "Installing Debian packages".green.bold
-          Cmd.run "sudo apt-get install libmng1", :announce_pwd => false
-          Cmd.run "sudo dpkg -i #{file.first}", :announce_pwd => false
+          Cmd.run "sudo apt-get install #{DEBIAN_DEPENDENCIES} --yes", :announce_pwd => false
+          Cmd.run "sudo dpkg -i #{file.first || '[DRIVER FILE FOR THIS ARCHITECTURE]'}", :announce_pwd => false
+        end
+        
+        def send_notification
+          Cmd.run %{notify-send --icon=gdm-setup "DeckLink installation complete" "You are now ready to use your Blackmagic Design DeckLink device." }, :internal => true, :die_on_failure => false
         end
         
         def define_relative_paths
@@ -77,8 +87,6 @@ module CSD
           Path.tar              = Pathname.new(File.join(Path.work, "#{decklink_basename + decklink_extension}"))
           Path.packages         = Pathname.new(File.join(Path.work, decklink_basename))
         end
-        
-        
         
       end
     end

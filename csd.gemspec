@@ -31,6 +31,7 @@ Gem::Specification.new do |s|
      "lib/csd/application/decklink.rb",
      "lib/csd/application/decklink/about.yml",
      "lib/csd/application/decklink/base.rb",
+     "lib/csd/application/decklink/options/install.rb",
      "lib/csd/application/default.rb",
      "lib/csd/application/default/base.rb",
      "lib/csd/application/minisip.rb",
