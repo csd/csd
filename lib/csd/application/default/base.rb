@@ -24,7 +24,7 @@ module CSD
         if Options.work_dir
           # The user specified the working directory manually
           path = Options.work_dir
-        elsif Options.temp
+        elsif Options.temp and !Options.this_user
           # The user specified the working directory to be a system's temporary directory
           # Note that only with this option, the directory is actually created at this point
           path = Dir.mktmpdir 

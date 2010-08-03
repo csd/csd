@@ -9,11 +9,14 @@ module CSD
         # This method presents a general overview about the task that is to be performed.
         #
         def introduction
-          Core.introduction
-          # FFmpeg.introduction
-          # HDVIPER.introduction
-          # X264.introduction
-          # Plugins.introduction
+          if Options.developer
+            Core.introduction
+            # FFmpeg.introduction
+            # HDVIPER.introduction
+            # X264.introduction
+            # Plugins.introduction
+            UI.separator
+          end
           super
         end
         
@@ -23,6 +26,8 @@ module CSD
           UI.separator
           UI.info "This operation will compile MiniSIP and its dependencies.".green.bold
           UI.separator
+          install_mode = Options.this_user ? 'Only for this user (inside the working directory)' : 'For all users (sudo)'
+          UI.info " Installation mode:       ".green.bold + install_mode.yellow
           introduction
           compile!
         end

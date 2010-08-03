@@ -2,7 +2,7 @@
 # This file gets eval'ed by the global options parser in lib/csd/options_parser
 
 self.this_user = false
-opts.on("--this-user","Compile MiniSIP not for all users (sudo), but only for the current user") do |value|
+opts.on("--this-user","Compile MiniSIP only for the current user (enforces the --no-temp option)") do |value|
   self.this_user = value
 end
 

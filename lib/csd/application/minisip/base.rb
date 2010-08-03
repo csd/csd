@@ -31,7 +31,6 @@ module CSD
         # This methods prints general information about this application module.
         #
         def introduction
-          UI.separator
           UI.info " Working directory:       ".green.bold + Path.work.to_s.yellow
           if Options.debug
             UI.info " Your Platform:           ".green + Gem::Platform.local.humanize.to_s.yellow

@@ -112,7 +112,7 @@ module CSD
             end
             
             def link_libraries
-              UI.info "Linking shared MiniSIP libraries"
+              UI.info "Linking shared MiniSIP libraries".green.bold
               Cmd.run "sudo ldconfig #{Path.build_lib_libminisip_so}", :announce_pwd => false
             end
             
@@ -215,9 +215,9 @@ module CSD
             def run_gtkgui
               UI.info "Executing MiniSIP".green.bold
               if Options.this_user
-                Cmd.run(Path.build_gtkgui, :die_on_failure => false, :announce_pwd => false)
+                Cmd.run Path.build_gtkgui, :die_on_failure => false, :announce_pwd => false
               else
-                Cmd.run('minisip_gtkgui')
+                Cmd.run 'minisip_gtkgui', :die_on_failure => false, :announce_pwd => false
               end
             end
             

@@ -7,11 +7,35 @@ module CSD
       class Base < CSD::Application::Base
        
         def install
+          UI.separator
+          UI.info "This operation will download and install the DeckLink device drivers.".green.bold
+          UI.separator
+          introduction
+        end
+        
+        def install!
           create_working_directory
           define_relative_paths
           download
           extract
           apply
+        end
+        
+        def introduction
+          UI.info " Working directory:       ".green.bold + Path.work.to_s.yellow
+          if Options.debug
+            UI.info " Your Platform:           ".green + Gem::Platform.local.humanize.to_s.yellow
+            UI.info(" Application module:      ".green + self.class.name.to_s.yellow)
+          end
+          UI.separator
+          if Options.help
+            UI.info Options.helptext
+            # Cleanup in case the working directory was temporary and is empty
+            Path.work.rmdir if Options.temp and Path.work.directory? and Path.work.children.empty?
+            raise CSD::Error::Argument::HelpWasRequested
+          else
+            raise Interrupt unless Options.yes or Options.reveal or UI.continue?
+          end
         end
         
         def download
