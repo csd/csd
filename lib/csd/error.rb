@@ -50,6 +50,7 @@ module CSD
       class MoveFailed    < CSDError; status_code(63); end
       class ReplaceFailed < CSDError; status_code(64); end
       class MkdirFailed   < CSDError; status_code(65); end
+      class TouchAndReplaceContentFailed < CSDError; status_code(66); end
     end
     
     # Errors in this module are related to the Application Module Framework

@@ -1,6 +1,11 @@
 # -*- encoding: UTF-8 -*-
 # This file gets eval'ed by the global options parser in lib/csd/options_parser
 
+self.this_user = false
+opts.on("--this-user","Compile MiniSIP not for all users (sudo), but only for the current user") do |value|
+  self.this_user = value
+end
+
 self.apt_get = true
 opts.on("--no-apt-get","Don't run any apt-get commands") do |value|
   self.apt_get = value

@@ -1,7 +1,7 @@
 human: DeckLink
-description: A capture card device from Blackmagic Design used by MiniSIP.
+description: Capture card drivers for the Blackmagic Design DeckLink device used by MiniSIP.
 actions:
   public:
-    - install: Download and install DeckLink drivers.
+    - install: Download and install the DeckLink drivers.
 scopes:
   --- {}

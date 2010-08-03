@@ -5,7 +5,7 @@ actions:
     #- show: Shows further information about MiniSIP
     #- download: Downloads MiniSIP components (e.g. source code, configurations, docs,...)
     - compile: Downloads and compiles MiniSIP from scratch
-    - package: Downloads, compiles and packages MiniSIP from scratch
+    #- package: Downloads, compiles and packages MiniSIP from scratch
     #- install: Installs an application
     #- check: Checks whether the environment dependencies for the application are satisfied
   developer:

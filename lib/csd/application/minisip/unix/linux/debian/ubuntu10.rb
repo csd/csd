@@ -22,6 +22,8 @@ module CSD
               r.replace '#include <giomm/socket.h>', "/* ----- AI COMMENTING OUT START ----- \n#include <giomm/socket.h>"
               r.replace '#include <giomm/tcpconnection.h>', "#include <giomm/tcpconnection.h>\n ----- AI COMMENTING OUT END ----- */"
             end
+            # We cannot use Cmd.copy here, because Cmd.copy has no superuser privileges.
+            # And since we are for sure on Ubuntu, these commands will work.
             Cmd.run("sudo cp #{Path.giomm_header} #{Path.giomm_header_backup}")
             Cmd.run("sudo cp #{Path.new_giomm_header} #{Path.giomm_header}")
           end

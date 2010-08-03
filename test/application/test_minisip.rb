@@ -60,6 +60,13 @@ class TestMinisip < Test::Unit::TestCase
           assert_match /git pull .+ cuttingedge/, out
           assert err.empty?
         end
+        
+        should "use sudo make install instead of make install by default" do
+          Options.make_install = true
+          out, err = capture { Core.compile }
+          # TODO: This should be a more strict test
+          assert_match /sudo make install/, out
+        end
 
       end # context "in theory"
 

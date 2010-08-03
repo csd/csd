@@ -50,6 +50,7 @@ module CSD
             # is compiled _before_ MiniSIP.
             #
             def modify_libavutil
+              return
               if Path.ffmpeg_libavutil_common_backup.file? and !Options.reveal
                 UI.warn "The libavutil common.h file seems to be fixed already, I won't touch it now. Delete #{Path.ffmpeg_libavutil_common_backup.enquote} to enforce it."
               else
@@ -64,7 +65,7 @@ module CSD
             def make
               UI.info "Compiling and installing FFmpeg".green.bold
               Cmd.cd Path.ffmpeg_repository, :internal => true
-              Cmd.run("./configure --enable-gpl --enable-libx264 --enable-x11grab #{c_flags}")
+              Cmd.run("#{c_flags} ./configure --enable-gpl --enable-libx264 --enable-x11grab")
               Cmd.run('make')
               Cmd.run('sudo checkinstall --pkgname=ffmpeg --pkgversion "99:-`git log -1 --pretty=format:%h`" --backup=no --default')
             end

@@ -15,7 +15,7 @@ module CSD
       def initialize
         define_working_directory
       end
-
+      
       # This method chooses the working directory, which will contain downloads needed for various tasks, etc.
       # Note that this directory is *not* removed by the AI in any case. The user has to make sure she knows the
       # location of it (especially if it is a temporary directory which is physically created right here).

@@ -23,14 +23,26 @@ module CSD
             #
             def compile
               UI.debug "#{self}.compile was called"
+              ffmpeg_available = Cmd.run('ffmpeg -h', :internal => true, :die_on_failure => false).success?
+              if ffmpeg_available and Options.configure and !Options.reveal and libraries.include?('libminisip')
+                if Gem::Platform.local.debian?
+                  # Note that FFmpeg must have been installed via apt-get or via the AI in order for this to work!
+                  Cmd.run "sudo apt-get remove ffmpeg"
+                else
+                  # On other linux distributions we don't know how to remove ffmpeg
+                  raise Error::Minisip::Core::FFmpegInstalled, "Please remove ffmpeg from your system first, or run the #{CSD.executable} with --no-configure"
+                end
+              end
               if Path.repository.directory? and !Options.reveal
                 UI.warn "The MiniSIP source code will not be downloaded, because the directory #{Path.repository.enquote} already exists."
               else
                 checkout
                 modify_source_code
               end
+              modify_dirlist
               # We would like to re-compile MiniSIP no matter what options were given as command-line arguments.
               compile_libraries
+              link_libraries
             end
             
             # This method provides upfront information to the user about how the MiniSIP Core component will be processed.
@@ -77,12 +89,30 @@ module CSD
             # and http://ffmpeg.org/doxygen/0.5/pixfmt_8h.html#33d341c4f443d24492a95fb7641d0986 for more information.
             #
             def modify_source_code
-              UI.info "Fixing MiniSIP source code".green.bold
+              UI.info "Fixing MiniSIP OpenGL GUI source code".green.bold
               Cmd.replace(Path.repository_open_gl_display, '/home/erik', Path.build)
               if Options.ffmpeg_first
                 Cmd.replace(Path.repository_avcoder_cxx,   'PIX_FMT_RGBA32', 'PIX_FMT_RGB32')
                 Cmd.replace(Path.repository_avdecoder_cxx, 'PIX_FMT_RGBA32', 'PIX_FMT_RGB32')
               end
+            end
+            
+            # Usually, Ubuntu ignores <tt>/usr/local/share/aclocal</tt>. So we need to create a file called
+            # +dirlist+ in <tt>/usr/share/aclocal</tt> which contains the path to the other directory.
+            #
+            def modify_dirlist
+              Path.dirlist     = Pathname.new File.join('/', 'usr', 'share', 'aclocal', 'dirlist')
+              if !Path.dirlist.file? and Gem::Platform.local.debian?
+                UI.info "Fixing broken Debian aclocal path".green.bold
+                Path.new_dirlist = Pathname.new File.join(Dir.mktmpdir, 'dirlist')
+                Cmd.touch_and_replace_content Path.new_dirlist, '/usr/local/share/aclocal'
+                Cmd.run "sudo mv #{Path.new_dirlist} #{Path.dirlist}"
+              end
+            end
+            
+            def link_libraries
+              UI.info "Linking shared MiniSIP libraries"
+              Cmd.run "ldconfig #{Path.build_lib_libminisip_so}"
             end
             
             def libminisip_cpp_flags
@@ -119,7 +149,7 @@ module CSD
             #
             def create_build_dir
               # In sudo mode, we don't need to create these. They already exist in the OS.
-              return if superuser?
+              return unless Options.this_user
               UI.info "Creating target build directories".green.bold
               [Path.build, Path.build_include, Path.build_lib, Path.build_share, Path.build_share_aclocal].each { |target| Cmd.mkdir target }
             end
@@ -135,10 +165,10 @@ module CSD
             # It is only used for the internal MiniSIP libraries.
             #
             def bootstrap!
-              if superuser?
-                Cmd.run("./bootstrap")
+              if Options.this_user
+                Cmd.run(%Q{./bootstrap -I "#{Path.build_share_aclocal}"})
               else
-                Cmd.run("./bootstrap -I #{Path.build_share_aclocal.enquote}")
+                Cmd.run("./bootstrap")
               end
             end
             
@@ -155,7 +185,7 @@ module CSD
                 else
                   ''
               end
-              common_options = superuser? ? '' : %Q{--prefix=#{Path.build.enquote} PKG_CONFIG_PATH=#{Path.build_lib_pkg_config.enquote} ACLOCAL_FLAGS=#{Path.build_share_aclocal} LD_LIBRARY_PATH=#{Path.build_lib.enquote}}
+              common_options = Options.this_user ? %Q{--prefix="#{Path.build}" PKG_CONFIG_PATH="#{Path.build_lib_pkg_config}" ACLOCAL_FLAGS="#{Path.build_share_aclocal}" LD_LIBRARY_PATH="#{Path.build_lib}"} : ''
               Cmd.run ['./configure', common_options, individual_options].join(' ')
             end
             
@@ -172,17 +202,21 @@ module CSD
             end
             
             def make_install!
-              Cmd.run("make install")
+              if Options.this_user
+                Cmd.run("make install")
+              else
+                Cmd.run("sudo make install")
+              end
             end
-          
+            
             # Execute the MiniSIP GTK GUI.
             #
-            def run_gtk_gui
+            def run_gtkgui
               UI.info "Executing MiniSIP".green.bold
-              if superuser?
-                Cmd.run('minisip_gtk_gui')
-              else
+              if Options.this_user
                 Cmd.run(Path.build_gtkgui, :die_on_failure => false, :announce_pwd => false)
+              else
+                Cmd.run('minisip_gtkgui')
               end
             end
             
@@ -242,7 +276,7 @@ module CSD
                 end
               end
               Cmd.cd '/'
-              Cmd.run('minisip_gtk_gui')
+              Cmd.run('minisip_gtkgui')
             end
             
           end

@@ -51,11 +51,19 @@ module CSD
         # Defines all paths ever needed for the MiniSIP module based on the working directory.
         #
         def define_relative_paths
-          Path.build                              = Pathname.new(File.join(Path.work, 'build'))
+          if Options.this_user
+            Path.build = Pathname.new(File.join(Path.work, 'build'))
+          else
+            Path.build = Pathname.new(File.join('/', 'usr', 'local'))
+            # This is tricky, but should work for most linux distributions
+            # On Windows it will just crash here, unless we determine where the heck sudo make install is targetting at :)
+            raise Error::Minisip::BuildDirNotFound, "Sorry, `/usr/local´ could not be found but was requested as MiniSIP target. Use `#{CSD.executable}´ with the option `--this-user´ instead." unless Path.build.directory?
+          end
           Path.build_bin                          = Pathname.new(File.join(Path.build, 'bin'))
           Path.build_gtkgui                       = Pathname.new(File.join(Path.build_bin, 'minisip_gtkgui'))
           Path.build_include                      = Pathname.new(File.join(Path.build, 'include'))
           Path.build_lib                          = Pathname.new(File.join(Path.build, 'lib'))
+          Path.build_lib_libminisip_so            = Pathname.new(File.join(Path.build_lib, 'libminisip.so.0'))
           Path.build_lib_pkg_config               = Pathname.new(File.join(Path.build_lib, 'pkgconfig'))
           Path.build_share                        = Pathname.new(File.join(Path.build, 'share'))
           Path.build_share_aclocal                = Pathname.new(File.join(Path.build_share, 'aclocal'))

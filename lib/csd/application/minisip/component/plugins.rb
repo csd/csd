@@ -27,10 +27,22 @@ module CSD
             # Copies the plugins from the repository to the final destination.
             #
             def copy
-              # TODO: Find out how to determine the destination path for the plugins
-              # UI.info "Creating plugin target directory".green.bold
-              # result = Path.plugins_destination.parent.directory? ? Cmd.run("sudo mkdir #{Path.plugins_destination}") : CommandResult.new
-              Cmd.copy(Dir[File.join(Path.plugins, '{m}*.{l,la,so}')], Path.plugins_destination) if Path.plugins_destination.directory?
+              if Path.plugins_destination.directory?
+                UI.info "Installing optional MiniSIP plugins".green.bold
+                UI.info "Copying from `#{Path.plugins_destination}´ to `#{Path.plugins}´".yellow
+                Dir[File.join(Path.plugins, '{md,mg,mvideo}*.{a,la,so}')].each do |plugin|
+                  if Gem::Platform.local.os == 'linux' or Gem::Platform.local.os == 'darwin'
+                    optional_sudo = Options.this_user ? '' : 'sudo '
+                    UI.info "  #{plugin}"
+                    Cmd.run("#{optional_sudo}cp #{plugin} #{Path.plugins_destination}", :internal => true)
+                  else
+                    # On other platforms we will have to do this without superuser privileges for now
+                    Cmd.copy(plugin, Path.plugins_destination)
+                  end
+                end
+              else
+                UI.warn "The target plugin directory could not be found: #{Path.plugins_destination.enquote}".green.bold
+              end
             end
           
           end

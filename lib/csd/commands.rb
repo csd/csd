@@ -87,6 +87,31 @@ module CSD
       result
     end
     
+    # Creates a new file and writes content to it. Truncates the file if it already had content.
+    #
+    def touch_and_replace_content(target, content='', params={})
+      default_params = { :die_on_failure => true, :internal => false }
+      params = default_params.merge(params)
+      target = target.pathnamify
+      result = CommandResult.new
+      unless params[:internal]
+        UI.info "Writing content into file #{target} as follows:".cyan 
+        UI.info "#{content}"
+      end
+      if Options.reveal
+        result.success = true
+      else
+        begin
+          File.open(target, 'w') { |f| f << content }
+          result.success = target.file? # TODO: Maybe check for the actual content of the created file here
+        rescue Exception => e
+          result.reason = "Cannot write to file `#{target}´. Reason: #{e.message}"
+          params[:die_on_failure] ? raise(CSD::Error::Command::TouchAndReplaceContentFailed, result.reason) : UI.error(result.reason)
+        end
+      end
+      result
+    end
+    
     # Copies one or several files to the destination
     #
     def copy(src, dest, params={})
@@ -151,9 +176,9 @@ module CSD
         default_params = { :die_on_failure => true }
         params = default_params.merge(params)
         begin
-          UI.info "   Modifying".yellow
+          UI.info "   Replacing".yellow
           UI.info "   `#{pattern}´".blue
-          UI.info "   to".yellow
+          UI.info "   with".yellow
           UI.info "   `#{substitution.to_s.gsub("\n", "\n    ")}´".white
           new_file_content = File.read(self.filepath).gsub(pattern.to_s, substitution.to_s)
           File.open(self.filepath, 'w+') { |file| file << new_file_content } unless Options.reveal
