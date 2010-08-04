@@ -48,7 +48,8 @@ module CSD
                 Cmd.run "sudo apt-get remove ffmpeg --yes", :announce_pwd => false
               else
                 # On other linux distributions we don't know how to remove ffmpeg
-                raise Error::Minisip::Core::FFmpegInstalled, "Please remove ffmpeg from your system first, or run the #{CSD.executable} with --no-configure"
+                UI.debug "MILESTONE: cannot-remove-ffmpeg"
+                raise Error::Minisip::Core::FFmpegInstalled, "Please remove ffmpeg from your system first, or run the #{CSD.executable} with --no-configure" unless Options.testmode
               end
             end
             

@@ -10,15 +10,12 @@ class TestMinisip < Test::Unit::TestCase
 
     setup do
       Options.clear
-      @default_minisip_options = Application::Minisip.options
     end
 
     context "Core component" do
       
       setup do
         @base = Application::Minisip::Base.new
-        @base.define_relative_paths
-        #CSD.options.eval @default_minisip_options
       end
 
       should "know how to identify and sort a subset of internal MiniSIP libraries with --only" do
@@ -34,10 +31,12 @@ class TestMinisip < Test::Unit::TestCase
         assert_equal %w{ libmutil minisip }, Core.libraries
       end
 
-      context "in theory" do
+      context "in theory when compiling" do
 
         setup do
           Options.clear
+          @base.define_relative_paths
+          CSD.options.clear Application::Minisip.default_options('compile')
           Options.reveal = true
         end
 
@@ -63,13 +62,13 @@ class TestMinisip < Test::Unit::TestCase
           assert_match /sudo make install/, out
         end
       
-        should "description" do
-          out, err = capture { Core.compile }
+        should "" do
+          #out, err = capture { Core.compile }
           #puts out
         
         end
 
-      end # context "in theory"
+      end # context "in theory when compiling"
 
       context "in practice" do
 

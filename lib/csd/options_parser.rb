@@ -34,9 +34,9 @@ module CSD
       end
     end
     
-    def clear
+    def clear(additional_options='')
       # Resetting all attributes to nil (because e.g. an application instance might have modified or added some).
-      super
+      super()
       # First we define all valid actions and scopes
       self.actions = []
       self.scopes  = []
@@ -53,6 +53,8 @@ module CSD
       self.developer = false
       # Shortcut to allow for debugging the options parser itself
       self.debug     = (ARGV.include?('--debug') or ARGV.include?('-d'))
+      # For our test suite we might want to inject more options here
+      eval additional_options
     end
 
     # Here we check for literals, i.e. "help", ACTION and APPLICATION.
