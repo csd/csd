@@ -295,8 +295,24 @@ module CSD
         return result
       end
       UI.info "Downloading #{name} to #{destination.enquote}".green.bold
-      # We will simply return the CommandResult of the run-method.
-      Cmd.run("git clone #{repository} #{destination}", :announce_pwd => false)
+      if Options.github_tar and repository =~ /github.com/
+        Cmd.mkdir destination
+        Cmd.cd destination
+        repository = repository.gsub('.git', '/tarball/master')
+        Cmd.run "wget #{repository}", :announce_pwd => false
+        if tar_file = Dir[File.join(destination, '*.tar*')].first or Options.reveal
+          Cmd.run "tar -xzf #{tar_file || '[NAME OF THE TARFILE]'}"
+          Cmd.run "rm #{tar_file || '[NAME OF THE TARFILE]'}"
+        end
+        if extracted_directory = Dir[File.join(destination, '*')].first or Options.reveal
+          content = Options.reveal ? File.join('[EXTRACTED DIRECTORY]', '*') : File.join(extracted_directory, '*')
+          Cmd.run "mv #{content} #{destination}", :announce_pwd => false
+          Cmd.run "rm -r #{extracted_directory || '[EXTRACTED DIRECTORY]'}"
+        end
+      else
+        # We will simply return the CommandResult of the run-method.
+        Cmd.run("git clone #{repository} #{destination}", :announce_pwd => false)
+      end
     end
   
   end

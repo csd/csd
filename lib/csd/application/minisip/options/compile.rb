@@ -12,8 +12,13 @@ opts.on("--no-apt-get","Don't run any apt-get commands") do |value|
 end
 
 self.ffmpeg_first = false
-opts.on("--ffmpeg-first","Compile FFmpeg before compiling MiniSIP (default is first MiniSIP)") do |value|
+opts.on("--force-ffmpeg","Do not remove FFmpeg before compiling MiniSIP and compile FFmpeg before MiniSIP") do |value|
   self.ffmpeg_first = value
+end
+
+self.github_tar = false
+opts.on("--github-tar","Instead of fetching git repositories from Github, use tarball downloads") do |value|
+  self.github_tar = value
 end
 
 self.branch = nil

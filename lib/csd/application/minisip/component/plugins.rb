@@ -41,7 +41,7 @@ module CSD
                   end
                 end
               else
-                UI.warn "The target plugin directory could not be found: #{Path.plugins_destination.enquote}".green.bold
+                UI.warn "The target plugin directory could not be found: #{Path.plugins_destination.enquote}"
               end
             end
           

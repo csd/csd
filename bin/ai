@@ -2,7 +2,7 @@
 
 # NOTE: If you would like to execute this file as a developer
 #       but not install the CSD gem, you can use this command:
-#       ruby -I path/to/csd/lib path/to/csd/bin/tta
+#       ruby -I path/to/csd/lib path/to/csd/bin/ai
 
 # First, let's load the RubyGems framework and the CSD gem.
 # Even though RubyGems is already loaded for Ruby >= 1.9,

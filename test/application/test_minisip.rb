@@ -20,6 +20,21 @@ class TestMinisip < Test::Unit::TestCase
       assert @app.respond_to?(:compile)
     end
     
+    context "in the whole workflow" do
+      
+      setup do
+        Options.clear
+      end
+
+      should "remove the working directory when in root installation mode and using tmp" do
+        Options.this_user = false
+        Options.temp = true
+        
+        
+      end
+      
+    end # context "in the whole workflow"
+    
     context "in the Core component" do
 
       setup do

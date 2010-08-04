@@ -27,7 +27,7 @@ module CSD
         elsif Options.temp and !Options.this_user
           # The user specified the working directory to be a system's temporary directory
           # Note that only with this option, the directory is actually created at this point
-          path = Dir.mktmpdir 
+          path = Dir.mktmpdir
         else
           # Other than that, we create a subdirectory in the current directory and use that
           app_name = Applications.current ? Applications.current.name : 'application'
@@ -40,6 +40,14 @@ module CSD
         unless Path.work.directory?
           UI.info "Creating working directory".green.bold
           Cmd.mkdir Path.work
+        end
+      end
+      
+      def cleanup_working_directory
+        if !Options.work_dir and Options.temp and !Options.this_user and Path.work.directory?
+          UI.info "Removing working directory".green.bold
+          UI.debug "MILESTONE: deleting-work-dir"
+          Cmd.run "rm -Rf #{Path.work}", :announce_pwd => false
         end
       end
       

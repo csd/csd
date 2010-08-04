@@ -24,17 +24,7 @@ module CSD
             #
             def compile
               UI.debug "#{self}.compile was called"
-              ffmpeg_available = Cmd.run('ffmpeg -h', :internal => true, :die_on_failure => false).success?
-              if ffmpeg_available and Options.configure and !Options.reveal and libraries.include?('libminisip')
-                if Gem::Platform.local.debian?
-                  # Note that FFmpeg must have been installed via apt-get or via the AI in order for this to work!
-                  UI.info "Removing FFmpeg before re-compiling MiniSIP".green.bold
-                  Cmd.run "sudo apt-get remove ffmpeg --yes", :announce_pwd => false
-                else
-                  # On other linux distributions we don't know how to remove ffmpeg
-                  raise Error::Minisip::Core::FFmpegInstalled, "Please remove ffmpeg from your system first, or run the #{CSD.executable} with --no-configure"
-                end
-              end
+              remove_ffmpeg
               if Path.repository.directory? and !Options.reveal
                 UI.warn "The MiniSIP source code will not be downloaded, because the directory #{Path.repository.enquote} already exists."
               else
@@ -42,10 +32,24 @@ module CSD
                 modify_source_code
               end
               modify_dirlist
-              # We would like to re-compile MiniSIP no matter what options were given as command-line arguments.
-              compile_libraries
+              compile_libraries # We would like to re-compile MiniSIP no matter what options were given as command-line arguments.
               link_libraries
               create_address_book
+            end
+            
+            def remove_ffmpeg
+              ffmpeg_available = Cmd.run('ffmpeg -h', :internal => true, :die_on_failure => false).success?
+              return if Options.ffmpeg_first or !Options.configure or !Options.reveal or !libraries.include?('libminisip') or !ffmpeg_available
+              if Gem::Platform.local.debian?
+                # Note that FFmpeg must have been installed via apt-get or via the AI in order for this to work,
+                # because manual compilations of FFmpeg cannot be removed automatically
+                UI.info "Removing FFmpeg before re-compiling MiniSIP".green.bold
+                UI.info "You can skip this step by giving the option --force-ffmpeg".yellow
+                Cmd.run "sudo apt-get remove ffmpeg --yes", :announce_pwd => false
+              else
+                # On other linux distributions we don't know how to remove ffmpeg
+                raise Error::Minisip::Core::FFmpegInstalled, "Please remove ffmpeg from your system first, or run the #{CSD.executable} with --no-configure"
+              end
             end
             
             # This method provides upfront information to the user about how the MiniSIP Core component will be processed.
@@ -95,6 +99,7 @@ module CSD
               UI.info "Fixing MiniSIP OpenGL GUI source code".green.bold
               Cmd.replace(Path.repository_open_gl_display, '/home/erik', Path.build)
               if Options.ffmpeg_first
+                UI.info "Fixing MiniSIP Audio/Video en/decoder source code".green.bold
                 Cmd.replace(Path.repository_avcoder_cxx,   'PIX_FMT_RGBA32', 'PIX_FMT_RGB32')
                 Cmd.replace(Path.repository_avdecoder_cxx, 'PIX_FMT_RGBA32', 'PIX_FMT_RGB32')
               end
@@ -236,7 +241,7 @@ module CSD
               return if Path.phonebook.file?
               UI.info "Creating default MiniSIP phonebook".green.bold
               Cmd.touch_and_replace_content Path.phonebook, ::CSD::Application::Minisip::PHONEBOOK_EXAMPLE, :internal => true
-              UI.info "  Phonebook successfully saved in #{Path.phonebook}"
+              UI.info "  Phonebook successfully saved in #{Path.phonebook}".yellow
             end
             
             # Iteratively makes debian packages of the internal MiniSIP libraries.

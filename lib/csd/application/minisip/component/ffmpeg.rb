@@ -50,7 +50,6 @@ module CSD
             # is compiled _before_ MiniSIP.
             #
             def modify_libavutil
-              return
               if Path.ffmpeg_libavutil_common_backup.file? and !Options.reveal
                 UI.warn "The libavutil common.h file seems to be fixed already, I won't touch it now. Delete #{Path.ffmpeg_libavutil_common_backup.enquote} to enforce it."
               else
