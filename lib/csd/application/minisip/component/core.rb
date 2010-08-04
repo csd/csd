@@ -41,6 +41,7 @@ module CSD
             def remove_ffmpeg
               ffmpeg_available = Cmd.run('ffmpeg -h', :internal => true, :die_on_failure => false).success?
               return if Options.ffmpeg_first or !Options.configure or !libraries.include?('libminisip') or !ffmpeg_available
+              UI.debug "MILESTONE: removing_ffmpeg"
               if Gem::Platform.local.debian?
                 # Note that FFmpeg must have been installed via apt-get or via the AI in order for this to work,
                 # because manual compilations of FFmpeg cannot be removed automatically
@@ -49,7 +50,7 @@ module CSD
                 Cmd.run "sudo apt-get remove ffmpeg --yes", :announce_pwd => false
               else
                 # On other linux distributions we don't know how to remove ffmpeg
-                UI.debug "MILESTONE: cannot-remove-ffmpeg"
+                UI.debug "MILESTONE: cannot_remove_ffmpeg"
                 raise Error::Minisip::Core::FFmpegInstalled, "Please remove ffmpeg from your system first, or run the #{CSD.executable} with --no-configure" unless Options.testmode
               end
             end
@@ -144,6 +145,7 @@ module CSD
               libraries.each do |library|
                 directory = Pathname.new(File.join(Path.repository, library))
                 if Cmd.cd(directory, :internal => true).success? or Options.reveal
+                  UI.debug "MILESTONE: processing_#{library}"
                   UI.info "Processing MiniSIP -> #{library}".green.bold
                   bootstrap
                   configure library

@@ -34,7 +34,9 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
             end
             
             def create_desktop_entry
-              return if Path.minisip_gnome_pixmap.file? and Path.minisip_desktop_entry.file?
+              # In fact, we would like to update the desktop entry it each time the AI (re-)compiles minisip
+              # So we do not return here now
+              # return if Path.minisip_gnome_pixmap.file? and Path.minisip_desktop_entry.file?
               UI.info "Installing Gnome menu item".green.bold
               Cmd.run("sudo cp #{Path.minisip_gnome_png} #{Path.minisip_gnome_pixmap}", :announce_pwd => false)
               Path.new_desktop_entry = Pathname.new File.join(Path.work, 'minisip.desktop')

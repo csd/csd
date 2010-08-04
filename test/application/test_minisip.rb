@@ -32,7 +32,7 @@ class TestMinisip < Test::Unit::TestCase
         assert_equal %w{ libmutil minisip }, Core.libraries
       end
 
-      context "in theory when compiling" do
+      context "*in theory* when compiling" do
 
         setup do
           Options.clear
@@ -42,8 +42,11 @@ class TestMinisip < Test::Unit::TestCase
           Options.testmode = true
         end
 
-        should "by default use the configure option" do
+        should "by default use all minisip compiling options" do
+          assert Options.bootstrap
           assert Options.configure
+          assert Options.make
+          assert Options.make_install
         end
 
         should "know how to checkout the default branch of the source code" do
@@ -62,17 +65,22 @@ class TestMinisip < Test::Unit::TestCase
         end
       
         should "use sudo make install instead of make install by default" do
-          Options.make_install = true
-          Options.force_ffmpeg = true
           out, err = capture { Core.compile }
           # TODO: This should be a more strict test
           assert_match /sudo make install/, out
         end
       
-        should "" do
-          #out, err = capture { Core.compile }
-          #puts out
+        should "proclaim that it was called in debug mode" do
+          Options.debug = true
+          out, err = capture { Core.compile }
+          assert_match /Minisip::Component::Core\.compile was called/, out
+        end
         
+        should "remove ffmpeg before compiling minisip" do
+          Options.debug = true
+          out, err = capture { Core.compile }
+          assert_match /MILESTONE: removing_ffmpeg.+MILESTONE: processing_libminisip/m, out
+          assert_no_match /MILESTONE: processing_libminisip.+MILESTONE: removing_ffmpeg/m, out
         end
 
       end # context "in theory when compiling"
