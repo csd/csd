@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{csd}
-  s.version = "0.1.11"
+  s.version = "0.1.12"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Technology Transfer Alliance Team"]
@@ -46,8 +46,11 @@ Gem::Specification.new do |s|
      "lib/csd/application/minisip/component/x264.rb",
      "lib/csd/application/minisip/error.rb",
      "lib/csd/application/minisip/options/common.rb",
+     "lib/csd/application/minisip/options/common_defaults.rb",
      "lib/csd/application/minisip/options/compile.rb",
+     "lib/csd/application/minisip/options/compile_defaults.rb",
      "lib/csd/application/minisip/options/package.rb",
+     "lib/csd/application/minisip/options/package_defaults.rb",
      "lib/csd/application/minisip/phonebook_example.rb",
      "lib/csd/application/minisip/unix.rb",
      "lib/csd/application/minisip/unix/darwin.rb",
