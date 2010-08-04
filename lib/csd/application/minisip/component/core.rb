@@ -40,7 +40,7 @@ module CSD
             
             def remove_ffmpeg
               ffmpeg_available = Cmd.run('ffmpeg -h', :internal => true, :die_on_failure => false).success?
-              return if Options.ffmpeg_first or !Options.configure or !Options.reveal or !libraries.include?('libminisip') or !ffmpeg_available
+              return if Options.ffmpeg_first or !Options.configure or !libraries.include?('libminisip') or !ffmpeg_available
               if Gem::Platform.local.debian?
                 # Note that FFmpeg must have been installed via apt-get or via the AI in order for this to work,
                 # because manual compilations of FFmpeg cannot be removed automatically
