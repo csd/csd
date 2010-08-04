@@ -10,6 +10,7 @@ class TestMinisip < Test::Unit::TestCase
 
     setup do
       Options.clear
+      Options.testmode = true
     end
 
     context "Core component" do
@@ -38,6 +39,11 @@ class TestMinisip < Test::Unit::TestCase
           @base.define_relative_paths
           Options.clear Application::Minisip.default_options('compile')
           Options.reveal = true
+          Options.testmode = true
+        end
+
+        should "by default use the configure option" do
+          assert Options.configure
         end
 
         should "know how to checkout the default branch of the source code" do

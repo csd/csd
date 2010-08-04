@@ -49,7 +49,7 @@ module CSD
           file = File.join(Path.applications, name, 'options', filename)
           result << File.read(file) if File.file?(file)
         end
-        default_options + result.join("\n")
+        default_options(action) + result.join("\n")
       end
       
       # Comes in handy for the test suite
