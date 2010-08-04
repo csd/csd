@@ -37,7 +37,7 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
               return if Path.minisip_gnome_pixmap.file? and Path.minisip_desktop_entry.file?
               UI.info "Installing Gnome menu item".green.bold
               Cmd.run("sudo cp #{Path.minisip_gnome_png} #{Path.minisip_gnome_pixmap}", :announce_pwd => false)
-              Path.new_desktop_entry = Pathname.new File.join(Dir.work, 'minisip.desktop')
+              Path.new_desktop_entry = Pathname.new File.join(Path.work, 'minisip.desktop')
               Cmd.touch_and_replace_content Path.new_desktop_entry, DESKTOP_ENTRY, :internal => true
               Cmd.run "sudo mv #{Path.new_desktop_entry} #{Path.minisip_desktop_entry}", :announce_pwd => false
             end

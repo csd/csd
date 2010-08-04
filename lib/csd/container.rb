@@ -70,8 +70,8 @@ module CSD
   class Options
     # Because the Options class will respond to clear, we must pass it on explicitly to the OptionsParser instance residing in CSD.options
     #
-    def self.clear
-      ::CSD.options.clear
+    def self.clear(*args)
+      ::CSD.options.clear(*args)
     end
     def self.method_missing(meth, *args, &block)
       ::CSD.options.send(meth, *args, &block)

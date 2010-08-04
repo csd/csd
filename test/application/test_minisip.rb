@@ -36,7 +36,7 @@ class TestMinisip < Test::Unit::TestCase
         setup do
           Options.clear
           @base.define_relative_paths
-          CSD.options.clear Application::Minisip.default_options('compile')
+          Options.clear Application::Minisip.default_options('compile')
           Options.reveal = true
         end
 
@@ -57,6 +57,7 @@ class TestMinisip < Test::Unit::TestCase
       
         should "use sudo make install instead of make install by default" do
           Options.make_install = true
+          Options.force_ffmpeg = true
           out, err = capture { Core.compile }
           # TODO: This should be a more strict test
           assert_match /sudo make install/, out
