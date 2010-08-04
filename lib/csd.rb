@@ -31,7 +31,7 @@ module CSD
       if !Applications.current and ARGV.include?('update')
         # Updating the AI
         UI.info "Updating the AI to the newest version".green.bold
-        Cmd.run "sudo gem update csd", :announce_pwd => false, :verbose => true
+        Cmd.run "sudo gem update csd --no-ri --no-rdoc", :announce_pwd => false, :verbose => true
         exit # The only smooth status code 0 exit in this whole application :)
       else
         choose_application unless Applications.current

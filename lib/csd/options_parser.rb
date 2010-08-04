@@ -122,9 +122,9 @@ module CSD
         opts.on("-s", "--silent","Don't show any output") do |value|
           self.silent = value
         end
-        #opts.on_tail("-a", "--developer", "Activating advanced AI functionality (developers only)") do |value|
-        #  self.developer = value
-        #end
+        opts.on_tail("-a", "--developer", "Show information only relevant to AI and MiniSIP developers") do |value|
+          self.developer = value
+        end
         opts.on_tail("-h", "--help", "Show detailed help (regarding the given ACTION and APPLICATION)") do |value|
           self.help = value
         end

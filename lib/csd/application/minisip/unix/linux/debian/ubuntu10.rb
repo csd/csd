@@ -16,7 +16,7 @@ module CSD
           if Path.giomm_header_backup.file? and !Options.reveal
             UI.warn "giomm-2.4 seems to be fixed already, I won't touch it now. Delete #{Path.giomm_header_backup.enquote} to enforce it."
           else
-            Path.new_giomm_header = File.join(Dir.mktmpdir, 'giomm.h')
+            Path.new_giomm_header = File.join(Dir.work, 'giomm.h')
             Cmd.copy(Path.giomm_header, Path.new_giomm_header)
             Cmd.replace Path.new_giomm_header do |r|
               r.replace '#include <giomm/socket.h>', "/* ----- AI COMMENTING OUT START ----- \n#include <giomm/socket.h>"

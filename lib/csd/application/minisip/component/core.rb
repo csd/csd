@@ -112,7 +112,7 @@ module CSD
               Path.dirlist     = Pathname.new File.join('/', 'usr', 'share', 'aclocal', 'dirlist')
               if !Path.dirlist.file? and Gem::Platform.local.debian?
                 UI.info "Fixing broken Debian aclocal path".green.bold
-                Path.new_dirlist = Pathname.new File.join(Dir.mktmpdir, 'dirlist')
+                Path.new_dirlist = Pathname.new File.join(Dir.work, 'dirlist')
                 Cmd.touch_and_replace_content Path.new_dirlist, '/usr/local/share/aclocal'
                 Cmd.run "sudo mv #{Path.new_dirlist} #{Path.dirlist}", :announce_pwd => false
               end

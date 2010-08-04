@@ -11,7 +11,7 @@ module CSD
 	</name>
 	<contact>
 		<name>
-			TTA HDVC
+			HDVC Clients
 		</name>
 		<pop>
 			<desc>
@@ -42,7 +42,7 @@ module CSD
 				Client4
 			</desc>
 			<uri>
-				ip:client4@carenet-se.se
+				sip:client4@carenet-se.se
 			</uri>
 		</pop>
 		<pop>
@@ -50,15 +50,15 @@ module CSD
 				Client5
 			</desc>
 			<uri>
-				ip:client5@carenet-se.se
+				sip:client5@carenet-se.se
 			</uri>
 		</pop>
 		<pop>
 			<desc>
-				Clien6
+				Client6
 			</desc>
 			<uri>
-				ip:client6@carenet-se.se
+				sip:client6@carenet-se.se
 			</uri>
 		</pop>
 	</contact>
@@ -68,10 +68,18 @@ module CSD
 		</name>
 		<pop>
 			<desc>
-				Reflector
+				Multiparty Conference Room
 			</desc>
 			<uri>
 				sip:mcu@carenet-se.se
+			</uri>
+		</pop>
+		<pop>
+			<desc>
+				Carenet Support Hotline
+			</desc>
+			<uri>
+				sip:uri@carenet-se.se
 			</uri>
 		</pop>
 	</contact>
@@ -87,11 +95,6 @@ module CSD
 				sip:tandberg1@carenet-se.se
 			</uri>
 		</pop>
-	</contact>
-	<contact>
-		<name>
-			Tandberg
-		</name>
 		<pop>
 			<desc>
 				Tandberg Client2

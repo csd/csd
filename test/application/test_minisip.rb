@@ -6,39 +6,19 @@ class TestMinisip < Test::Unit::TestCase
   include CSD
   include Application::Minisip::Component
   
-  context "The MiniSIP instance" do
-    
+  context "MiniSIP's" do
+
     setup do
-      ARGV.clear
       Options.clear
-      ARGV.push(@name)
-      Applications.current
-      @app = Application::Minisip::Base.new
+      @default_minisip_options = Application::Minisip.options
     end
-    
-    should "respond to a valid action" do
-      assert @app.respond_to?(:compile)
-    end
-    
-    context "in the whole workflow" do
+
+    context "Core component" do
       
       setup do
-        Options.clear
-      end
-
-      should "remove the working directory when in root installation mode and using tmp" do
-        Options.this_user = false
-        Options.temp = true
-        
-        
-      end
-      
-    end # context "in the whole workflow"
-    
-    context "in the Core component" do
-
-      setup do
-        Options.clear
+        @base = Application::Minisip::Base.new
+        @base.define_relative_paths
+        #CSD.options.eval @default_minisip_options
       end
 
       should "know how to identify and sort a subset of internal MiniSIP libraries with --only" do
@@ -67,7 +47,7 @@ class TestMinisip < Test::Unit::TestCase
           assert_no_match /git pull/, out
           assert err.empty?
         end
-        
+      
         should "know how to checkout a particular branch of the source code" do
           Options.branch = 'cuttingedge'
           out, err = capture { Core.checkout }
@@ -75,12 +55,18 @@ class TestMinisip < Test::Unit::TestCase
           assert_match /git pull .+ cuttingedge/, out
           assert err.empty?
         end
-        
+      
         should "use sudo make install instead of make install by default" do
           Options.make_install = true
           out, err = capture { Core.compile }
           # TODO: This should be a more strict test
           assert_match /sudo make install/, out
+        end
+      
+        should "description" do
+          out, err = capture { Core.compile }
+          #puts out
+        
         end
 
       end # context "in theory"
@@ -97,8 +83,8 @@ class TestMinisip < Test::Unit::TestCase
 
       end # context "in practice"
 
-    end # context "The Minisip Core component"
+    end # context "Core component"
     
-  end # context "The MiniSIP instance"
+  end # context "MiniSIP's"
   
 end

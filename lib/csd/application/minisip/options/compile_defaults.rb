@@ -1,0 +1,10 @@
+self.this_user = false
+self.apt_get = true
+self.ffmpeg_first = false
+self.github_tar = false
+self.branch = nil
+self.bootstrap = true
+self.configure = true
+self.make = true
+self.make_install = true
+self.only = nil

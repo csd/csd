@@ -44,12 +44,12 @@ module CSD
       # If there are no files in myapplication/options, an empty +String+ is returned instead.
       #
       def options(action='')
-        options_dir      = File.join(Path.applications, name, 'options')
-        common_file      = File.join(options_dir, "common.rb")
-        specific_file    = File.join(options_dir, "#{action}.rb")
-        common_options   = File.file?(common_file) ? File.read(common_file) : ''
-        specific_options = File.file?(specific_file) ? File.read(specific_file) : ''
-        specific_options + common_options
+        result = ''
+        ["common_defaults.rb", "common.rb", "#{action}_defaults.rb", "#{action}.rb"].each do |filename|
+          file = File.join(Path.applications, name, 'options', filename)
+          result += File.file?(file) ? File.read(file) : ''
+        end
+        result
       end
     
       protected
