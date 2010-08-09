@@ -48,19 +48,29 @@ module CSD
             
             when 'linux'
               # Linux
-              UI.debug "#{self}.instance supports Linux"
-              UI.debug "#{self}.instance analyzes the Linux kernel release #{Gem::Platform.local.kernel_release.to_s.enquote}"
-              case Gem::Platform.local.kernel_release
-                
-                when '2.6.32-21-generic', '2.6.32-22-generic'
-                  # Ubuntu 10.04
-                  UI.debug "#{self}.instance supports Ubuntu 10.04"
-                  Ubuntu10.new
+              case Gem::Platform.local.cpu
+
+                when 'x86'
+                  # 32 bit
+                  UI.debug "#{self}.instance supports Linux (32 bit)"
+                  UI.debug "#{self}.instance analyzes the Linux kernel release #{Gem::Platform.local.kernel_release.to_s.enquote}"
+                  case Gem::Platform.local.kernel_release
+
+                    when '2.6.32-21-generic', '2.6.32-22-generic'
+                      # Ubuntu 10.04
+                      UI.debug "#{self}.instance supports Ubuntu 10.04"
+                      Ubuntu10.new
+
+                    else
+                      # Any other Linux (currently only Debian is supported)
+                      UI.debug "#{self}.instance supports Debian"
+                      Debian.new
+                  end
                 
                 else
-                  # Any other Linux (currently only Debian is supported)
-                  UI.debug "#{self}.instance supports Debian"
-                  Debian.new
+                  # 64 bit
+                  UI.debug "#{self}.instance found the architecture to be other than 'x86', but 64 bit is not supported"
+                  raise Error::Minisip::Amd64NotSupported, "Sorry, 64-bit systems are currently not supported by MiniSIP."
               end
               
             else

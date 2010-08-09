@@ -47,6 +47,7 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
             
             # Every desktop entry file not created via dpkg will not update the gnome menus cache. We need to
             # do this manually here. See https://bugs.launchpad.net/ubuntu/+source/gnome-menus/+bug/581838
+            # If this step would not be done, the MiniSIP menu item would disappear after restarting Ubuntu.
             #
             def update_gnome_menu_cache
               Cmd.run %{sudo sh -c "/usr/share/gnome-menus/update-gnome-menus-cache /usr/share/applications/ > /usr/share/applications/desktop.${LANG}.cache"}

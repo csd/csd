@@ -8,6 +8,7 @@ module CSD
       # See 'csd/error' to find out which status code range has been assigned to MiniSIP
       
       class BuildDirNotFound < CSDError; status_code(200); end
+      class Amd64NotSupported < CSDError; status_code(201); end
       
       module Core
         class FFmpegInstalled < CSDError; status_code(210); end
