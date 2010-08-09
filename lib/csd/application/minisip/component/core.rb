@@ -112,8 +112,8 @@ module CSD
             # +dirlist+ in <tt>/usr/share/aclocal</tt> which contains the path to the other directory.
             #
             def modify_dirlist
-              Path.dirlist     = Pathname.new File.join('/', 'usr', 'share', 'aclocal', 'dirlist')
-              if !Path.dirlist.file? and Gem::Platform.local.debian?
+              Path.dirlist = Pathname.new File.join('/', 'usr', 'share', 'aclocal', 'dirlist')
+              if !Path.dirlist.file? and Gem::Platform.local.debian? or Options.reveal
                 UI.info "Fixing broken Debian aclocal path".green.bold
                 Path.new_dirlist = Pathname.new File.join(Path.work, 'dirlist')
                 Cmd.touch_and_replace_content Path.new_dirlist, '/usr/local/share/aclocal'

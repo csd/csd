@@ -29,6 +29,7 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
                 Cmd.run "nautilus #{Path.build_bin}"
               else
                 create_desktop_entry
+                update_gnome_menu_cache
               end
               send_notification
             end
@@ -44,6 +45,15 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
               Cmd.run "sudo mv #{Path.new_desktop_entry} #{Path.minisip_desktop_entry}", :announce_pwd => false
             end
             
+            # Every desktop entry file not created via dpkg will not update the gnome menus cache. We need to
+            # do this manually here. See https://bugs.launchpad.net/ubuntu/+source/gnome-menus/+bug/581838
+            #
+            def update_gnome_menu_cache
+              Cmd.run %{sudo sh -c "/usr/share/gnome-menus/update-gnome-menus-cache /usr/share/applications/ > /usr/share/applications/desktop.${LANG}.cache"}
+            end
+            
+            # Sends an OSD notification.
+            #
             def send_notification
               Cmd.run %{notify-send --icon=minisip_gnome "MiniSIP installation complete" "Please have a look in your Applications menu -> Internet." }, :internal => true, :die_on_failure => false
             end
