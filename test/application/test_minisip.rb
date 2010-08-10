@@ -51,7 +51,7 @@ class TestMinisip < Test::Unit::TestCase
 
         should "know how to checkout the default branch of the source code" do
           out, err = capture { Core.checkout }
-          assert_mOptions.branchatch /git clone /, out
+          assert_match /git clone /, out
           assert_no_match /git pull/, out
           assert err.empty?
         end
