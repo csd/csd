@@ -24,6 +24,7 @@ module CSD
           download
           extract
           apply
+          add_boot_loader
           send_notification
         end
         
@@ -75,17 +76,28 @@ module CSD
           Cmd.run "sudo dpkg -i #{file.first || '[DRIVER FILE FOR THIS ARCHITECTURE]'}", :announce_pwd => false
         end
         
+        def add_boot_loader
+          content = Path.kernel_module.file? ? File.read(Path.kernel_module) : ''
+          if content !~ /\nblackmagic/m
+            UI.info "Adding Blackmagic drivers to the boot loader".green.bold
+            Cmd.touch_and_replace_content Path.new_kernel_module, "#{content}\nblackmagic"
+            Cmd.run "sudo cp #{Path.new_kernel_module} #{Path.kernel_module}"
+          end
+        end
+        
         def send_notification
           Cmd.run %{notify-send --icon=gdm-setup "DeckLink installation complete" "You are now ready to use your Blackmagic Design DeckLink device." }, :internal => true, :die_on_failure => false
         end
         
         def define_relative_paths
-          blacklink_repository  = 'http://www.blackmagic-design.com/downloads/software/'
-          decklink_basename     = 'DeckLink_Linux_7.7.3'
-          decklink_extension    = '.tar.gz'
-          Path.decklink_url     = blacklink_repository + decklink_basename + decklink_extension
-          Path.tar              = Pathname.new(File.join(Path.work, "#{decklink_basename + decklink_extension}"))
-          Path.packages         = Pathname.new(File.join(Path.work, decklink_basename))
+          blacklink_repository   = 'http://www.blackmagic-design.com/downloads/software/'
+          decklink_basename      = 'DeckLink_Linux_7.7.3'
+          decklink_extension     = '.tar.gz'
+          Path.decklink_url      = blacklink_repository + decklink_basename + decklink_extension
+          Path.tar               = Pathname.new(File.join(Path.work, "#{decklink_basename + decklink_extension}"))
+          Path.packages          = Pathname.new(File.join(Path.work, decklink_basename))
+          Path.new_kernel_module = Pathname.new(File.join(Path.work, 'modules'))
+          Path.kernel_module     = Pathname.new(File.join('/', 'etc', 'modules'))
         end
         
       end
