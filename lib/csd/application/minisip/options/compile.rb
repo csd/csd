@@ -17,7 +17,7 @@ opts.on("--github-tar","Instead of fetching git repositories from Github, use ta
   self.github_tar = value
 end
 
-opts.on('--branch BRANCH', 'Choose another branch than `master´ when downloading the source code') do |lib|
+opts.on('--branch BRANCH', 'Choose another branch than `master´ when downloading the source code') do |value|
   self.branch = value
 end
 

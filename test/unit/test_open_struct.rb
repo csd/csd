@@ -17,6 +17,14 @@ class TestOpenStruct < Test::Unit::TestCase
       assert_nil @os.steve
     end
     
+    should "give a nice debugging output" do
+      @os.myoption = 'I am cool'
+      @os.helptext = 'I am helpful'
+      assert_match /helptext/, @os.inspect
+      assert_no_match /helptext=nil/, @os.inspect
+      assert_match /helptext=nil/, @os.inspect_for_debug
+    end
+    
   end
 
 end

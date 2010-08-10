@@ -24,7 +24,7 @@ module CSD
             #
             def compile
               UI.debug "#{self}.compile was called"
-              UI.debug "The current Options are: #{CSD.options.inspect}"
+              UI.debug "The current Options are: #{::CSD.options.inspect_for_debug}"
               remove_ffmpeg
               if Path.repository.directory? and !Options.reveal
                 UI.warn "The MiniSIP source code will not be downloaded, because the directory #{Path.repository.enquote} already exists."
