@@ -86,7 +86,7 @@ module CSD
               Cmd.git_clone 'MiniSIP repository', 'http://github.com/csd/minisip.git', Path.repository
               if Options.branch
                 Cmd.cd Path.repository, :internal => true
-                Cmd.run "git pull origin #{Options.branch}"
+                Cmd.run "git checkout -b #{Options.branch} origin/#{Options.branch}"
               end
             end
             

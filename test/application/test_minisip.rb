@@ -53,6 +53,7 @@ class TestMinisip < Test::Unit::TestCase
           out, err = capture { Core.checkout }
           assert_match /git clone /, out
           assert_no_match /git pull/, out
+          assert_no_match /git checkout/, out
           assert err.empty?
         end
       
@@ -60,7 +61,7 @@ class TestMinisip < Test::Unit::TestCase
           Options.branch = 'cuttingedge'
           out, err = capture { Core.checkout }
           assert_match /git clone /, out
-          assert_match /git pull .+ cuttingedge/, out
+          assert_match /git checkout .+ cuttingedge/, out
           assert err.empty?
         end
       
