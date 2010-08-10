@@ -122,6 +122,7 @@ module CSD
             end
             
             def link_libraries
+              return if Options.this_user
               UI.info "Linking shared MiniSIP libraries".green.bold
               Cmd.run "sudo ldconfig #{Path.build_lib_libminisip_so}", :announce_pwd => false
             end
