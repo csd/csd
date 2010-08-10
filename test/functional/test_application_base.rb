@@ -11,7 +11,7 @@ class TestApplicationBase < Test::Unit::TestCase
     setup do
       ARGV.clear
       Options.clear
-      @name = 'minisip'
+      @name = 'decklink'
       ARGV.push(@name)
       assert @app = Applications.find(@name).instance
     end

@@ -51,7 +51,7 @@ class TestMinisip < Test::Unit::TestCase
 
         should "know how to checkout the default branch of the source code" do
           out, err = capture { Core.checkout }
-          assert_match /git clone /, out
+          assert_mOptions.branchatch /git clone /, out
           assert_no_match /git pull/, out
           assert err.empty?
         end
@@ -81,6 +81,14 @@ class TestMinisip < Test::Unit::TestCase
           out, err = capture { Core.compile }
           assert_match /MILESTONE: removing_ffmpeg.+MILESTONE: processing_libminisip/m, out
           assert_no_match /MILESTONE: processing_libminisip.+MILESTONE: removing_ffmpeg/m, out
+        end
+        
+        should "not link the library in this-user-mode" do
+          out, err = capture { Core.compile }
+          assert_match /ldconfig/, out
+          Options.this_user=true
+          out, err = capture { Core.compile }
+          assert_no_match /ldconfig/, out
         end
 
       end # context "in theory when compiling"
