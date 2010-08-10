@@ -9,11 +9,8 @@ class TestApplicationBase < Test::Unit::TestCase
   context "An application instance" do
   
     setup do
-      ARGV.clear
       Options.clear
-      @name = 'decklink'
-      ARGV.push(@name)
-      assert @app = Applications.find(@name).instance
+      @app = Application::Base.new
     end
     
     should "use a temporary directory as working directory when the --temp options is given" do
@@ -48,7 +45,7 @@ class TestApplicationBase < Test::Unit::TestCase
     should "take the current pwd with a subdirectory in the name of the application as working directory by default" do
       @app.define_working_directory
       assert_kind_of Pathname, Path.work
-      assert_equal File.join(Dir.pwd, "#{@name}.ai"), Path.work.to_s
+      assert_equal File.join(Dir.pwd, "application.ai"), Path.work.to_s
     end
     
   end # context "An application instance"
