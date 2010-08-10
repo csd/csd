@@ -16,6 +16,14 @@ module CSD
           self.testmode = testmode
         end
         
+        # A nicer version of inspect (it only removes the helptext attribute)
+        #
+        def inspect_for_debug
+          result = self.dup
+          result.helptext = nil
+          result.inspect
+        end
+        
       end
     end
   end
