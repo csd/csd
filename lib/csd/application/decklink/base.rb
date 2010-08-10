@@ -81,7 +81,7 @@ module CSD
           if content !~ /\nblackmagic/m
             UI.info "Adding Blackmagic drivers to the boot loader".green.bold
             Cmd.touch_and_replace_content Path.new_kernel_module, "#{content}\nblackmagic"
-            Cmd.run "sudo cp #{Path.new_kernel_module} #{Path.kernel_module}"
+            Cmd.run "sudo cp #{Path.new_kernel_module} #{Path.kernel_module}", :announce_pwd => false
           end
         end
         
