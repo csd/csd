@@ -22,6 +22,12 @@ module CSD
           kernel_version and kernel_version =~ /Debian|Ubuntu/
         end
         
+        # Determines whether the OS is Ubuntu. Returns +true+ or +false+.
+        #
+        def ubuntu?
+          kernel_version and kernel_version =~ /Ubuntu/
+        end
+        
         # On linux systems, this method returns the current kernel version.
         #
         def kernel_version

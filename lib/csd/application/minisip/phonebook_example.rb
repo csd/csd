@@ -79,7 +79,7 @@ module CSD
 				Carenet Support Hotline
 			</desc>
 			<uri>
-				sip:uri@carenet-se.se
+				sip:support@carenet-se.se
 			</uri>
 		</pop>
 	</contact>
