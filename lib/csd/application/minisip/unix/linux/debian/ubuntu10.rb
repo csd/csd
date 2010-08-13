@@ -7,6 +7,7 @@ module CSD
       class Ubuntu10 < Debian
         
         def after_aptitude
+          create_working_directory
           fix_ubuntu_10_04
           super
         end

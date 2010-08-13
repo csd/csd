@@ -37,7 +37,10 @@ module CSD
       end
       
       def create_working_directory
-        unless Path.work.directory?
+        UI.debug "The working directory is demanded to be #{Path.work}"
+        if Path.work.directory?
+          UI.debug "The working directory already exists and will not be created"
+        else
           UI.info "Creating working directory".green.bold
           Cmd.mkdir Path.work
         end
