@@ -1,0 +1,7 @@
+human: i2conf
+description: A sip video conference MCU used by MiniSIP.
+actions:
+  public:
+    - install: Download and install the MCU.
+scopes:
+  --- {}
