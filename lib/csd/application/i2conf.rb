@@ -6,7 +6,7 @@ module CSD
   module Application
     # This is the Application Module for i2conf, a sip video conference MCU.
     #
-    module i2conf
+    module I2conf
       class << self
 
         include CSD::Application::Default

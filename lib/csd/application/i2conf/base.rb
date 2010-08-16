@@ -1,6 +1,6 @@
 # -*- encoding: UTF-8 -*-
 require 'csd/application/default/base'
-require 'csd/application/minisip/base'
+require 'csd/application/minisip/base/unix/linux/debian'
 
 module CSD
   module Application
@@ -14,7 +14,7 @@ module CSD
         DEBIAN_DEPENDENCIES = %w{ libboost-dev libboost-thread-dev liblog4cxx* }
         
         def install
-          @minisip = ::CSD::Application::Minisip::Base.new
+          @minisip = ::CSD::Application::Minisip::Debian.new
           define_relative_paths
           UI.separator
           UI.info "This operation will download and install the i2conf SIP video conferencing MCU.".green.bold
@@ -24,8 +24,8 @@ module CSD
         end
         
         def install!
-          #create_working_directory
-          #
+          create_working_directory
+          
 
           send_notification
         end
@@ -53,7 +53,8 @@ module CSD
         end
         
         def define_relative_paths
-          Path.packages          = Pathname.new(File.join(Path.work, decklink_basename))
+          UI.debug "#{self}#define_relative_paths defines relative i2conf paths now"
+#          Path.packages          = Pathname.new(File.join(Path.work#, decklink_basename))
         end
         
       end
