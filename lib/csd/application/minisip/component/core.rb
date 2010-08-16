@@ -203,7 +203,10 @@ module CSD
               # These options are used by all libraries
               common_options = Options.this_user ? %Q{--prefix="#{Path.build}" PKG_CONFIG_PATH="#{Path.build_lib_pkg_config}" ACLOCAL_FLAGS="#{Path.build_share_aclocal}" LD_LIBRARY_PATH="#{Path.build_lib}"} : ''
               # I2conf needs to compile MiniSIP without any options
-              individual_options = '' if Options.blank_minisip_configuration
+              if Options.blank_minisip_configuration
+                UI.debug "#{self}#configure! resets flags because of Option.blank_minisip_configuration"
+                individual_options = ''
+              end
               # Putting it all together
               Cmd.run ['./configure', common_options, debug_options, individual_options].join(' ')
             end
