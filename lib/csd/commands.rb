@@ -176,15 +176,16 @@ module CSD
         default_params = { :die_on_failure => true, :only_first_occurence => false }
         params = default_params.merge(params)
         begin
-          UI.info "   Replacing".yellow
+          new_file_content = if params[:only_first_occurence]
+            UI.info "   Replacing the first occurence of".yellow
+            File.read(self.filepath).sub(pattern.to_s, substitution.to_s)
+          else
+            UI.info "   Replacing".yellow
+            File.read(self.filepath).gsub(pattern.to_s, substitution.to_s)
+          end
           UI.info "   `#{pattern}´".blue
           UI.info "   with".yellow
           UI.info "   `#{substitution.to_s.gsub("\n", "\n    ")}´".white
-          new_file_content = if params[:only_first_occurence]
-            File.read(self.filepath).sub(pattern.to_s, substitution.to_s)
-          else
-            File.read(self.filepath).gsub(pattern.to_s, substitution.to_s)
-          end
           File.open(self.filepath, 'w+') { |file| file << new_file_content } unless Options.reveal
           result.success = true
         rescue Errno::ENOENT => e

@@ -8,3 +8,4 @@ self.configure = true
 self.make = true
 self.make_install = true
 self.only = nil
+self.enable_debug = false

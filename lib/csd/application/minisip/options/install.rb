@@ -42,3 +42,7 @@ end
 opts.on("--only libmutil,libmsip,etc.", Array, "Process only these libraries") do |list|
   self.only = list
 end
+
+opts.on("--enable-debug","Enable MiniSIP-internal debugging") do |value|
+  self.enable_debug = value
+end

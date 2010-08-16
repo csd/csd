@@ -192,14 +192,20 @@ module CSD
             def configure!(name='')
               individual_options = case name
                 when 'libminisip'
-                  %Q{--enable-debug --enable-video --enable-opengl --disable-mil --enable-decklink --disable-sdl #{libminisip_cpp_flags} #{libminisip_ld_flags}}
+                  %Q{--enable-video --enable-opengl --disable-mil --enable-decklink --disable-sdl #{libminisip_cpp_flags} #{libminisip_ld_flags}}
                 when 'minisip'
-                  %Q{--enable-debug --enable-video --enable-opengl --enable-textui}
+                  %Q{--enable-video --enable-opengl --enable-textui}
                 else
                   ''
               end
+              # The --enable-debug option should only be there if specifically requested
+              debug_options = (Options.enable_debug (and name == 'libminisip' or name == 'minisip')) ? '--enable-debug' : ''
+              # These options are used by all libraries
               common_options = Options.this_user ? %Q{--prefix="#{Path.build}" PKG_CONFIG_PATH="#{Path.build_lib_pkg_config}" ACLOCAL_FLAGS="#{Path.build_share_aclocal}" LD_LIBRARY_PATH="#{Path.build_lib}"} : ''
-              Cmd.run ['./configure', common_options, individual_options].join(' ')
+              # I2conf needs to compile MiniSIP without any options
+              individual_options = '' if Options.blank_minisip_configuration
+              # Putting it all together
+              Cmd.run ['./configure', common_options, debug_options, individual_options].join(' ')
             end
             
             def make
