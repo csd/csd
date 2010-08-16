@@ -1,13 +1,13 @@
 # -*- encoding: UTF-8 -*-
 require 'csd/application/default/base'
-require 'csd/application/minisip/base/unix/linux/debian'
+require 'csd/application/minisip/unix/linux/debian'
 
 module CSD
   module Application
     module I2conf
       class Base < CSD::Application::Base
         
-        include ::CSD::Application::Minisip
+        include ::CSD::Application::Minisip::Component
         
         # A list of apt-get packages that are required to install i2conf.
         #
@@ -25,9 +25,43 @@ module CSD
         
         def install!
           create_working_directory
+          compile_libmutil
+          aptitude
           
-
           send_notification
+        end
+        
+        def checkout
+          Cmd.git_clone('i2conf repository', 'git://github.com/csd/strManager.git', Path.str_manager)
+        end
+        
+        def copy_libtool
+          Cmd.cd Path.str_manager
+          Cmd.run 'cp /usr/share.libtool/config/config.sub .'
+          Cmd.run 'cp /usr/share.libtool/config/config.guess .'
+          Cmd.run 'cp /usr/share.libtool/config/ltmain.sh .'
+        end
+        
+        def fix_str_manager
+          Cmd.replace Path.str_src_manager, '#include', "#include <iostream>\n#include", { :only_first_occurence => true }
+        end
+        
+        
+        def compile_libmutil
+          @minisip.aptitude
+          Options.only = ['libmutil']
+          Options.bootstrap = true
+          Options.configure = true
+          Options.make = true
+          Options.make_install = true
+          Core.checkout
+          Core.compile_libraries
+        end
+        
+        def aptitude
+          UI.info "Installing Debian dependencies".green.bold
+          Cmd.run("sudo apt-get update")
+          Cmd.run("sudo apt-get install #{DEBIAN_DEPENDENCIES.sort.join(' ')} --yes --fix-missing")
         end
         
         def introduction
@@ -53,8 +87,10 @@ module CSD
         end
         
         def define_relative_paths
-          UI.debug "#{self}#define_relative_paths defines relative i2conf paths now"
-#          Path.packages          = Pathname.new(File.join(Path.work#, decklink_basename))
+          UI.debug "#{self.class}#define_relative_paths defines relative i2conf paths now"
+          Path.str_manager          = Pathname.new(File.join(Path.work, 'libstrmanager'))
+          Path.str_src_manager      = Pathname.new(File.join(Path.str_manager, 'src', 'Manager.cpp'))
+          Path.str_src_worker       = Pathname.new(File.join(Path.str_manager, 'src', 'workers', 'StatsWorker.cpp'))
         end
         
       end
