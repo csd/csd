@@ -24,8 +24,8 @@ module CSD
         end
         
         def install!
-          create_working_directory
-          compile_libmutil
+          create_working_directoryfix_i2conf_aclocal
+          compile_minisip
           aptitude
           checkout_strmanager
           copy_libtool
@@ -38,9 +38,9 @@ module CSD
           send_notification
         end
         
-        def compile_libmutil
+        def compile_minisip
           @minisip.aptitude
-          Options.only = ['libmutil']
+          Options.only = %w{ libmutil libmnetutil libmcrypto libmikey libmsip }
           Options.bootstrap = true
           Options.configure = true
           Options.make = true
@@ -70,8 +70,9 @@ module CSD
         def fix_str_manager
           UI.info 'Fixing strManager'.green.bold
           [Path.str_src_manager, Path.str_src_worker].each do |file|
-            next if File.read(file).include?('#include <iostream>')
-            Cmd.replace file, '#include', "#include <iostream>\n#include", { :only_first_occurence => true }
+            if Options.reveal or !File.read(file).include?('#include <iostream>')
+              Cmd.replace file, '#include', "#include <iostream>\n#include", { :only_first_occurence => true }
+            end
           end
         end
         
@@ -89,15 +90,17 @@ module CSD
         end
         
         def fix_i2conf
-          return if File.read(Path.i2conf_bootstrap).include?('automake-1.11')
-          UI.info 'Fixing i2conf automake'.green.bold
-          Cmd.replace Path.i2conf_bootstrap, 'elif automake-1.10', %{elif automake-1.11 --version >/dev/null 2>&1; then\n  amvers="-1.11"\nelif automake-1.10}, { :only_first_occurence => true }
+          if Options.reveal or !File.read(Path.i2conf_bootstrap).include?('automake-1.11')
+            UI.info 'Fixing i2conf automake'.green.bold
+            Cmd.replace Path.i2conf_bootstrap, 'elif automake-1.10', %{elif automake-1.11 --version >/dev/null 2>&1; then\n  amvers="-1.11"\nelif automake-1.10}, { :only_first_occurence => true }
+          end
         end
         
         def fix_i2conf_aclocal
-          return unless File.read(Path.i2conf_bootstrap).include?('-I m4')
-          UI.info 'Fixing i2conf aclocal'.green.bold
-          Cmd.replace Path.i2conf_bootstrap, '-I m4 ', ''
+          if Options.reveal or File.read(Path.i2conf_bootstrap).include?('-I m4')
+            UI.info 'Fixing i2conf aclocal'.green.bold
+            Cmd.replace Path.i2conf_bootstrap, '-I m4 ', ''
+          end
         end
         
         def compile_i2conf
