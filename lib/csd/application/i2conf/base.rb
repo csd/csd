@@ -98,6 +98,7 @@ module CSD
           Cmd.cd Path.i2conf
           Cmd.run './bootstrap'
           Cmd.run './configure'
+          Cmd.run 'aclocal'
           Cmd.run 'make'
           Cmd.run 'sudo make install'
         end
