@@ -24,7 +24,7 @@ module CSD
         end
         
         def install!
-          create_working_directoryfix_i2conf_aclocal
+          create_working_directory
           compile_minisip
           aptitude
           checkout_strmanager
