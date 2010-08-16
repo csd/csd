@@ -15,6 +15,10 @@ module CSD
           super
           define_relative_paths
         end
+        
+        def install
+          compile
+        end
 
         # Running the compile task.
         #
