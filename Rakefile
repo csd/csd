@@ -25,7 +25,7 @@ Jeweler::Tasks.new do |gemspec|
   gemspec.email       = "mtoday11@gmail.com"
   gemspec.homepage    = "http://github.com/csd/csd"
   gemspec.authors     = ["Technology Transfer Alliance Team"]
-  gemspec.executables = ['ai']
+  gemspec.executables = ['ai', 'ttai']
   gemspec.post_install_message = %q{
 ============================================================
 

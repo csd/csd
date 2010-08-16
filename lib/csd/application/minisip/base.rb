@@ -50,6 +50,7 @@ module CSD
         # Defines all paths ever needed for the MiniSIP module based on the working directory.
         #
         def define_relative_paths
+          UI.debug "#{self}#define_relative_paths defines relative MiniSIP paths now"
           if Options.this_user
             Path.build = Pathname.new(File.join(Path.work, 'build'))
           else
