@@ -33,6 +33,7 @@ module CSD
           compile_str_manager
           checkout_i2conf
           fix_i2conf
+          fix_i2conf_aclocal
           compile_i2conf
           send_notification
         end
@@ -89,8 +90,14 @@ module CSD
         
         def fix_i2conf
           return if File.read(Path.i2conf_bootstrap).include?('automake-1.11')
-          UI.info 'Fixing i2conf'.green.bold
+          UI.info 'Fixing i2conf automake'.green.bold
           Cmd.replace Path.i2conf_bootstrap, 'elif automake-1.10', %{elif automake-1.11 --version >/dev/null 2>&1; then\n  amvers="-1.11"\nelif automake-1.10}, { :only_first_occurence => true }
+        end
+        
+        def fix_i2conf_aclocal
+          return unless File.read(Path.i2conf_bootstrap).include?('-I m4')
+          UI.info 'Fixing i2conf aclocal'.green.bold
+          Cmd.replace Path.i2conf_bootstrap, '-I m4 ', ''
         end
         
         def compile_i2conf
