@@ -27,8 +27,8 @@ module CSD
         
         def aptitude
           UI.info "Installing Debian dependencies for MiniSIP".green.bold
-          Cmd.run("sudo apt-get update")
-          Cmd.run("sudo apt-get install #{DEBIAN_DEPENDENCIES.sort.join(' ')} --yes --fix-missing")
+          Cmd.run 'sudo apt-get update', :announce_pwd => false
+          Cmd.run "sudo apt-get install #{DEBIAN_DEPENDENCIES.sort.join(' ')} --yes --fix-missing", :announce_pwd => false
         end
         
       end

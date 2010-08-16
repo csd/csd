@@ -5,9 +5,9 @@ actions:
     #- show: Shows further information about MiniSIP
     #- download: Downloads MiniSIP components (e.g. source code, configurations, docs,...)
     - install: Downloads and compiles MiniSIP from scratch
+    - check: Checks whether the environment dependencies for MiniSIP are satisfied
     #- package: Downloads, compiles and packages MiniSIP from scratch
     #- install: Installs an application
-    #- check: Checks whether the environment dependencies for the application are satisfied
   developer:
     #- publish: Submits a compiled package to the CSD package repository
 scopes:

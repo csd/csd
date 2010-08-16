@@ -50,8 +50,8 @@ module CSD
         
         def aptitude
           UI.info "Installing Debian dependencies for i2conf".green.bold
-          Cmd.run("sudo apt-get update")
-          Cmd.run("sudo apt-get install #{DEBIAN_DEPENDENCIES.sort.join(' ')} --yes --fix-missing")
+          Cmd.run 'sudo apt-get update', :announce_pwd => false
+          Cmd.run "sudo apt-get install #{DEBIAN_DEPENDENCIES.sort.join(' ')} --yes --fix-missing", :announce_pwd => false
         end
         
         def checkout_strmanager
@@ -60,7 +60,7 @@ module CSD
         
         def copy_libtool
           UI.info 'Copying libtool dependencies'.green.bold
-          Cmd.cd Path.str_manager
+          Cmd.cd Path.str_manager, :announce_pwd => false
           Cmd.run 'cp /usr/share/libtool/config/config.sub .'
           Cmd.run 'cp /usr/share/libtool/config/config.guess .'
           Cmd.run 'cp /usr/share/libtool/config/ltmain.sh .'
@@ -76,7 +76,7 @@ module CSD
         
         def compile_str_manager
           UI.info 'Compiling strManager'.green.bold
-          Cmd.cd Path.str_manager
+          Cmd.cd Path.str_manager, :announce_pwd => false
           Cmd.run './configure'
           Cmd.run 'aclocal'
           Cmd.run 'make'
@@ -95,7 +95,7 @@ module CSD
         
         def compile_i2conf
           UI.info 'Compiling i2conf'.green.bold
-          Cmd.cd Path.i2conf
+          Cmd.cd Path.i2conf, :announce_pwd => false
           Cmd.run './bootstrap'
           Cmd.run './configure'
           Cmd.run 'aclocal'

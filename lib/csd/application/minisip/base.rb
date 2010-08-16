@@ -16,6 +16,9 @@ module CSD
           define_relative_paths
         end
         
+        # Running the install task.
+        # Currently this corresponds to the compile task.
+        #
         def install
           compile
         end
@@ -29,6 +32,12 @@ module CSD
         # Running the package task.
         #
         def package
+          UI.error 'Currently not supported for this platform. Sorry.'
+        end
+
+        # Running the check task.
+        #
+        def check
           UI.error 'Currently not supported for this platform. Sorry.'
         end
         
