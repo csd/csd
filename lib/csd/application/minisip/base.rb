@@ -73,7 +73,7 @@ module CSD
           Path.build_share_aclocal                = Pathname.new(File.join(Path.build_share, 'aclocal'))
           Path.giomm_header                       = Pathname.new(File.join('/', 'usr', 'include', 'giomm-2.4', 'giomm.h'))
           Path.giomm_header_backup                = Pathname.new(File.join('/', 'usr', 'include', 'giomm-2.4', 'giomm.h.ai-backup'))
-          Path.repository                         = Pathname.new(File.join(Path.work, 'repository'))
+          Path.repository                         = Pathname.new(File.join(Path.work, 'minisip'))
           Path.repository_libminisip_rules        = Pathname.new(File.join(Path.repository, 'libminisip', 'debian', 'rules'))
           Path.repository_libminisip_rules_backup = Pathname.new(File.join(Path.repository, 'libminisip', 'debian', 'rules.ai-backup'))
           Path.repository_grabber                 = Pathname.new(File.join(Path.repository, 'libminisip', 'source', 'subsystem_media', 'video', 'grabber'))
