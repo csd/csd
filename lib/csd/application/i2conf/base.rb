@@ -41,19 +41,22 @@ module CSD
         end
         
         def copy_libtool
+          UI.info 'Copying libtool dependencies'
           Cmd.cd Path.str_manager
-          Cmd.run 'cp /usr/share.libtool/config/config.sub .'
-          Cmd.run 'cp /usr/share.libtool/config/config.guess .'
-          Cmd.run 'cp /usr/share.libtool/config/ltmain.sh .'
+          Cmd.run 'cp /usr/share/libtool/config/config.sub .'
+          Cmd.run 'cp /usr/share/libtool/config/config.guess .'
+          Cmd.run 'cp /usr/share/libtool/config/ltmain.sh .'
         end
         
         def fix_str_manager
+          UI.info 'Fixing strManager'
           [Path.str_src_manager, Path.str_src_worker].each do |file|
             Cmd.replace file, '#include', "#include <iostream>\n#include", { :only_first_occurence => true }
           end
         end
         
         def compile_str_manager
+          UI.info 'Compiling strManager'
           Cmd.cd Path.str_manager
           Cmd.run './configure'
           Cmd.run 'aclocal'
@@ -66,6 +69,7 @@ module CSD
         end
         
         def compile_i2conf
+          UI.info 'Compiling i2conf'
           Cmd.cd Path.i2conf
           Cmd.run './configure'
           Cmd.run 'make'
