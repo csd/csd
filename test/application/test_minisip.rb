@@ -37,7 +37,7 @@ class TestMinisip < Test::Unit::TestCase
         setup do
           Options.clear
           @base.define_relative_paths
-          Options.clear Application::Minisip.default_options('compile')
+          Options.clear Application::Minisip.default_options('install')
           Options.reveal = true
           Options.testmode = true
         end

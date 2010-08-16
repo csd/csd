@@ -1,6 +1,6 @@
 # -*- encoding: UTF-8 -*-
 require 'csd/application/default/base'
-require 'csd/application/minisip/base/unix/linux/debian'
+require 'csd/application/minisip/unix/linux/debian'
 
 module CSD
   module Application

@@ -15,6 +15,7 @@ module CSD
         #
         def instance
           if Gem::Platform.local.ubuntu?
+            UI.debug "#{self}.instance initializes the i2conf Base class now"
             Base.new
           else
             raise 'Sorry, currently only Ubuntu is supported.'
