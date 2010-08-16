@@ -199,7 +199,7 @@ module CSD
                   ''
               end
               # The --enable-debug option should only be there if specifically requested
-              debug_options = (Options.enable_debug (and name == 'libminisip' or name == 'minisip')) ? '--enable-debug' : ''
+              debug_options = (Options.enable_debug and (name == 'libminisip' or name == 'minisip')) ? '--enable-debug' : ''
               # These options are used by all libraries
               common_options = Options.this_user ? %Q{--prefix="#{Path.build}" PKG_CONFIG_PATH="#{Path.build_lib_pkg_config}" ACLOCAL_FLAGS="#{Path.build_share_aclocal}" LD_LIBRARY_PATH="#{Path.build_lib}"} : ''
               # I2conf needs to compile MiniSIP without any options
