@@ -41,7 +41,7 @@ module CSD
         def compile_minisip
           @minisip.aptitude
           Options.only = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip }
-          Options.blank_minisip_comfiguration = true
+          Options.blank_minisip_configuration = true
           Options.bootstrap = true
           Options.configure = true
           Options.make = true
