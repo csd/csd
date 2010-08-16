@@ -27,12 +27,17 @@ module CSD
           create_working_directory
           compile_libmutil
           aptitude
+          checkout_strmanager
+          copy_libtool
+          fix_str_manager
+          compile_str_manager
+          checkout_i2conf
           
           send_notification
         end
         
-        def checkout
-          Cmd.git_clone('i2conf repository', 'git://github.com/csd/strManager.git', Path.str_manager)
+        def checkout_strmanager
+          Cmd.git_clone('strManager library', 'git://github.com/csd/strManager.git', Path.str_manager)
         end
         
         def copy_libtool
@@ -43,9 +48,29 @@ module CSD
         end
         
         def fix_str_manager
-          Cmd.replace Path.str_src_manager, '#include', "#include <iostream>\n#include", { :only_first_occurence => true }
+          [Path.str_src_manager, Path.str_src_worker].each do |file|
+            Cmd.replace file, '#include', "#include <iostream>\n#include", { :only_first_occurence => true }
+          end
         end
         
+        def compile_str_manager
+          Cmd.cd Path.str_manager
+          Cmd.run './configure'
+          Cmd.run 'aclocal'
+          Cmd.run 'make'
+          Cmd.run 'sudo make install'
+        end
+        
+        def checkout_i2conf
+          Cmd.git_clone('i2conf repository', 'git://github.com/csd/i2conf.git', Path.i2conf)
+        end
+        
+        def compile_i2conf
+          Cmd.cd Path.i2conf
+          Cmd.run './configure'
+          Cmd.run 'make'
+          Cmd.run 'sudo make install'
+        end
         
         def compile_libmutil
           @minisip.aptitude
@@ -59,7 +84,7 @@ module CSD
         end
         
         def aptitude
-          UI.info "Installing Debian dependencies".green.bold
+          UI.info "Installing Debian dependencies for i2conf".green.bold
           Cmd.run("sudo apt-get update")
           Cmd.run("sudo apt-get install #{DEBIAN_DEPENDENCIES.sort.join(' ')} --yes --fix-missing")
         end
@@ -91,6 +116,7 @@ module CSD
           Path.str_manager          = Pathname.new(File.join(Path.work, 'libstrmanager'))
           Path.str_src_manager      = Pathname.new(File.join(Path.str_manager, 'src', 'Manager.cpp'))
           Path.str_src_worker       = Pathname.new(File.join(Path.str_manager, 'src', 'workers', 'StatsWorker.cpp'))
+          Path.i2conf               = Pathname.new(File.join(Path.work, 'i2conf'))
         end
         
       end
