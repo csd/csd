@@ -32,48 +32,9 @@ module CSD
           fix_str_manager
           compile_str_manager
           checkout_i2conf
-          
+          fix_i2conf
+          compile_i2conf
           send_notification
-        end
-        
-        def checkout_strmanager
-          Cmd.git_clone('strManager library', 'git://github.com/csd/strManager.git', Path.str_manager)
-        end
-        
-        def copy_libtool
-          UI.info 'Copying libtool dependencies'
-          Cmd.cd Path.str_manager
-          Cmd.run 'cp /usr/share/libtool/config/config.sub .'
-          Cmd.run 'cp /usr/share/libtool/config/config.guess .'
-          Cmd.run 'cp /usr/share/libtool/config/ltmain.sh .'
-        end
-        
-        def fix_str_manager
-          UI.info 'Fixing strManager'
-          [Path.str_src_manager, Path.str_src_worker].each do |file|
-            Cmd.replace file, '#include', "#include <iostream>\n#include", { :only_first_occurence => true }
-          end
-        end
-        
-        def compile_str_manager
-          UI.info 'Compiling strManager'
-          Cmd.cd Path.str_manager
-          Cmd.run './configure'
-          Cmd.run 'aclocal'
-          Cmd.run 'make'
-          Cmd.run 'sudo make install'
-        end
-        
-        def checkout_i2conf
-          Cmd.git_clone('i2conf repository', 'git://github.com/csd/i2conf.git', Path.i2conf)
-        end
-        
-        def compile_i2conf
-          UI.info 'Compiling i2conf'
-          Cmd.cd Path.i2conf
-          Cmd.run './configure'
-          Cmd.run 'make'
-          Cmd.run 'sudo make install'
         end
         
         def compile_libmutil
@@ -93,6 +54,58 @@ module CSD
           Cmd.run("sudo apt-get install #{DEBIAN_DEPENDENCIES.sort.join(' ')} --yes --fix-missing")
         end
         
+        def checkout_strmanager
+          Cmd.git_clone('strManager library', 'git://github.com/csd/strManager.git', Path.str_manager)
+        end
+        
+        def copy_libtool
+          UI.info 'Copying libtool dependencies'.green.bold
+          Cmd.cd Path.str_manager
+          Cmd.run 'cp /usr/share/libtool/config/config.sub .'
+          Cmd.run 'cp /usr/share/libtool/config/config.guess .'
+          Cmd.run 'cp /usr/share/libtool/config/ltmain.sh .'
+        end
+        
+        def fix_str_manager
+          UI.info 'Fixing strManager'.green.bold
+          [Path.str_src_manager, Path.str_src_worker].each do |file|
+            next if File.read(file).include?('#include <iostream>')
+            Cmd.replace file, '#include', "#include <iostream>\n#include", { :only_first_occurence => true }
+          end
+        end
+        
+        def compile_str_manager
+          UI.info 'Compiling strManager'.green.bold
+          Cmd.cd Path.str_manager
+          Cmd.run './configure'
+          Cmd.run 'aclocal'
+          Cmd.run 'make'
+          Cmd.run 'sudo make install'
+        end
+        
+        def checkout_i2conf
+          Cmd.git_clone('i2conf repository', 'git://github.com/csd/i2conf.git', Path.i2conf)
+        end
+        
+        def fix_i2conf
+          return if File.read(Path.i2conf_bootstrap).include?('automake-1.11')
+          UI.info 'Fixing i2conf'.green.bold
+          Cmd.replace Path.i2conf_bootstrap, 'elif automake-1.10', %{elif automake-1.11 --version >/dev/null 2>&1; then\n  amvers="-1.11"\nelif automake-1.10}, { :only_first_occurence => true }
+        end
+        
+        def compile_i2conf
+          UI.info 'Compiling i2conf'.green.bold
+          Cmd.cd Path.i2conf
+          Cmd.run './bootstrap'
+          Cmd.run './configure'
+          Cmd.run 'make'
+          Cmd.run 'sudo make install'
+        end
+        
+        def send_notification
+          Cmd.run %{notify-send --icon=gdm-setup "I2conf installation complete" "You are now ready to use your SIP MCU." }, :internal => true, :die_on_failure => false
+        end
+        
         def introduction
           UI.info " Working directory:       ".green.bold + Path.work.to_s.yellow
           if Options.debug
@@ -110,17 +123,13 @@ module CSD
           end
         end
         
-        
-        def send_notification
-          Cmd.run %{notify-send --icon=gdm-setup "I2conf installation complete" "You are now ready to use your SIP MCU." }, :internal => true, :die_on_failure => false
-        end
-        
         def define_relative_paths
           UI.debug "#{self.class}#define_relative_paths defines relative i2conf paths now"
           Path.str_manager          = Pathname.new(File.join(Path.work, 'libstrmanager'))
           Path.str_src_manager      = Pathname.new(File.join(Path.str_manager, 'src', 'Manager.cpp'))
           Path.str_src_worker       = Pathname.new(File.join(Path.str_manager, 'src', 'workers', 'StatsWorker.cpp'))
           Path.i2conf               = Pathname.new(File.join(Path.work, 'i2conf'))
+          Path.i2conf_bootstrap     = Pathname.new(File.join(Path.i2conf, 'bootstrap'))
         end
         
       end
