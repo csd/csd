@@ -74,8 +74,9 @@ module CSD
         UI.info opts.help
       end
       UI.separator
-      UI.info '  To execute a task:   '.green.bold + "#{executable} [TASK] #{Applications.current.name}".cyan.bold + "          Example: #{executable} compile minisip".dark
-      UI.info '   For more details:   '.green.bold + "#{executable} help [TASK] #{Applications.current.name}".cyan.bold + "     Example: #{executable} help compile minisip".dark
+      example_action = actions.flatten.keys.first
+      UI.info '  To execute a task:   '.green.bold + "#{executable} [TASK] #{Applications.current.name}".cyan.bold + "          Example: #{executable} #{example_action} #{Applications.current.name}".dark
+      UI.info '   For more details:   '.green.bold + "#{executable} help [TASK] #{Applications.current.name}".cyan.bold + "     Example: #{executable} help #{example_action} #{Applications.current.name}".dark
       UI.separator
       UI.warn "You did not specify a valid task name."
       raise Error::Argument::NoAction

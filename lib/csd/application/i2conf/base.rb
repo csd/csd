@@ -51,6 +51,7 @@ module CSD
           Options.make = true
           Options.make_install = true
           Core.checkout
+          Core.modify_dirlist
           Core.compile_libraries
           Core.link_libraries
         end
