@@ -1,12 +1,16 @@
 #!/usr/bin/env ruby
 
-# NOTE: If you would like to execute this file as a developer
-#       but not install the CSD gem, you can use this command:
-#       ruby -I path/to/csd/lib path/to/csd/bin/ai
 
-# First, let's load the RubyGems framework and the CSD gem.
-# Even though RubyGems is already loaded for Ruby >= 1.9,
-# we want to go sure here and load it to provide robustness
+
+#
+# THIS IS A DUPLICATE OF THE EXECUTABLE 'ai'
+#
+
+
+
+
+
+
 require 'rubygems'
 require 'csd'
 
@@ -23,4 +27,9 @@ rescue Interrupt
   CSD.ui.separator
   CSD.ui.info "Quitting the AI...".red
   exit 1
+rescue Exception => e
+  puts e
+  puts
+  puts "  \e[31m\e[1mPlease report errors at:\e[0m \e[36mhttp://github.com/csd/csd/issues\e[0m"
+  puts
 end

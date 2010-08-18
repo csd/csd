@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{csd}
-  s.version = "0.1.18"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Technology Transfer Alliance Team"]
@@ -37,7 +37,11 @@ Gem::Specification.new do |s|
      "lib/csd/application/i2conf.rb",
      "lib/csd/application/i2conf/about.yml",
      "lib/csd/application/i2conf/base.rb",
+     "lib/csd/application/i2conf/config_example.rb",
+     "lib/csd/application/i2conf/options/common.rb",
+     "lib/csd/application/i2conf/options/common_defaults.rb",
      "lib/csd/application/i2conf/options/install.rb",
+     "lib/csd/application/i2conf/options/install_defaults.rb",
      "lib/csd/application/minisip.rb",
      "lib/csd/application/minisip/about.yml",
      "lib/csd/application/minisip/base.rb",

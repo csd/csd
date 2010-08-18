@@ -23,4 +23,9 @@ rescue Interrupt
   CSD.ui.separator
   CSD.ui.info "Quitting the AI...".red
   exit 1
+rescue Exception => e
+  puts e
+  puts
+  puts "  \e[31m\e[1mPlease report errors at:\e[0m \e[36mhttp://github.com/csd/csd/issues\e[0m"
+  puts
 end

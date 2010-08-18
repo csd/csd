@@ -42,6 +42,7 @@ module CSD
         end
         
         def compile_minisip
+          return unless Options.minisip
           @minisip.aptitude
           Options.only = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip }
           Options.blank_minisip_configuration = true
@@ -67,7 +68,7 @@ module CSD
         
         def copy_libtool
           UI.info 'Copying libtool dependencies'.green.bold
-          Cmd.cd Path.str_manager, :announce_pwd => false
+          Cmd.cd Path.str_manager, :internal => true
           Cmd.run 'cp /usr/share/libtool/config/config.sub .'
           Cmd.run 'cp /usr/share/libtool/config/config.guess .'
           Cmd.run 'cp /usr/share/libtool/config/ltmain.sh .'
@@ -84,7 +85,7 @@ module CSD
         
         def compile_str_manager
           UI.info 'Compiling strManager'.green.bold
-          Cmd.cd Path.str_manager, :announce_pwd => false
+          Cmd.cd Path.str_manager, :internal => true
           Cmd.run './configure'
           Cmd.run 'aclocal'
           Cmd.run 'make'
@@ -111,7 +112,7 @@ module CSD
         
         def compile_i2conf
           UI.info 'Compiling i2conf'.green.bold
-          Cmd.cd Path.i2conf, :announce_pwd => false
+          Cmd.cd Path.i2conf, :internal => true
           Cmd.run './bootstrap'
           Cmd.run './configure'
           Cmd.run 'aclocal'
@@ -131,8 +132,13 @@ module CSD
         def congratulations
           cleanup_working_directory if Options.temp
           UI.separator
-          UI.info "i2conf installation complete.".green.bold
-          UI.info "You can run it by typing: " + "i2conf -f #{Path.i2conf_example_conf}".cyan
+          UI.info "  i2conf installation complete.".green.bold
+          UI.separator
+          UI.info "  1. Change the password in the example configuration file:".yellow
+          UI.info "     #{Path.i2conf_example_conf}".cyan
+          UI.separator
+          UI.info "  2. Start the MCU: ".yellow
+          UI.info "     i2conf -f #{Path.i2conf_example_conf}".cyan
           UI.separator
         end
         

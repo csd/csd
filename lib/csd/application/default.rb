@@ -45,7 +45,7 @@ module CSD
       #
       def options(action='')
         result = []
-        ["common.rb", "#{action}.rb"].each do |filename|
+        ["#{action}.rb", "common.rb"].each do |filename|
           file = File.join(Path.applications, name, 'options', filename)
           result << File.read(file) if File.file?(file)
         end
