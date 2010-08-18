@@ -1,6 +1,7 @@
 # -*- encoding: UTF-8 -*-
 require 'csd/application/default/base'
 require 'csd/application/minisip/unix/linux/debian'
+require 'csd/application/i2conf/config_example'
 
 module CSD
   module Application
@@ -35,22 +36,26 @@ module CSD
           fix_i2conf
           fix_i2conf_aclocal
           compile_i2conf
+          configure_i2conf
           send_notification
+          congratulations
         end
         
         def compile_minisip
           @minisip.aptitude
           Options.only = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip }
-          Options.blank_minisip_comfiguration = true
+          Options.blank_minisip_configuration = true
           Options.bootstrap = true
           Options.configure = true
           Options.make = true
           Options.make_install = true
           Core.checkout
           Core.compile_libraries
+          Core.link_libraries
         end
         
         def aptitude
+          return unless Options.apt_get
           UI.info "Installing Debian dependencies for i2conf".green.bold
           Cmd.run 'sudo apt-get update', :announce_pwd => false
           Cmd.run "sudo apt-get install #{DEBIAN_DEPENDENCIES.sort.join(' ')} --yes --fix-missing", :announce_pwd => false
@@ -114,8 +119,21 @@ module CSD
           Cmd.run 'sudo make install'
         end
         
+        def configure_i2conf
+          UI.info "Creating example i2conf configuration file".green.bold
+          Cmd.touch_and_replace_content Path.i2conf_example_conf, ::CSD::Application::I2conf::CONFIG_EXAMPLE
+        end
+
         def send_notification
           Cmd.run %{notify-send --icon=gdm-setup "I2conf installation complete" "You are now ready to use your SIP MCU." }, :internal => true, :die_on_failure => false
+        end
+        
+        def congratulations
+          cleanup_working_directory if Options.temp
+          UI.separator
+          UI.info "i2conf installation complete.".green.bold
+          UI.info "You can run it by typing: " + "i2conf -f #{Path.i2conf_example_conf}".cyan
+          UI.separator
         end
         
         def introduction
@@ -142,6 +160,7 @@ module CSD
           Path.str_src_worker       = Pathname.new(File.join(Path.str_manager, 'src', 'workers', 'StatsWorker.cpp'))
           Path.i2conf               = Pathname.new(File.join(Path.work, 'i2conf'))
           Path.i2conf_bootstrap     = Pathname.new(File.join(Path.i2conf, 'bootstrap'))
+          Path.i2conf_example_conf  = Pathname.new(File.join(ENV['HOME'], '.i2conf.example.xml'))
         end
         
       end

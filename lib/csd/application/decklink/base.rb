@@ -72,7 +72,7 @@ module CSD
           file = Dir[File.join(Path.packages, "Deck*#{archflag}*.deb")]
           UI.debug "#{self.class} identified these applicable packages: #{file.join(', ')}"
           UI.info "Installing Debian packages".green.bold
-          Cmd.run "sudo apt-get install #{DEBIAN_DEPENDENCIES.join(' ')} --yes", :announce_pwd => false
+          Cmd.run "sudo apt-get install #{DEBIAN_DEPENDENCIES.join(' ')} --yes --force-yes", :announce_pwd => false
           Cmd.run "sudo dpkg -i #{file.first || '[DRIVER FILE FOR THIS ARCHITECTURE]'}", :announce_pwd => false
         end
         
