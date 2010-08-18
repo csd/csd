@@ -30,7 +30,14 @@ rescue Interrupt
   CSD.ui.separator
   CSD.ui.info "Quitting the AI...".red
   exit 1
-rescue Exception => e
+rescue ScriptError => e
+  puts "\e[31m\e[5mINTERNAL SCRIPT ERROR: \e[0m\e[31m#{e}\e[0m"
+  puts
+  puts e.backtrace.join("\n")
+  puts
+  puts "  \e[31m\e[1mPlease report errors at:\e[0m \e[36mhttp://github.com/csd/csd/issues\e[0m"
+  puts
+rescue StandardError => e
   puts "\e[31m\e[5mINTERNAL ERROR: \e[0m\e[31m#{e}\e[0m"
   puts
   puts e.backtrace.join("\n")

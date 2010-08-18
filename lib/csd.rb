@@ -18,8 +18,8 @@ module CSD
       @executable = options[:executable]
       Options.parse!
       respond_to_incomplete_arguments
-      UI.debug "#{self}.bootstrap initializes the task #{Options.action.enquote} of the application #{Applications.current.name.to_s.enquote} now"
-      Applications.current.instance.send("#{Options.action}".to_sym)
+      UI.debug "#{self}.bootstrap initializes the task #{Options.action.to_s.enquote} of the application #{Applications.current.name.to_s.enquote if Applications.current} now"
+      Applications.current.instance.send("#{Options.action}".to_sym) if Applications.current
     end
   
     private
@@ -32,7 +32,18 @@ module CSD
         # Updating the AI
         UI.info "Updating the AI to the newest version".green.bold
         Cmd.run "sudo gem update csd --no-ri --no-rdoc", :announce_pwd => false, :verbose => true
-        exit # The only smooth status code 0 exit in this whole application :)
+        exit!
+      elsif !Applications.current and ARGV.include?('edge')
+        UI.info "Updating the AI to the cutting-edge experimental version".green.bold
+        Path.edge_tmp = Dir.mktmpdir
+        Path.edge_file = File.join(Path.edge_tmp, 'edge.gem')
+        if Cmd.download('http://github.com/downloads/csd/csd/edge.gem', Path.edge_file).success?
+          Cmd.run "sudo gem install #{Path.edge_file} --no-ri --no-rdoc", :announce_pwd => false, :verbose => true
+        else
+          UI.info "Currently there is no edge version published.".green.bold
+        end
+        FileUtils.rm_r Path.edge_tmp
+        exit!
       else
         choose_application unless Applications.current
         choose_action unless Options.valid_action?
