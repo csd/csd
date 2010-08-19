@@ -56,6 +56,7 @@ module CSD
             FFmpeg.compile
           end
           Plugins.compile
+          Network.compile
           Gnome.compile
           congratulations
         end

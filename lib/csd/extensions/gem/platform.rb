@@ -31,7 +31,7 @@ module CSD
         # Determines whether the OS is Ubuntu 10. Returns +true+ or +false+.
         #
         def ubuntu_10?
-          ubuntu? and %w{ 2.6.32-21-generic 2.6.32-22-generic }.includes?(kernel_release)
+          ubuntu? and %w{ 2.6.32-21-generic 2.6.32-22-generic }.include?(kernel_release)
         end
         
         # On linux systems, this method returns the current kernel version.

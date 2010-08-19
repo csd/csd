@@ -109,6 +109,7 @@ module CSD
           Path.minisip_gnome_pixmap               = Pathname.new(File.join('/', 'usr', 'share', 'pixmaps', 'minisip_gnome.png'))
           Path.minisip_desktop_entry              = Pathname.new(File.join('/', 'usr', 'share', 'applications', 'minisip.desktop'))
           Path.phonebook                          = Pathname.new(File.join(ENV['HOME'], '.minisip.addr'))
+          Path.realtek_firmware                   = Pathname.new(File.join(Path.work, 'realtek'))
         end
         
       end

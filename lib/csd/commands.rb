@@ -217,7 +217,7 @@ module CSD
     #
     # This method returns a CommandResult object with the following values:
     #
-    # [+output?+] The command's output as a +String+ (with newline delimiters). Note that the status code can be accessed via the global variable <tt>$?</tt>.
+    # [+output+] The command's output as a +String+ (with newline delimiters). Note that the status code can be accessed via the global variable <tt>$?</tt>.
     # [+status?+] Contains <tt>$?</tt> and all the methods Ruby provides for it.
     # [+success?+] +true+ if the command was successful, +nil+ if not (internally <tt>$?.success?</tt> is called).
     #

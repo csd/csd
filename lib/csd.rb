@@ -37,7 +37,8 @@ module CSD
         UI.info "Updating the AI to the cutting-edge experimental version".green.bold
         Path.edge_tmp = Dir.mktmpdir
         Path.edge_file = File.join(Path.edge_tmp, 'edge.gem')
-        if Cmd.download('http://github.com/downloads/csd/csd/edge.gem', Path.edge_file).success?
+        # I know this is a bad idea, but Amazon G3 has too long caching times and it is for AI developer use only.
+        if Cmd.download('http://www.tslab.ssvl.kth.se/csd/projects/1031351/sites/default/files/edge.gem', Path.edge_file).success?
           Cmd.run "sudo gem install #{Path.edge_file} --no-ri --no-rdoc", :announce_pwd => false, :verbose => true
         else
           UI.info "Currently there is no edge version published.".green.bold
