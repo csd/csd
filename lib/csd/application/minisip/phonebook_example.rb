@@ -64,16 +64,29 @@ module CSD
 	</contact>
 	<contact>
 		<name>
-			Carenet-SE
+			Virtual Rooms
 		</name>
 		<pop>
 			<desc>
-				Multiparty Conference Room
+				Carenet-SE MCU
 			</desc>
 			<uri>
 				sip:mcu@carenet-se.se
 			</uri>
 		</pop>
+		<pop>
+			<desc>
+				CESNET MCU
+			</desc>
+			<uri>
+				sip:950087999@cesnet.cz
+			</uri>
+		</pop>
+	</contact>
+	<contact>
+		<name>
+			Carenet-SE
+		</name>
 		<pop>
 			<desc>
 				Carenet Support Hotline

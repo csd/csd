@@ -86,7 +86,7 @@ module CSD
         UI.info opts.help
       end
       UI.separator
-      example_action = actions.flatten.keys.first
+      example_action = Applications.current.actions['public'].empty? ? 'install' : Applications.current.actions['public'].flatten.first.keys.first
       UI.info '  To execute a task:   '.green.bold + "#{executable} [TASK] #{Applications.current.name}".cyan.bold + "          Example: #{executable} #{example_action} #{Applications.current.name}".dark
       UI.info '   For more details:   '.green.bold + "#{executable} help [TASK] #{Applications.current.name}".cyan.bold + "     Example: #{executable} help #{example_action} #{Applications.current.name}".dark
       UI.separator

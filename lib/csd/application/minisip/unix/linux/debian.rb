@@ -30,6 +30,10 @@ module CSD
           UI.info "Installing Debian dependencies for MiniSIP".green.bold
           Cmd.run 'sudo apt-get update', :announce_pwd => false
           Cmd.run "sudo apt-get install #{DEBIAN_DEPENDENCIES.sort.join(' ')} --yes --fix-missing", :announce_pwd => false
+          UI.info "Installing 2D/3D acceleration for ATI graphic cards".green.bold
+          # Note that aptitude will not fail if the package cannot be found. This is very useful, because fglrx does not
+          # exist on Ubuntu 9.10, yet this command will not fail. Apt-get install would fail.
+          Cmd.run "sudo aptitude install fglrx", :announce_pwd => false, :die_on_failure => false
         end
         
       end

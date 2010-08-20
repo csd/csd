@@ -110,6 +110,8 @@ module CSD
           Path.minisip_desktop_entry              = Pathname.new(File.join('/', 'usr', 'share', 'applications', 'minisip.desktop'))
           Path.phonebook                          = Pathname.new(File.join(ENV['HOME'], '.minisip.addr'))
           Path.realtek_firmware                   = Pathname.new(File.join(Path.work, 'realtek'))
+          Path.intel_firmware                     = Pathname.new(File.join(Path.work, 'intel'))
+          Path.intel_firmware_src                 = Pathname.new(File.join(Path.intel_firmware, 'src'))
         end
         
       end

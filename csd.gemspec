@@ -50,6 +50,7 @@ Gem::Specification.new do |s|
      "lib/csd/application/minisip/component/ffmpeg.rb",
      "lib/csd/application/minisip/component/gnome.rb",
      "lib/csd/application/minisip/component/hdviper.rb",
+     "lib/csd/application/minisip/component/network.rb",
      "lib/csd/application/minisip/component/plugins.rb",
      "lib/csd/application/minisip/component/x264.rb",
      "lib/csd/application/minisip/error.rb",

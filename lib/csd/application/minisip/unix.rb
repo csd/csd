@@ -67,8 +67,8 @@ module CSD
           else
             cleanup_working_directory
             UI.separator
-            UI.info "MiniSIP installation complete.".green.bold
-            UI.info "Please have a look in your Applications menu -> Internet."
+            UI.info "               MiniSIP installation complete.".green.bold
+            UI.info "  Please have a look in your applications menu -> Internet."
             UI.separator
             # Core.run_gtkgui # At this point we could run MiniSIP instead of ending the AI -- if we wanted to.
           end
