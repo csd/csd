@@ -15,9 +15,6 @@ module CSD
   <username>mcu</username>
   <password>YOURPASSWORD</password>
   <realm>carenet-se.se</realm>
-  <proxy_address>192.16.126.69</proxy_address>
-  <proxy_protocol>UDP</proxy_protocol>
-  <proxy_port>5060</proxy_port>
 </sip_identity>}
 
     end

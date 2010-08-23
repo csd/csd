@@ -10,6 +10,21 @@ module CSD
         
         include ::CSD::Application::Minisip::Component
         
+        DESKTOP_ENTRY = %{
+[Desktop Entry]
+Encoding=UTF-8
+Name=i2conf MCU
+GenericName=SIP Multipoint Control Unit (Reflector)
+Comment=Provide a multi-party video conference room
+Exec=EXECUTABLE
+Icon=minisip_gnome
+Terminal=true
+Type=Application
+StartupNotify=true
+Categories=Application;Internet;Network;Chat;AudioVideo}
+        
+        GNOME_ICON_URL = 'http://github.com/downloads/csd/i2conf/i2conf_gnome.png'
+        
         # A list of apt-get packages that are required to install i2conf.
         #
         DEBIAN_DEPENDENCIES = %w{ libboost-dev libboost-thread-dev liblog4cxx* }
@@ -36,6 +51,7 @@ module CSD
           fix_i2conf
           fix_i2conf_aclocal
           compile_i2conf
+          create_desktop_entry
           configure_i2conf
           send_notification
           congratulations
@@ -91,6 +107,7 @@ module CSD
           Cmd.run 'aclocal'
           Cmd.run 'make'
           Cmd.run 'sudo make install'
+          Cmd.run "sudo ldconfig /usr/local/lib/libstrmanager.so", :announce_pwd => false
         end
         
         def checkout_i2conf
@@ -121,6 +138,18 @@ module CSD
           Cmd.run 'sudo make install'
         end
         
+        def create_desktop_entry
+          UI.info "Installing Gnome menu item".green.bold
+          if Cmd.download(GNOME_ICON_URL, Path.i2conf_gnome_png).success?
+            Cmd.run("sudo cp #{Path.i2conf_gnome_png} #{Path.i2conf_gnome_pixmap}", :announce_pwd => false)
+            Cmd.touch_and_replace_content Path.i2conf_new_desktop_entry, DESKTOP_ENTRY, :internal => true
+            Cmd.run "sudo mv #{Path.i2conf_new_desktop_entry} #{Path.i2conf_desktop_entry}", :announce_pwd => false
+            Gnome.update_gnome_menu_cache
+          else
+            UI.warn "The menu item could not be created, because the image file could not be downloaded from #{GNOME_ICON_URL}.".green.bold
+          end
+        end
+                
         def configure_i2conf
           UI.info "Creating example i2conf configuration file".green.bold
           Cmd.touch_and_replace_content Path.i2conf_example_conf, ::CSD::Application::I2conf::CONFIG_EXAMPLE
@@ -162,12 +191,15 @@ module CSD
         
         def define_relative_paths
           UI.debug "#{self.class}#define_relative_paths defines relative i2conf paths now"
-          Path.str_manager          = Pathname.new(File.join(Path.work, 'libstrmanager'))
-          Path.str_src_manager      = Pathname.new(File.join(Path.str_manager, 'src', 'Manager.cpp'))
-          Path.str_src_worker       = Pathname.new(File.join(Path.str_manager, 'src', 'workers', 'StatsWorker.cpp'))
-          Path.i2conf               = Pathname.new(File.join(Path.work, 'i2conf'))
-          Path.i2conf_bootstrap     = Pathname.new(File.join(Path.i2conf, 'bootstrap'))
-          Path.i2conf_example_conf  = Pathname.new(File.join(ENV['HOME'], '.i2conf.example.xml'))
+          Path.str_manager              = Pathname.new(File.join(Path.work, 'libstrmanager'))
+          Path.str_src_manager          = Pathname.new(File.join(Path.str_manager, 'src', 'Manager.cpp'))
+          Path.str_src_worker           = Pathname.new(File.join(Path.str_manager, 'src', 'workers', 'StatsWorker.cpp'))
+          Path.i2conf                   = Pathname.new(File.join(Path.work, 'i2conf'))
+          Path.i2conf_bootstrap         = Pathname.new(File.join(Path.i2conf, 'bootstrap'))
+          Path.i2conf_gnome_png         = Pathname.new(File.join(ENV['HOME'], 'i2conf.example.xml'))
+          Path.i2conf_gnome_pixmap      = Pathname.new(File.join('/', 'usr', 'share', 'pixmaps', 'i2conf_gnome.png'))
+          Path.i2conf_desktop_entry     = Pathname.new(File.join('/', 'usr', 'share', 'applications', 'i2conf.desktop'))
+          Path.i2conf_new_desktop_entry = Pathname.new(File.join(Path.work, 'i2conf.desktop'))
         end
         
       end

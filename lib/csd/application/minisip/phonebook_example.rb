@@ -82,6 +82,14 @@ module CSD
 				sip:950087999@cesnet.cz
 			</uri>
 		</pop>
+		<pop>
+			<desc>
+				TTA MCU
+			</desc>
+			<uri>
+			sip:ttamcu@carenet-se.se
+			</uri>
+		</pop>
 	</contact>
 	<contact>
 		<name>
@@ -93,6 +101,14 @@ module CSD
 			</desc>
 			<uri>
 				sip:support@carenet-se.se
+			</uri>
+		</pop>
+		<pop>
+			<desc>
+				SIP test account
+			</desc>
+			<uri>
+				sip:test@carenet-se.se
 			</uri>
 		</pop>
 	</contact>

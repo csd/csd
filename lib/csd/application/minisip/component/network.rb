@@ -10,7 +10,7 @@ module CSD
             def compile
               UI.debug "#{self}.compile was called"
               fix_udp_buffer
-              UI.info 'Determining network interface card'.green.bold
+              permanent_udp_buffer
               lsmod = Cmd.run 'lsmod', :die_on_failure => false, :internal => true
               lspci = Cmd.run 'lspci -v | grep Ethernet', :die_on_failure => false, :internal => true
               UI.debug "#{self}.compile had this lsmod output: #{lsmod.output}"
@@ -24,13 +24,30 @@ module CSD
               UI.info 'Fixing UDP buffer size'.green.bold
               Cmd.run 'sudo sysctl -w net.core.rmem_max=8000000', :announce_pwd => false
               Cmd.run 'sudo sysctl -w net.core.rmem_default=8000000', :announce_pwd => false
+              #Cmd.run 'sudo sysctl -w net.ipv4.udp_mem="min def max"', :announce_pwd => false
+            end
+            
+            def permanent_udp_buffer
+              if Path.sysctl_conf_backup.file? and !Options.reveal
+                UI.warn "The UDP buffer modifications seems to be permanent already. Delete #{Path.sysctl_conf_backup.enquote} to enforce it."
+              else
+                UI.info 'Making the UDP buffer modifications permanent'.green.bold
+                content = Path.sysctl_conf.file? ? File.read(Path.sysctl_conf) : ''
+                Cmd.copy Path.sysctl_conf, Path.new_sysctl_conf
+                UI.info "Adding modifications to #{Path.new_sysctl_conf}".cyan
+                Cmd.touch_and_replace_content Path.new_sysctl_conf, "#{content}\n# Changes made by the AI\nnet.core.rmem_max=8000000\nnet.core.rmem_default=8000000", :internal => true
+                # We cannot use Cmd.copy here, because Cmd.copy has no superuser privileges.
+                # And since we are for sure on Ubuntu, these commands will work.
+                Cmd.run "sudo cp #{Path.sysctl_conf} #{Path.sysctl_conf_backup}", :announce_pwd => false
+                Cmd.run "sudo cp #{Path.new_sysctl_conf} #{Path.sysctl_conf}", :announce_pwd => false
+              end
             end
             
             def update_realtek
               checkout_realtek
               compile_realtek
             end
-
+            
             def update_intel
               checkout_intel
               compile_intel

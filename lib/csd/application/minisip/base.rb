@@ -112,6 +112,9 @@ module CSD
           Path.realtek_firmware                   = Pathname.new(File.join(Path.work, 'realtek'))
           Path.intel_firmware                     = Pathname.new(File.join(Path.work, 'intel'))
           Path.intel_firmware_src                 = Pathname.new(File.join(Path.intel_firmware, 'src'))
+          Path.sysctl_conf                        = Pathname.new(File.join('/', 'etc', 'sysctl.conf'))
+          Path.sysctl_conf_backup                 = Pathname.new(File.join('/', 'etc', 'sysctl.conf.ai-backup'))
+          Path.new_sysctl_conf                    = Pathname.new(File.join(Path.work, 'sysctl.conf'))
         end
         
       end

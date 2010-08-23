@@ -25,8 +25,8 @@ module CSD
             end
             # We cannot use Cmd.copy here, because Cmd.copy has no superuser privileges.
             # And since we are for sure on Ubuntu, these commands will work.
-            Cmd.run("sudo cp #{Path.giomm_header} #{Path.giomm_header_backup}")
-            Cmd.run("sudo cp #{Path.new_giomm_header} #{Path.giomm_header}")
+            Cmd.run "sudo cp #{Path.giomm_header} #{Path.giomm_header_backup}", :announce_pwd => false
+            Cmd.run "sudo cp #{Path.new_giomm_header} #{Path.giomm_header}", :announce_pwd => false
           end
         end
         
