@@ -8,7 +8,7 @@ module CSD
         
         # A list of apt-get packages that are required to compile minisip including hdviper and ffmpeg
         #
-        DEBIAN_DEPENDENCIES = %w{ automake build-essential checkinstall git-core libnotify-bin libasound2-dev libavcodec-dev libglademm-2.4-dev libgtkmm-2.4-dev libltdl3-dev libsdl-dev libsdl-ttf2.0-dev libssl-dev libtool libswscale-dev libx11-dev libxv-dev nasm subversion yasm }
+        DEBIAN_DEPENDENCIES = %w{ automake build-essential checkinstall git-core libasound2-dev libavcodec-dev libglademm-2.4-dev libgtkmm-2.4-dev libltdl3-dev libnotify-bin libsdl-dev libsdl-ttf2.0-dev libssl-dev libswscale-dev libtool libx11-dev libxv-dev nasm subversion yasm }
 
         def compile!
           aptitude

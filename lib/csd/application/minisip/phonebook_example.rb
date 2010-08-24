@@ -18,7 +18,7 @@ module CSD
 				Client 1
 			</desc>
 			<uri>
-				sip:client1@carenet-se.se
+				client1@carenet-se.se
 			</uri>
 		</pop>
 		<pop>
@@ -26,7 +26,7 @@ module CSD
 				Client2
 			</desc>
 			<uri>
-				sip:client2@carenet-se.se
+				client2@carenet-se.se
 			</uri>
 		</pop>
 		<pop>
@@ -34,7 +34,7 @@ module CSD
 				Client3
 			</desc>
 			<uri>
-				sip:client3@carenet-se.se
+				client3@carenet-se.se
 			</uri>
 		</pop>
 		<pop>
@@ -42,7 +42,7 @@ module CSD
 				Client4
 			</desc>
 			<uri>
-				sip:client4@carenet-se.se
+				client4@carenet-se.se
 			</uri>
 		</pop>
 		<pop>
@@ -50,7 +50,7 @@ module CSD
 				Client5
 			</desc>
 			<uri>
-				sip:client5@carenet-se.se
+				client5@carenet-se.se
 			</uri>
 		</pop>
 		<pop>
@@ -58,7 +58,7 @@ module CSD
 				Client6
 			</desc>
 			<uri>
-				sip:client6@carenet-se.se
+				client6@carenet-se.se
 			</uri>
 		</pop>
 	</contact>
@@ -71,7 +71,7 @@ module CSD
 				Carenet-SE MCU
 			</desc>
 			<uri>
-				sip:mcu@carenet-se.se
+				mcu@carenet-se.se
 			</uri>
 		</pop>
 		<pop>
@@ -79,7 +79,7 @@ module CSD
 				CESNET MCU
 			</desc>
 			<uri>
-				sip:950087999@cesnet.cz
+				950087999@cesnet.cz
 			</uri>
 		</pop>
 		<pop>
@@ -87,7 +87,7 @@ module CSD
 				TTA MCU
 			</desc>
 			<uri>
-			sip:ttamcu@carenet-se.se
+			ttamcu@carenet-se.se
 			</uri>
 		</pop>
 	</contact>
@@ -100,7 +100,7 @@ module CSD
 				Carenet Support Hotline
 			</desc>
 			<uri>
-				sip:support@carenet-se.se
+				support@carenet-se.se
 			</uri>
 		</pop>
 		<pop>
@@ -108,7 +108,7 @@ module CSD
 				SIP test account
 			</desc>
 			<uri>
-				sip:test@carenet-se.se
+				test@carenet-se.se
 			</uri>
 		</pop>
 	</contact>
@@ -121,7 +121,7 @@ module CSD
 				Tandberg Client1
 			</desc>
 			<uri>
-				sip:tandberg1@carenet-se.se
+				tandberg1@carenet-se.se
 			</uri>
 		</pop>
 		<pop>
@@ -129,7 +129,7 @@ module CSD
 				Tandberg Client2
 			</desc>
 			<uri>
-				sip:tandberg2@carenet-se.se
+				tandberg2@carenet-se.se
 			</uri>
 		</pop>
 	</contact>
