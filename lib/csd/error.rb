@@ -6,6 +6,7 @@ module CSD
   #
   # * +minisip+ has been assigned error status codes 200-280
   # * +decklink+ has been assigned error status codes 280-299
+  # * +graphics+ has been assigned error status codes 300-349
   #
   module Error
     

@@ -1,5 +1,5 @@
 # -*- encoding: UTF-8 -*-
-require 'csd/application/default/base'
+require 'csd/application/default'
 require 'csd/application/decklink/base'
 
 module CSD
