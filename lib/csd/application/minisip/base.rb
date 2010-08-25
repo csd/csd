@@ -41,6 +41,25 @@ module CSD
           UI.error 'Currently not supported for this platform. Sorry.'
         end
         
+        # Determines which components of MiniSIP should be processed, because the scope parameter might be set
+        # by the user, requesting for only a particular component.
+        #
+        def components
+          Options.scope ? [Options.scope] : Options.scopes_names
+        end
+        
+        # Determine whether all components should be processed or not.
+        #
+        def all_components?
+          components == Options.scopes_names
+        end
+        
+        # Determines whether a particular component should be processed.
+        #
+        def component?(name)
+          components.include? name
+        end
+        
         # This methods prints general information about this application module.
         #
         def introduction

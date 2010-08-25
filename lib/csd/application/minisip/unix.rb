@@ -9,12 +9,13 @@ module CSD
         # This method presents a general overview about the task that is to be performed.
         #
         def introduction
+          UI.debug "Components to be processed: #{components.inspect}"
           if Options.developer
-            Core.introduction
-            FFmpeg.introduction
-            HDVIPER.introduction
-            X264.introduction
-            Plugins.introduction
+            Core.introduction    if component? 'core'
+            FFmpeg.introduction  if component? 'ffmpeg'
+            HDVIPER.introduction if component? 'hdviper'
+            X264.introduction    if component? 'x264'
+            Plugins.introduction if component? 'plugins'
             UI.separator
           end
           super
@@ -24,7 +25,11 @@ module CSD
         #
         def compile
           UI.separator
-          UI.info "This operation will compile MiniSIP and its dependencies.".green.bold
+          if all_components?
+            UI.info "This operation will install MiniSIP and its dependencies.".green.bold
+          else
+            UI.info "This operation will install the #{Options.scope} component of MiniSIP.".green.bold
+          end
           UI.separator
           install_mode = Options.this_user ? 'Only for this user (inside the working directory)' : 'For all users (sudo)'
           UI.info " Installation mode:       ".green.bold + install_mode.yellow
@@ -45,19 +50,19 @@ module CSD
         #
         def compile!
           create_working_directory
-          HDVIPER.compile
+          HDVIPER.compile          if component? 'hdviper'
           if Options.ffmpeg_first
-            X264.compile
-            FFmpeg.compile
-            Core.compile
+            X264.compile           if component? 'x264'
+            FFmpeg.compile         if component? 'ffmpeg'
+            Core.compile           if component? 'core'
           else
-            Core.compile
-            X264.compile
-            FFmpeg.compile
+            Core.compile           if component? 'core'
+            X264.compile           if component? 'x264'
+            FFmpeg.compile         if component? 'ffmpeg'
           end
-          Plugins.compile
-          Network.compile
-          Gnome.compile
+          Plugins.compile          if component? 'plugins'
+          Network.compile          if component? 'network'
+          Gnome.compile            if component? 'gnome'
           congratulations
         end
         
@@ -66,6 +71,7 @@ module CSD
             Core.run_gtkgui
           else
             cleanup_working_directory
+            return unless all_components?
             UI.separator
             UI.info "               MiniSIP installation complete.".green.bold
             UI.info "  Please have a look in your applications menu -> Internet."
