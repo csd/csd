@@ -72,13 +72,13 @@ module CSD
           file = Dir[File.join(Path.packages, "Deck*#{archflag}*.deb")]
           UI.debug "#{self.class} identified these applicable packages: #{file.join(', ')}"
           UI.info "Installing Debian packages".green.bold
-          Cmd.run "sudo apt-get install #{DEBIAN_DEPENDENCIES.join(' ')} --yes", :announce_pwd => false
+          Cmd.run "sudo apt-get install #{DEBIAN_DEPENDENCIES.join(' ')} --yes --force-yes", :announce_pwd => false
           Cmd.run "sudo dpkg -i #{file.first || '[DRIVER FILE FOR THIS ARCHITECTURE]'}", :announce_pwd => false
         end
         
         def add_boot_loader
           content = Path.kernel_module.file? ? File.read(Path.kernel_module) : ''
-          if content !~ /\nblackmagic/m
+          if content !~ /\nblackmagic/m or Options.reveal
             UI.info "Adding Blackmagic drivers to the boot loader".green.bold
             Cmd.touch_and_replace_content Path.new_kernel_module, "#{content}\nblackmagic"
             Cmd.run "sudo cp #{Path.new_kernel_module} #{Path.kernel_module}", :announce_pwd => false

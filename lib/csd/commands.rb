@@ -217,7 +217,7 @@ module CSD
     #
     # This method returns a CommandResult object with the following values:
     #
-    # [+output?+] The command's output as a +String+ (with newline delimiters). Note that the status code can be accessed via the global variable <tt>$?</tt>.
+    # [+output+] The command's output as a +String+ (with newline delimiters). Note that the status code can be accessed via the global variable <tt>$?</tt>.
     # [+status?+] Contains <tt>$?</tt> and all the methods Ruby provides for it.
     # [+success?+] +true+ if the command was successful, +nil+ if not (internally <tt>$?.success?</tt> is called).
     #
@@ -319,7 +319,20 @@ module CSD
         Cmd.run("git clone #{repository} #{destination}", :announce_pwd => false)
       end
     end
-  
+    
+    # This downloads a file. It could be replaced by Ruby internals in the future to make it work in Windows.
+    # The CommandResult of <tt>Cmd.run</tt> is returned, so <tt>result.success?</tt> will indicate whether
+    # the download was successful or not.
+    #
+    def download(url, destination)
+      if Cmd.run('curl -h', :internal => true, :die_on_failure => false).success?
+        # Darwin
+        Cmd.run "curl #{url} --location -o #{destination}", :die_on_failure => false, :announce_pwd => false
+      elsif Cmd.run('wget -h', :internal => true, :die_on_failure => false).success?
+        # Linux
+        Cmd.run "wget #{url} -O #{destination}", :die_on_failure => false, :announce_pwd => false
+      end
+    end
   end
   
   # Objects of this class can be returned by Commands. Since it is an OpenStruct object,

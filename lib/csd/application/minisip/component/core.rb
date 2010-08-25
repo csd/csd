@@ -41,7 +41,7 @@ module CSD
             def remove_ffmpeg
               ffmpeg_available = Cmd.run('ffmpeg -h', :internal => true, :die_on_failure => false).success?
               return if Options.ffmpeg_first or !Options.configure or !libraries.include?('libminisip') or !ffmpeg_available
-              UI.debug "MILESTONE: removing_ffmpeg"
+              UI.debug "MILESTONE_removing_ffmpeg"
               if Gem::Platform.local.debian?
                 # Note that FFmpeg must have been installed via apt-get or via the AI in order for this to work,
                 # because manual compilations of FFmpeg cannot be removed automatically
@@ -50,7 +50,7 @@ module CSD
                 Cmd.run "sudo apt-get remove ffmpeg --yes", :announce_pwd => false
               else
                 # On other linux distributions we don't know how to remove ffmpeg
-                UI.debug "MILESTONE: cannot_remove_ffmpeg"
+                UI.debug "MILESTONE_cannot_remove_ffmpeg"
                 raise Error::Minisip::Core::FFmpegInstalled, "Please remove ffmpeg from your system first, or run the #{CSD.executable} with --no-configure" unless Options.testmode
               end
             end
@@ -143,10 +143,11 @@ module CSD
             #
             def compile_libraries
               create_build_dir
+              UI.debug "MILESTONE_processing_libraries"
               libraries.each do |library|
                 directory = Pathname.new(File.join(Path.repository, library))
                 if Cmd.cd(directory, :internal => true).success? or Options.reveal
-                  UI.debug "MILESTONE: processing_#{library}"
+                  UI.debug "MILESTONE_processing_#{library}"
                   UI.info "Processing MiniSIP -> #{library}".green.bold
                   bootstrap
                   configure library
@@ -203,10 +204,7 @@ module CSD
               # These options are used by all libraries
               common_options = Options.this_user ? %Q{--prefix="#{Path.build}" PKG_CONFIG_PATH="#{Path.build_lib_pkg_config}" ACLOCAL_FLAGS="#{Path.build_share_aclocal}" LD_LIBRARY_PATH="#{Path.build_lib}"} : ''
               # I2conf needs to compile MiniSIP without any options
-              if Options.blank_minisip_configuration
-                UI.debug "#{self}#configure! resets flags because of Option.blank_minisip_configuration"
-                individual_options = ''
-              end
+              individual_options = '' if Options.blank_minisip_configuration
               # Putting it all together
               Cmd.run ['./configure', common_options, debug_options, individual_options].join(' ')
             end

@@ -49,7 +49,7 @@ module CSD
       def cleanup_working_directory
         if !Options.work_dir and Options.temp and !Options.this_user and Path.work.directory?
           UI.info "Removing working directory".green.bold
-          UI.debug "MILESTONE: deleting_work_dir"
+          UI.debug "MILESTONE_deleting_work_dir"
           # TODO: Make this Windows working
           Cmd.run "sudo rm -Rf #{Path.work}", :announce_pwd => false
         end

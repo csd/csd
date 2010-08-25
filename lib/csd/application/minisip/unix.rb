@@ -11,10 +11,10 @@ module CSD
         def introduction
           if Options.developer
             Core.introduction
-            # FFmpeg.introduction
-            # HDVIPER.introduction
-            # X264.introduction
-            # Plugins.introduction
+            FFmpeg.introduction
+            HDVIPER.introduction
+            X264.introduction
+            Plugins.introduction
             UI.separator
           end
           super
@@ -56,6 +56,7 @@ module CSD
             FFmpeg.compile
           end
           Plugins.compile
+          Network.compile
           Gnome.compile
           congratulations
         end
@@ -66,8 +67,8 @@ module CSD
           else
             cleanup_working_directory
             UI.separator
-            UI.info "MiniSIP installation complete.".green.bold
-            UI.info "Please have a look in your Applications menu -> Internet."
+            UI.info "               MiniSIP installation complete.".green.bold
+            UI.info "  Please have a look in your applications menu -> Internet."
             UI.separator
             # Core.run_gtkgui # At this point we could run MiniSIP instead of ending the AI -- if we wanted to.
           end

@@ -27,7 +27,7 @@ module CSD
             # Copies the plugins from the repository to the final destination.
             #
             def copy
-              if Path.plugins_destination.directory?
+              if Path.plugins_destination.directory? or Options.reveal
                 UI.info "Installing optional MiniSIP plugins".green.bold
                 UI.info "Copying from `#{Path.plugins_destination}´ to `#{Path.plugins}´".yellow
                 Dir[File.join(Path.plugins, '{md,mg,mvideo}*.{a,la,so}')].each do |plugin|

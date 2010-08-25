@@ -12,6 +12,38 @@ class TestMinisip < Test::Unit::TestCase
       Options.clear
       Options.testmode = true
     end
+    
+    context "Debian instance" do
+      
+      setup do
+        @debian = ::CSD::Application::Minisip::Debian.new
+      end
+
+      context "*in theory* when compiling" do
+
+        setup do
+          Options.clear
+          @debian.define_relative_paths
+          Options.clear Application::Minisip.default_options('install')
+          Options.reveal = true
+          Options.testmode = true
+        end
+        
+        should "by default run apt-get commands" do
+          assert Options.apt_get
+          out, err = capture { @debian.compile! }
+          assert_match /apt\-get update/, out
+          assert_match /apt\-get install/, out
+        end
+        
+        should "skip apt-get if demanded" do
+          Options.apt_get = false
+          out, err = capture { @debian.compile! }
+          assert_no_match /apt\-get/, out
+        end
+      
+      end
+    end
 
     context "Core component" do
       
@@ -48,7 +80,7 @@ class TestMinisip < Test::Unit::TestCase
           assert Options.make
           assert Options.make_install
         end
-
+        
         should "know how to checkout the default branch of the source code" do
           out, err = capture { Core.checkout }
           assert_match /git clone /, out
@@ -56,7 +88,7 @@ class TestMinisip < Test::Unit::TestCase
           assert_no_match /git checkout/, out
           assert err.empty?
         end
-      
+        
         should "know how to checkout a particular branch of the source code" do
           Options.branch = 'cuttingedge'
           out, err = capture { Core.checkout }
@@ -64,7 +96,7 @@ class TestMinisip < Test::Unit::TestCase
           assert_match /git checkout .+ cuttingedge/, out
           assert err.empty?
         end
-      
+        
         should "use sudo make install instead of make install by default" do
           out, err = capture { Core.compile }
           # TODO: This should be a more strict test
@@ -80,8 +112,8 @@ class TestMinisip < Test::Unit::TestCase
         should "remove ffmpeg before compiling minisip" do
           Options.debug = true
           out, err = capture { Core.compile }
-          assert_match /MILESTONE: removing_ffmpeg.+MILESTONE: processing_libminisip/m, out
-          assert_no_match /MILESTONE: processing_libminisip.+MILESTONE: removing_ffmpeg/m, out
+          assert_match /MILESTONE_removing_ffmpeg.+MILESTONE_processing_libminisip/m, out
+          assert_no_match /MILESTONE_processing_libminisip.+MILESTONE_removing_ffmpeg/m, out
         end
         
         should "not link the library in this-user-mode" do
@@ -91,7 +123,32 @@ class TestMinisip < Test::Unit::TestCase
           out, err = capture { Core.compile }
           assert_no_match /ldconfig/, out
         end
+        
+        should "process libraries without parameters when demanded" do
+          Options.debug = true
+          Options.blank_minisip_configuration = true
+          out, err = capture { Core.compile_libraries }
+          assert_match /MILESTONE_processing_libmstun/, out
+          assert_match /MILESTONE_processing_libminisip/, out
+          assert_match /MILESTONE_processing_minisip/, out
+          assert_no_match /FLAGS/, out 
+          assert_no_match /enable/, out 
+        end
 
+        should "have no --enable-debug flag by default" do
+          Options.debug = true
+          out, err = capture { Core.compile_libraries }
+          assert_no_match /enable\-debug/, out
+        end
+        
+        should "use --enable-debug flag if demanded" do
+          Options.debug = true
+          Options.enable_debug = true
+          out, err = capture { Core.compile_libraries }
+          assert_match /MILESTONE_processing_libminisip.+\-\-enable\-debug.+MILESTONE_processing_minisip.+\-\-enable\-debug/m, out
+          assert_no_match /\-\-enable\-debug.+MILESTONE_processing_libminisip/m, out
+        end
+        
       end # context "in theory when compiling"
 
       context "in practice" do

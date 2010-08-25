@@ -54,19 +54,15 @@ module CSD
                   # 32 bit
                   UI.debug "#{self}.instance supports Linux (32 bit)"
                   UI.debug "#{self}.instance analyzes the Linux kernel release #{Gem::Platform.local.kernel_release.to_s.enquote}"
-                  case Gem::Platform.local.kernel_release
-
-                    when '2.6.32-21-generic', '2.6.32-22-generic'
-                      # Ubuntu 10.04
-                      UI.debug "#{self}.instance supports Ubuntu 10.04"
-                      Ubuntu10.new
-
-                    else
-                      # Any other Linux (currently only Debian is supported)
-                      UI.debug "#{self}.instance supports Debian"
-                      Debian.new
+                  if Gem::Platform.local.ubuntu_10?
+                    # Ubuntu 10.04
+                    UI.debug "#{self}.instance supports Ubuntu 10.04"
+                    Ubuntu10.new
+                  else
+                    # Any other Linux (currently only Debian is supported)
+                    UI.debug "#{self}.instance supports Debian"
+                    Debian.new
                   end
-                
                 else
                   # 64 bit
                   UI.debug "#{self}.instance found the architecture to be other than 'x86', but 64 bit is not supported"

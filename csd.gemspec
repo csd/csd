@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{csd}
-  s.version = "0.1.18"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Technology Transfer Alliance Team"]
-  s.date = %q{2010-08-16}
+  s.date = %q{2010-08-25}
   s.description = %q{CSD stands for Communication Systems Design and is a project of the Telecommunication Systems Laboratory (TSLab) of the Royal Institute of Technology in Stockholm, Sweden. Within CSD many software tools are used to build up various networks and services. This gem is supposed to automate processes to handle the compilation and installation of these software tools. Technology Transfer Alliance (TTA) is the project team, which maintains this code.}
   s.email = %q{mtoday11@gmail.com}
   s.executables = ["ai", "ttai"]
@@ -37,7 +37,11 @@ Gem::Specification.new do |s|
      "lib/csd/application/i2conf.rb",
      "lib/csd/application/i2conf/about.yml",
      "lib/csd/application/i2conf/base.rb",
+     "lib/csd/application/i2conf/config_example.rb",
+     "lib/csd/application/i2conf/options/common.rb",
+     "lib/csd/application/i2conf/options/common_defaults.rb",
      "lib/csd/application/i2conf/options/install.rb",
+     "lib/csd/application/i2conf/options/install_defaults.rb",
      "lib/csd/application/minisip.rb",
      "lib/csd/application/minisip/about.yml",
      "lib/csd/application/minisip/base.rb",
@@ -46,6 +50,7 @@ Gem::Specification.new do |s|
      "lib/csd/application/minisip/component/ffmpeg.rb",
      "lib/csd/application/minisip/component/gnome.rb",
      "lib/csd/application/minisip/component/hdviper.rb",
+     "lib/csd/application/minisip/component/network.rb",
      "lib/csd/application/minisip/component/plugins.rb",
      "lib/csd/application/minisip/component/x264.rb",
      "lib/csd/application/minisip/error.rb",

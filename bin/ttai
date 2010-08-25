@@ -16,11 +16,32 @@ begin
 rescue CSD::Error::CSDError => e
   # Here we catch CSD internal errors and exit with the propriate status code
   # We output the error message only for status codes 50 and higher, because they are rather severe
-  CSD.ui.error e.message unless e.status_code <= 49
+  if e.status_code >= 50
+    CSD.ui.error e.message
+    if e.status_code < 200
+      puts
+      puts "  \e[31mPlease report bugs at:\e[0m \e[36mhttp://github.com/csd/csd/issues\e[0m"
+      puts
+    end
+  end
   exit e.status_code
 rescue Interrupt
   # Lastly, close the AI gracefully on abnormal termination
   CSD.ui.separator
   CSD.ui.info "Quitting the AI...".red
   exit 1
+rescue ScriptError => e
+  puts "\e[31m\e[5mINTERNAL SCRIPT ERROR: \e[0m\e[31m#{e}\e[0m"
+  puts
+  puts e.backtrace.join("\n")
+  puts
+  puts "  \e[31m\e[1mPlease report errors at:\e[0m \e[36mhttp://github.com/csd/csd/issues\e[0m"
+  puts
+rescue StandardError => e
+  puts "\e[31m\e[5mINTERNAL ERROR: \e[0m\e[31m#{e}\e[0m"
+  puts
+  puts e.backtrace.join("\n")
+  puts
+  puts "  \e[31m\e[1mPlease report errors at:\e[0m \e[36mhttp://github.com/csd/csd/issues\e[0m"
+  puts
 end

@@ -35,8 +35,7 @@ module CSD
       end
     
       def scopes(action)
-        # TODO: about.scopes[:action]
-        []
+        about.scopes.key?(action) ? about.scopes[action] : []
       end
       
       # This method will look for application and task specific optionsfiles of the current application module.
@@ -45,7 +44,7 @@ module CSD
       #
       def options(action='')
         result = []
-        ["common.rb", "#{action}.rb"].each do |filename|
+        ["#{action}.rb", "common.rb"].each do |filename|
           file = File.join(Path.applications, name, 'options', filename)
           result << File.read(file) if File.file?(file)
         end
