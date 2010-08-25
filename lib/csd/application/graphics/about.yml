@@ -1,0 +1,8 @@
+# -*- encoding: UTF-8 -*-
+human: graphics
+description: Graphic card drivers to improve video quality.
+actions:
+  public:
+    - install: Downloads and installs the latest graphic card driver.
+scopes:
+  --- {}
