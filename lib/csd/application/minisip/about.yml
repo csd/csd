@@ -12,4 +12,10 @@ actions:
     - package: Downloads, compiles and packages MiniSIP from scratch
     #- publish: Submits a compiled package to the CSD package repository
 scopes:
-  --- {}
+  install:
+    - core: Install only the Core component of MiniSIP
+    - ffmpeg: Install only the FFmpeg component of MiniSIP
+    - gnome: Install only the GNOME component of MiniSIP
+    - hdviper: Install only the HDVIPER component of MiniSIP
+    - network: Install only the Network component of MiniSIP
+    - plugins: Install only the Plugins component of MiniSIP

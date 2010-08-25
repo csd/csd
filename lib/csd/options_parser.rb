@@ -17,20 +17,27 @@ module CSD
     end
     
     def valid_action?
-      public_actions    = actions['public'] ? self.actions['public'].map { |pair| pair.keys.first } : []
-      developer_actions = actions['developer'] ? self.actions['developer'].map { |pair| pair.keys.first } : []
-      all_actions = public_actions + developer_actions
-      all_actions.include?(self.action)
+      self.actions_names.include?(self.action)
+    end
+    
+    def valid_scope?
+      self.scopes_names.include?(self.scope)
     end
     
     def define_actions_and_scopes
       if Applications.current
         # Here we overwrite the default supported actions and scopes with the application specific ones
-        UI.debug "#{self.class} loads the actions of #{Applications.current} now"
-        self.actions = Applications.current.actions
+        UI.debug "#{self.class}#define_actions_and_scopes loads the actions of #{Applications.current} now"
+        self.actions       = Applications.current.actions
+        public_actions    = actions['public'] ? self.actions['public'].map { |pair| pair.keys.first } : []
+        developer_actions = actions['developer'] ? self.actions['developer'].map { |pair| pair.keys.first } : []
+        self.actions_names = public_actions + developer_actions
+        #UI.debug "#{self.class}#define_actions_and_scopes identified the actions #{self.actions.inspect}"
         # At this point we know that the first argument is no option, but *some* action (may it be valid or not)
-        UI.debug "#{self.class} loads the scopes of #{Applications.current} now"
-        self.scopes  = Applications.current.scopes(self.action)
+        UI.debug "#{self.class}#define_actions_and_scopes loads the scopes of #{Applications.current} now"
+        self.scopes       = Applications.current.scopes(self.action)
+        self.scopes_names = self.scopes.map { |pair| pair.keys.first }
+        #UI.debug "#{self.class}#define_actions_and_scopes identified the scopes #{self.scopes.inspect}"
       end
     end
     
@@ -38,8 +45,10 @@ module CSD
       # Resetting all attributes to nil (because e.g. an application instance might have modified or added some).
       super()
       # First we define all valid actions and scopes
-      self.actions = []
-      self.scopes  = []
+      self.actions       = []
+      self.actions_names = []
+      self.scopes        = []
+      self.scopes_names  = []
       # Then we define the default literals
       self.help        = false
       self.application = nil
@@ -79,7 +88,13 @@ module CSD
           self.action      = ARGV.shift
           self.application = ARGV.shift # Removing the application name from the argument list
         end
+        # The only thing that is left is the scope, by now shifted from the third to the first location.
+        # A literal must now be the desired scope
+        if ARGV.first and not ARGV.first.starts_with?('-')
+          self.scope = ARGV.shift
+        end
       end
+      UI.debug "#{self.class}#parse_literals identified the application `#{self.application}´, the action `#{self.action}´ and the scope `#{self.scope}´"
     end
     
     # Parse all options that the user gave as command parameter. Note that this function strips the options

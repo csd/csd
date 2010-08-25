@@ -11,10 +11,10 @@ module CSD
         def introduction
           if Options.developer
             Core.introduction
-            # FFmpeg.introduction
-            # HDVIPER.introduction
-            # X264.introduction
-            # Plugins.introduction
+            FFmpeg.introduction
+            HDVIPER.introduction
+            X264.introduction
+            Plugins.introduction
             UI.separator
           end
           super

@@ -35,8 +35,7 @@ module CSD
       end
     
       def scopes(action)
-        # TODO: about.scopes[:action]
-        []
+        about.scopes.key?(action) ? about.scopes[action] : []
       end
       
       # This method will look for application and task specific optionsfiles of the current application module.

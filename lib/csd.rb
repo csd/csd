@@ -73,6 +73,7 @@ module CSD
     def respond_to_incomplete_arguments
       choose_application unless Applications.current
       choose_action unless Options.valid_action?
+      choose_scope if Options.scope and not Options.valid_scope?
     end
   
     # This methods lists all available applications
@@ -89,7 +90,6 @@ module CSD
       end
       UI.separator
       UI.info '  For more information type:   '.green.bold + "#{executable} [APPLICATION NAME]".cyan.bold + "     Example: #{executable} minisip".dark
-      #UI.info '                For example:   '.green.bold + "#{executable} minisip".cyan.bold
       UI.separator
       UI.warn "You did not specify a valid application name."
       raise Error::Argument::NoApplication
@@ -101,7 +101,7 @@ module CSD
       UI.separator
       UI.info "  Automated Installer assistance for #{Applications.current.human}".green.bold
       UI.separator
-      UI.info "  The AI can assist you with the following tasks regarding #{Applications.current.human}: "
+      UI.info "  The AI can assist you with the following tasks regarding #{Applications.current.human}:"
       OptionParser.new do |opts|
         opts.banner = ''
         actions = Applications.current.actions['public']
@@ -110,11 +110,33 @@ module CSD
         UI.info opts.help
       end
       UI.separator
-      example_action = Applications.current.actions['public'].empty? ? 'install' : Applications.current.actions['public'].flatten.first.keys.first
+      example_action = Options.actions_names.empty? ? 'install' : Options.actions_names.first
       UI.info '  To execute a task:   '.green.bold + "#{executable} [TASK] #{Applications.current.name}".cyan.bold + "          Example: #{executable} #{example_action} #{Applications.current.name}".dark
       UI.info '   For more details:   '.green.bold + "#{executable} help [TASK] #{Applications.current.name}".cyan.bold + "     Example: #{executable} help #{example_action} #{Applications.current.name}".dark
       UI.separator
       UI.warn "You did not specify a valid task name."
+      raise Error::Argument::NoAction
+    end
+    
+    # This methods lists all available scopes for a specific application and action
+    #
+    def choose_scope
+      UI.separator
+      UI.info "  Automated Installer assistance to #{Options.action} #{Applications.current.human}".green.bold
+      UI.separator
+      UI.info "  The AI can #{Options.action} the following #{Applications.current.human} components:"
+      OptionParser.new do |opts|
+        opts.banner = ''
+        scopes = Applications.current.scopes(Options.action)
+        scopes.flatten.each { |scope| opts.list_item(scope.keys.first, scope.values.first) }
+        UI.info opts.help
+      end
+      UI.separator
+      example_scope = Options.scopes_names.empty? ? 'myscope' : Options.scopes_names.first
+      UI.info '  To choose all components:   '.green.bold + "#{executable} #{Options.action} #{Applications.current.name}".cyan.bold + "                      Example: #{executable} #{Options.action} #{Applications.current.name}".dark
+      UI.info '   To choose one component:   '.green.bold + "#{executable} #{Options.action} #{Applications.current.name} [COMPONENT]".cyan.bold + "          Example: #{executable} #{Options.action} #{Applications.current.name} #{example_scope}".dark
+      UI.separator
+      UI.warn "You did not specify a valid scope."
       raise Error::Argument::NoAction
     end
 
