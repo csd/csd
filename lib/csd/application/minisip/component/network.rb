@@ -7,6 +7,16 @@ module CSD
         module Network
           class << self
             
+            OPTIMUM_BUFFERS = {
+              'net.core.rmem_max'     => '131071',
+              'net.core.wmem_max'     => '131071',
+              'net.core.rmem_default' => '114688',
+              'net.core.wmem_default' => '114688',
+              'net.ipv4.udp_mem'      => '81120 108160 162240',
+              'net.ipv4.udp_rmem_min' => '4096',
+              'net.ipv4.udp_wmem_min' => '4096'
+            }
+            
             def compile
               UI.debug "#{self}.compile was called"
               fix_udp_buffer
@@ -22,9 +32,9 @@ module CSD
             def fix_udp_buffer
               return unless Gem::Platform.local.debian? or Options.reveal
               UI.info 'Fixing UDP buffer size'.green.bold
-              Cmd.run 'sudo sysctl -w net.core.rmem_max=8000000', :announce_pwd => false
-              Cmd.run 'sudo sysctl -w net.core.rmem_default=8000000', :announce_pwd => false
-              #Cmd.run 'sudo sysctl -w net.ipv4.udp_mem="min def max"', :announce_pwd => false
+              OPTIMUM_BUFFERS.each do |key, value|
+                Cmd.run %{sudo sysctl -w #{key}="#{value}"}, :announce_pwd => false
+              end
             end
             
             def permanent_udp_buffer
@@ -35,7 +45,8 @@ module CSD
                 content = Path.sysctl_conf.file? ? File.read(Path.sysctl_conf) : ''
                 Cmd.copy Path.sysctl_conf, Path.new_sysctl_conf
                 UI.info "Adding modifications to #{Path.new_sysctl_conf}".cyan
-                Cmd.touch_and_replace_content Path.new_sysctl_conf, "#{content}\n# Changes made by the AI\nnet.core.rmem_max=8000000\nnet.core.rmem_default=8000000", :internal => true
+                modifications = ['', '# Changes made by the AI'] + OPTIMUM_BUFFERS.map { |key, value| %{#{key} = #{value}} }
+                Cmd.touch_and_replace_content Path.new_sysctl_conf, modifications.join("\n"), :internal => true
                 # We cannot use Cmd.copy here, because Cmd.copy has no superuser privileges.
                 # And since we are for sure on Ubuntu, these commands will work.
                 Cmd.run "sudo cp #{Path.sysctl_conf} #{Path.sysctl_conf_backup}", :announce_pwd => false

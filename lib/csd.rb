@@ -1,4 +1,5 @@
 #-- encoding: UTF-8
+require 'net/http'
 
 # Loading all files in the subdirectory `csd´
 Dir[File.join(File.dirname(__FILE__), 'csd', '*.rb')].sort.each { |path| require "csd/#{File.basename(path, '.rb')}" }
@@ -17,38 +18,61 @@ module CSD
     def bootstrap(options={})
       @executable = options[:executable]
       Options.parse!
+      respond_to_internal_ai_options
       respond_to_incomplete_arguments
       UI.debug "#{self}.bootstrap initializes the task #{Options.action.to_s.enquote if Options.action} of the application #{Applications.current.name.to_s.enquote if Applications.current} now"
       Applications.current.instance.send("#{Options.action}".to_sym) if Applications.current
     end
   
     private
-  
+    
+    def respond_to_internal_ai_options
+      if !Applications.current and ARGV.include?('update')
+        update_ai_using_rubygems
+      elsif !Applications.current and ARGV.include?('edge')
+        update_ai_to_cutting_edge
+      end
+    end
+    
+    # Updating the AI
+    #
+    def update_ai_using_rubygems
+      UI.info "Updating the AI to the newest version".green.bold
+      Cmd.run "sudo gem update csd --no-ri --no-rdoc", :announce_pwd => false, :verbose => true
+      exit!
+    end
+    
+    # This method is used to conveniently update the AI without officially publishing it on RubyGems.
+    # This can be handy when testing many things on many machines at the same time :)
+    #
+    def update_ai_to_cutting_edge
+      UI.info "Updating the AI to the cutting-edge experimental version".green.bold
+      # Create a temporary working directory
+      Path.edge_tmp = Dir.mktmpdir
+      Path.edge_file = File.join(Path.edge_tmp, 'edge.gem')
+      # Retrieve list of possible locations for edge versions
+      # Note that you can just modify that list to add your own locations
+      # You can modify the list at http://github.com/csd/csd/downloads
+      # Note that the Amazon G3 cache used by Github takes about 12 hours to refresh the file, though!
+      for location in Net::HTTP.get_response(URI.parse('http://cloud.github.com/downloads/csd/csd/edge.txt')).body.split.each do
+        # See if there is a downloadable edge version at this location. If not, move on to the next location
+        next unless Cmd.download(location, Path.edge_file).success?
+        # If the download was successful here, let's update the AI from that downloaded gem-file and exit
+        updated = Cmd.run("sudo gem install #{Path.edge_file} --no-ri --no-rdoc", :announce_pwd => false, :verbose => true).success?
+        break
+      end
+      UI.info "Currently there is no edge version published.".green.bold unless updated
+      # Cleaning up the temporary directory
+      FileUtils.rm_r Path.edge_tmp
+      exit!
+    end
+    
     # This method check the arguments the user has provided and terminates the AI with
     # some helpful message if the arguments are invalid.
     #
     def respond_to_incomplete_arguments
-      if !Applications.current and ARGV.include?('update')
-        # Updating the AI
-        UI.info "Updating the AI to the newest version".green.bold
-        Cmd.run "sudo gem update csd --no-ri --no-rdoc", :announce_pwd => false, :verbose => true
-        exit!
-      elsif !Applications.current and ARGV.include?('edge')
-        UI.info "Updating the AI to the cutting-edge experimental version".green.bold
-        Path.edge_tmp = Dir.mktmpdir
-        Path.edge_file = File.join(Path.edge_tmp, 'edge.gem')
-        # I know this is a bad idea, but Amazon G3 has too long caching times and it is for AI developer use only.
-        if Cmd.download('http://www.tslab.ssvl.kth.se/csd/projects/1031351/sites/default/files/edge.gem', Path.edge_file).success?
-          Cmd.run "sudo gem install #{Path.edge_file} --no-ri --no-rdoc", :announce_pwd => false, :verbose => true
-        else
-          UI.info "Currently there is no edge version published.".green.bold
-        end
-        FileUtils.rm_r Path.edge_tmp
-        exit!
-      else
-        choose_application unless Applications.current
-        choose_action unless Options.valid_action?
-      end
+      choose_application unless Applications.current
+      choose_action unless Options.valid_action?
     end
   
     # This methods lists all available applications
