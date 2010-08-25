@@ -102,7 +102,7 @@ module CSD
     #
     def parse_options
       OptionParser.new do |opts|
-        self.banner = "Usage: ".bold + "#{CSD.executable} [help] #{Options.action} #{Applications.current.name} [COMPONENT] [OPTIONS]".cyan
+        self.banner = "Usage: ".bold + "#{CSD.executable} [help] #{Options.action} #{Applications.current.name if Applications.current} [COMPONENT] [OPTIONS]".cyan
         opts.banner = self.banner.magenta.bold
         
         unless Options.scopes_names.empty?
