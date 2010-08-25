@@ -45,7 +45,8 @@ module CSD
                 content = Path.sysctl_conf.file? ? File.read(Path.sysctl_conf) : ''
                 Cmd.copy Path.sysctl_conf, Path.new_sysctl_conf
                 UI.info "Adding modifications to #{Path.new_sysctl_conf}".cyan
-                modifications = ['', '# Changes made by the AI'] + OPTIMUM_BUFFERS.map { |key, value| %{#{key} = #{value}} }
+                modifications = ['# Changes made by the AI'] + OPTIMUM_BUFFERS.map { |key, value| %{#{key} = #{value}} }
+                modifications = content + "\n" + modifications
                 Cmd.touch_and_replace_content Path.new_sysctl_conf, modifications.join("\n"), :internal => true
                 # We cannot use Cmd.copy here, because Cmd.copy has no superuser privileges.
                 # And since we are for sure on Ubuntu, these commands will work.
