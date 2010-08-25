@@ -32,12 +32,12 @@ module CSD
         public_actions    = actions['public'] ? self.actions['public'].map { |pair| pair.keys.first } : []
         developer_actions = actions['developer'] ? self.actions['developer'].map { |pair| pair.keys.first } : []
         self.actions_names = public_actions + developer_actions
-        #UI.debug "#{self.class}#define_actions_and_scopes identified the actions #{self.actions.inspect}"
+        UI.debug "#{self.class}#define_actions_and_scopes identified the actions #{self.actions_names.inspect}"
         # At this point we know that the first argument is no option, but *some* action (may it be valid or not)
         UI.debug "#{self.class}#define_actions_and_scopes loads the scopes of #{Applications.current} now"
         self.scopes       = Applications.current.scopes(self.action)
         self.scopes_names = self.scopes.map { |pair| pair.keys.first }
-        #UI.debug "#{self.class}#define_actions_and_scopes identified the scopes #{self.scopes.inspect}"
+        UI.debug "#{self.class}#define_actions_and_scopes identified the scopes #{self.scopes_names.inspect}"
       end
     end
     
@@ -102,8 +102,13 @@ module CSD
     #
     def parse_options
       OptionParser.new do |opts|
-        self.banner = Applications.current ? 'OPTIONS' : "Usage: ".bold + "#{CSD.executable} [help] [TASK] APPLICATION [OPTIONS]"
+        self.banner = "Usage: ".bold + "#{CSD.executable} [help] #{Options.action} #{Applications.current.name} [COMPONENT] [OPTIONS]".cyan
         opts.banner = self.banner.magenta.bold
+        
+        unless Options.scopes_names.empty?
+          opts.headline "COMPONENTS".green.bold
+          scopes.flatten.each { |scope| opts.list_item(scope.keys.first, scope.values.first) }
+        end
 
         # Here we load application-specific options file.
         # TODO: There must be a better way for this in general than to eval the raw ruby code

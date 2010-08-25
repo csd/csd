@@ -19,3 +19,4 @@ scopes:
     - hdviper: Install only the HDVIPER component of MiniSIP
     - network: Install only the Network component of MiniSIP
     - plugins: Install only the Plugins component of MiniSIP
+    - x264: Install only the x264 component of MiniSIP
