@@ -26,6 +26,7 @@ module CSD
           apply
           add_boot_loader
           send_notification
+          cleanup_working_directory
         end
         
         def introduction
