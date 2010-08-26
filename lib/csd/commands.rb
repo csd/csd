@@ -144,7 +144,9 @@ module CSD
     # Otherwise it calls the replace function in the Replacer class. 
     #
     def replace(filepath, pattern='', substitution='', params={}, &block)
+      # In case of a block, the second argument might be the params
       params = pattern if pattern.is_a?(Hash)
+      # Setting default parameters
       default_params = { :die_on_failure => true }
       params = default_params.merge(params)
       UI.info "Modifying contents of `#{filepath}´ as follows:".cyan
@@ -178,10 +180,10 @@ module CSD
         begin
           new_file_content = if params[:only_first_occurence]
             UI.info "   Replacing the first occurence of".yellow
-            File.read(self.filepath).sub(pattern.to_s, substitution.to_s)
+            File.read(self.filepath).sub(pattern, substitution) unless Options.reveal
           else
             UI.info "   Replacing".yellow
-            File.read(self.filepath).gsub(pattern.to_s, substitution.to_s)
+            File.read(self.filepath).gsub(pattern, substitution) unless Options.reveal
           end
           UI.info "   `#{pattern}´".blue
           UI.info "   with".yellow
