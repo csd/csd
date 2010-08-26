@@ -15,6 +15,7 @@ module CSD
         end
         
         def install!
+          define_relative_paths
           create_working_directory
           determine_graphics_card
         end
@@ -39,16 +40,16 @@ module CSD
         end
         
         def install_geforce
-          Cmd.git_clone 'drivers for nVIDIA GeForce', 'git@github.com:csd/nvidia.git', Path.geforce
+          Cmd.git_clone 'drivers for nVIDIA GeForce', 'git://github.com/csd/nvidia.git', Path.geforce
           Cmd.run "chmod +x #{Path.geforce_run}", :announce_pwd => false
           Cmd.run "sudo #{Path.geforce_run}", :announce_pwd => false
         end
         
         def define_relative_paths
-          UI.debug "#{self.class}#define_relative_paths defines relative i2conf paths now"
+          UI.debug "#{self.class}#define_relative_paths defines relative graphics paths now"
           Path.radeon       = Pathname.new(File.join(Path.work, 'radeon'))
           Path.geforce      = Pathname.new(File.join(Path.work, 'geforce'))
-          Path.geforce_run  = Pathname.new(File,join(Path.geforce, 'NVIDIA-Linux-x86-256.44.run.sh'))
+          Path.geforce_run  = Pathname.new(File.join(Path.geforce, 'NVIDIA-Linux-x86-256.44.run.sh'))
         end
         
       end
