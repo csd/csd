@@ -96,15 +96,16 @@ module CSD
             # with the most recent FFmpeg version. In fact, MiniSIP won't compile if FFmpeg is present
             # and this has not been modified.
             # See http://www.howgeek.com/2010/03/01/ffmpeg-php-error-‘pix_fmt_rgba32’-undeclared-first-use-in-this-function
-            # and http://ffmpeg.org/doxygen/0.5/pixfmt_8h.html#33d341c4f443d24492a95fb7641d0986 for more information.
+            # and http://ffmpeg.org/doxygen/0.5/pixfmt_8h.html#33d341c4f443d24492a95fb7641d0986 for more information
+            # about the FFmpeg pixel format constants.
             #
             def modify_source_code
               UI.info "Fixing MiniSIP OpenGL GUI source code".green.bold
-              Cmd.replace(Path.repository_open_gl_display, '/home/erik', Path.build)
+              Cmd.replace Path.repository_open_gl_display, /(\s+)(string path = ")(.+)(".+)/, "\1\2#{Path.build}\4"
               if Options.ffmpeg_first
                 UI.info "Fixing MiniSIP Audio/Video en/decoder source code".green.bold
-                Cmd.replace(Path.repository_avcoder_cxx,   'PIX_FMT_RGBA32', 'PIX_FMT_RGB32')
-                Cmd.replace(Path.repository_avdecoder_cxx, 'PIX_FMT_RGBA32', 'PIX_FMT_RGB32')
+                Cmd.replace Path.repository_avcoder_cxx,   'PIX_FMT_RGBA32', 'PIX_FMT_RGB32'
+                Cmd.replace Path.repository_avdecoder_cxx, 'PIX_FMT_RGBA32', 'PIX_FMT_RGB32'
               end
             end
             
