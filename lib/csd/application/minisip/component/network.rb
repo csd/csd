@@ -46,8 +46,8 @@ module CSD
                 Cmd.copy Path.sysctl_conf, Path.new_sysctl_conf
                 UI.info "Adding modifications to #{Path.new_sysctl_conf}".cyan
                 modifications = ['# Changes made by the AI'] + OPTIMUM_BUFFERS.map { |key, value| %{#{key} = #{value}} }
-                modifications = content + "\n" + modifications
-                Cmd.touch_and_replace_content Path.new_sysctl_conf, modifications.join("\n"), :internal => true
+                modifications = content + "\n" + modifications.join("\n")
+                Cmd.touch_and_replace_content Path.new_sysctl_conf, modifications, :internal => true
                 # We cannot use Cmd.copy here, because Cmd.copy has no superuser privileges.
                 # And since we are for sure on Ubuntu, these commands will work.
                 Cmd.run "sudo cp #{Path.sysctl_conf} #{Path.sysctl_conf_backup}", :announce_pwd => false
