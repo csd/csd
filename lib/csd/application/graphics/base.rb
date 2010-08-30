@@ -61,7 +61,7 @@ module CSD
           Cmd.git_clone 'drivers for nVIDIA GeForce', 'git://github.com/csd/nvidia.git', Path.geforce
           Cmd.run "chmod +x #{Path.geforce_run}", :announce_pwd => false
           proprietary_continue
-          Cmd.run "sudo #{Path.geforce_run}", :announce_pwd => false
+          Cmd.run "sudo #{Path.geforce_run}", :announce_pwd => false, :verbose =>true
         end
         
         def proprietary_continue
