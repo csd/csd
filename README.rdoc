@@ -2,11 +2,23 @@
 
 CSD stands for Communication Systems Design and is a project of the Telecommunication Systems Laboratory (TSLab) of the Royal Institute of Technology in Stockholm, Sweden. Within CSD many software tools are used to build up various networks and services. This gem is supposed to automate processes to handle the compilation and installation of these software tools. Technology Transfer Alliance (TTA) is the project team, which maintains this code.
 
+== Where is it?
+
+* {Installation instructions}[http://ttai.notlong.com/]
+* {Source Code}[http://github.com/csd/csd]
+* {RDoc API}[http://rdoc.info/github/csd/csd/master]
+* {Developer Forks}[http://github.com/csd/csd/network]
+* {Bug Tracker}[http://github.com/csd/csd/issues]
+* {Wiki}[http://wiki.github.com/csd/csd]
+
 == Requirements
 
-* Ruby >= 1.8.7
+* {Ruby}[http://ruby-lang.org] (>= 1.8.7)
+* {RubyGems}[http://rubygems.org] (>= 1.3.7)
 
 == Installation
+
+After having installed RubyGems, in a console, type
 
   (sudo) gem install csd
 
@@ -16,13 +28,14 @@ In a console, type
 
   ai
 
+For more details we refer to the {Wiki}[http://wiki.github.com/csd/csd].
+
 == Note on Patches/Pull Requests
 
-* Fork the project.
-* Make your feature addition or bug fix.
-* Add tests for it. This is important so we don't break it in a future version unintentionally.
-* Commit, do not mess with Rakefile, version, or history.
-  (if you want to have your own version, that is fine but bump version in a commit by itself we can ignore when I pull)
+* Fork the project
+* Make your feature addition or bug fix
+* Add tests for it. This is important so we don't break it in a future version unintentionally
+* Commit, without the Rakefile and the VERSION file
 * Send us a pull request.
 
 == Copyright
