@@ -1,13 +1,11 @@
 # -*- encoding: UTF-8 -*-
+# This file gets eval'ed by the global options parser in lib/csd/rb
 
-opts.headline 'WORKING DIRECTORY OPTIONS'.green.bold
 
-self.temp = true
-opts.on("--no-temp", "Use a subdirectory in the current directory as working directory and not /tmp.") do |value|
-  self.temp = value
+opts.on("--force-geforce","Skip graphical card checking and force to install GeForce drivers") do |value|
+  self.force_geforce = value
 end
 
-self.work_dir = nil
-opts.on("--work-dir [PATH]", "Defines and/or creates the working directory. This will override the --no-temp option.") do |value|
-  self.work_dir = value
+opts.on("--force-radeon","Skip graphical card checking and force to install Radeon drivers") do |value|
+  self.force_radeon = value
 end

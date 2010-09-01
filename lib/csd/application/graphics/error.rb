@@ -9,6 +9,7 @@ module CSD
       
       class CardNotSupported < CSDError; status_code(300); end
       class Amd64NotSupported < CSDError; status_code(301); end
+      class XServerStillRunning < CSDError; status_code(302); end
       
     end
   end
