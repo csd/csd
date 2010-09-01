@@ -12,6 +12,26 @@ module CSD
       @@ui ||= choose_ui
     end
     
+    # This method chooses and holds the command helper instance.
+    #
+    def cmd
+      @@cmd ||= Commands.new
+    end
+    
+    # This method chooses and holds the container for paths.
+    #
+    def path
+      @@path ||= PathContainer.new
+    end
+    
+    # This method chooses and holds the container for argument options.
+    #
+    def options
+      @@options ||= OptionsParser.new
+    end
+    
+    private
+    
     # This method chooses an user interface instance according to the Options and returns a new instance of it.
     #
     def choose_ui
@@ -21,26 +41,9 @@ module CSD
         UserInterface::CLI.new
       end
     end
-  
-    # This method chooses and holds the command execution instance.
-    #
-    def cmd
-      @@cmd ||= Commands.new
-    end
-  
-    # This holds the container for paths.
-    #
-    def path
-      @@path ||= PathContainer.new
-    end
-  
-    # This holds the container for argument options.
-    #
-    def options
-      @@options ||= OptionsParser.new
-    end
+    
   end
-
+  
   # A wrapper for the UI class to be able to run all methods as class methods.
   #
   class UI
@@ -77,4 +80,5 @@ module CSD
       ::CSD.options.send(meth, *args, &block)
     end
   end
+  
 end

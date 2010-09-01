@@ -255,33 +255,6 @@ module CSD
       result
     end
     
-    private
-    
-    # The common backend for copy and move operations.
-    #
-    def transfer(action, src, dest, params={})
-      default_params = { :die_on_failure => true }
-      params = default_params.merge(params)
-      result = CommandResult.new
-      UI.info "#{action == :copy ? 'Copying' : 'Moving'} `#{src}´ to `#{dest}´".cyan
-      begin
-        FileUtils.send(action, src, dest) unless Options.reveal
-        result.success = true
-      rescue Exception => e
-        result.success = false
-        result.reason = "Could not perform #{action} operation! #{e.message}"
-        if params[:die_on_failure]
-          case action
-            when :copy then raise CSD::Error::Command::CopyFailed, result.reason
-            when :move then raise CSD::Error::Command::MoveFailed, result.reason
-          end
-        else
-          UI.error result.reason
-        end
-      end
-      result
-    end
-    
     # Clones the master branch of a repository using +git+. +name+ is a +String+ used for UI outputs,
     # +repository+ is the URL/path to the repository, +destination+ is an absolute or relative
     # path to where the repository should be downloaded to.
@@ -335,6 +308,34 @@ module CSD
         Cmd.run "wget #{url} -O #{destination}", :die_on_failure => false, :announce_pwd => false
       end
     end
+    
+    protected
+    
+    # The common backend for copy and move operations.
+    #
+    def transfer(action, src, dest, params={})
+      default_params = { :die_on_failure => true }
+      params = default_params.merge(params)
+      result = CommandResult.new
+      UI.info "#{action == :copy ? 'Copying' : 'Moving'} `#{src}´ to `#{dest}´".cyan
+      begin
+        FileUtils.send(action, src, dest) unless Options.reveal
+        result.success = true
+      rescue Exception => e
+        result.success = false
+        result.reason = "Could not perform #{action} operation! #{e.message}"
+        if params[:die_on_failure]
+          case action
+            when :copy then raise CSD::Error::Command::CopyFailed, result.reason
+            when :move then raise CSD::Error::Command::MoveFailed, result.reason
+          end
+        else
+          UI.error result.reason
+        end
+      end
+      result
+    end
+  
   end
   
   # Objects of this class can be returned by Commands. Since it is an OpenStruct object,
@@ -352,7 +353,6 @@ module CSD
     def method_missing(meth, *args, &block)
       meth.to_s.ends_with?('?') ? self.send(meth.to_s.chop.to_sym, *args, &block) : super
     end
-    
   end
   
 end

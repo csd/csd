@@ -45,6 +45,8 @@ module CSD
       @@current ||= choose_current
     end
     
+    protected
+    
     # This method identifies the desired application. No caching takes place here.
     # It is meant to be very robust, we expect the application to be any one of the first three arguments.
     #
