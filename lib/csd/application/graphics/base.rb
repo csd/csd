@@ -82,7 +82,7 @@ module CSD
         end
         
         def xserver_running?
-          result = Cmd.run 'ps -ef'
+          result = Cmd.run('ps -ef', :internal => true)
           result.success? and (result.output =~ /bin\/X.+gdm/ or result.output =~ /xinit/)
         end
         
@@ -108,7 +108,7 @@ module CSD
         def proprietary_continue_for_geforce
           UI.separator
           UI.info 'The proprietary installer for your graphic card will now be executed.'.green.bold
-          UI.info 'Be sure to select "Yes" when the wizard requests modifying the X Server files '.green.bold
+          UI.info 'Be sure to select "Yes" when asked if nvidia-xconfig should update your X configuration.'.green.bold
           UI.info 'Please restart your computer after exiting the wizard.'.green.bold
           UI.separator
           wait_for_confirmation

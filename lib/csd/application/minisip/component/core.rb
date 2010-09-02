@@ -110,7 +110,7 @@ module CSD
               Cmd.replace Path.repository_open_gl_display, /\tstring path = "(.+)"\+/, %{\tstring path = "#{Path.build}"+}
               # Removing the default SIP proxy server from the Configuration generator
               Cmd.replace Path.repository_sip_conf, 'sip.domain.example', ''
-              #
+              # 
               
               # Making 
               if Options.ffmpeg_first

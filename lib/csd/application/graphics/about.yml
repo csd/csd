@@ -1,5 +1,5 @@
 # -*- encoding: UTF-8 -*-
-human: graphics
+human: Graphics
 description: Graphic card drivers to improve video quality.
 actions:
   public:
