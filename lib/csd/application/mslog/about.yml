@@ -1,0 +1,8 @@
+# -*- encoding: UTF-8 -*-
+human: Mslog
+description: A MiniSIP logging server.
+actions:
+  public:
+    - install: Downloads and installs the logging server for MiniSIP.
+scopes:
+  --- {}

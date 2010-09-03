@@ -6,6 +6,10 @@ module CSD
     module Graphics
       class Base < CSD::Application::Base
         
+        # This method will notify users about following operations and initiate installation process.
+        # The reason of creating another method to carry out actual installation process is to keep the
+        # source code clean and easy to read.
+        #
         def install
           UI.separator
           UI.info "This operation will download and install the latest graphics card drivers.".green.bold
@@ -14,6 +18,10 @@ module CSD
           install!
         end
         
+        # This method is to create a working directory to preserve graphical card installation scripts,
+        # initiate graphics card installation GUI and
+        # clean up the working directory when the graphical card driver has been successfully installed.
+        #
         def install!
           define_relative_paths
           create_working_directory
@@ -38,6 +46,9 @@ module CSD
           end
         end
         
+        # This method will determine the model of graphics card and initiate corresponding installation process
+        # Currently, only Radeon and GeForce graphics cards are supported.
+        #
         def process_graphics_card
           case determine_graphic_card
             when /Radeon/
@@ -49,6 +60,17 @@ module CSD
           end
         end
         
+        # The method is to detect graphics card model
+        #
+        # ====Returns
+        # * It will return 'Radeon',when options of force_radeon is set.
+        # * It will return 'Radeon',when options of force_radeon is set.
+        # * Otherwise, it will return the result of graphics card checking command.
+        # ====Purpose
+        # This methold is supposed to detect the current graphics card models and initiate corresponding
+        # installation process. However, whenever a user want to force its system to install another graphics
+        # card driver, it will fake the detection result and comply with users' request.
+        #
         def determine_graphic_card
           return 'Radeon' if Options.force_radeon
           return 'GeForce' if Options.force_geforce
