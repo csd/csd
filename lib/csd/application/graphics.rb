@@ -12,7 +12,8 @@ module CSD
 
         include CSD::Application::Default
 
-        # This method will check which system we're on and initialize the correct sub-module
+        # This method will check which system we're on and initialize the correct sub-module.
+        # Currently we only support Ubuntu.
         #
         def instance
           if Gem::Platform.local.ubuntu?

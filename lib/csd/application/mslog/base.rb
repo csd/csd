@@ -21,7 +21,7 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
 
         # A list of apt-get packages that are required to install the logging server.
         #
-        DEBIAN_DEPENDENCIES = %w{ ant openjdk-6-jre openjdk-6-jdk }
+        DEBIAN_DEPENDENCIES = %w{ ant openjdk-6-jre openjdk-6-jdk libnotify-bin }
         
         def install
           UI.separator
@@ -34,11 +34,11 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
         def install!
           create_working_directory
           define_relative_paths
-          apply
-          process_logging_server
+          apt_get
+          download
+          process
           create_desktop_entry
-          update_gnome_menu_cache
-          cleanup_working_directory
+          send_notification
         end
         
         def introduction
@@ -50,23 +50,24 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
           UI.separator
           if Options.help
             UI.info Options.helptext
-            # Cleanup in case the working directory was temporary and is empty
-            Path.work.rmdir if Options.temp and Path.work.directory? and Path.work.children.empty?
             raise CSD::Error::Argument::HelpWasRequested
           else
             raise Interrupt unless Options.yes or Options.reveal or UI.continue?
           end
         end
         
-        def apply
+        def apt_get
           UI.info "Update the package index".green.bold
           Cmd.run "sudo apt-get update --yes --force-yes", :announce_pwd => false
           UI.info "Installing Debian packages".green.bold
           Cmd.run "sudo apt-get install #{DEBIAN_DEPENDENCIES.join(' ')} --yes --force-yes", :announce_pwd => false
         end
-        
-        def process_logging_server
+
+        def download
           Cmd.git_clone 'Source code of logging server', 'git://github.com/csd/minisip-logging-server.git', Path.packages
+        end
+        
+        def process
           Cmd.cd Path.packages, :internal => true
           Cmd.run 'ant'
           Cmd.cd Path.bin, :internal => true
@@ -76,19 +77,19 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
         
         def create_desktop_entry
           UI.info "Installing Gnome menu item".green.bold
-          if Cmd.download(GNOME_ICON_URL, Path.mslog_gnome_png).success?
-            Cmd.run("sudo cp #{Path.mslog_gnome_png} #{Path.mslog_gnome_pixmap}", :announce_pwd => false)
-            Cmd.touch_and_replace_content Path.mslog_new_desktop_entry, DESKTOP_ENTRY.sub('PLACEHOLDER', Path.logging_server_run), :internal => true
-            Cmd.run "sudo mv #{Path.mslog_new_desktop_entry} #{Path.mslog_desktop_entry}", :announce_pwd => false
-            Gnome.update_gnome_menu_cache
-          else
-            UI.warn "The menu item could not be created, because the image file could not be downloaded from #{GNOME_ICON_URL}.".green.bold
-          end
+          Cmd.run("sudo cp #{Path.mslog_gnome_png} #{Path.mslog_gnome_pixmap}", :announce_pwd => false)
+          Cmd.touch_and_replace_content Path.mslog_new_desktop_entry, DESKTOP_ENTRY.sub('PLACEHOLDER', Path.logging_server_run), :internal => true
+          Cmd.run "sudo mv #{Path.mslog_new_desktop_entry} #{Path.mslog_desktop_entry}", :announce_pwd => false
+          update_gnome_menu_cache
         end
         
         def update_gnome_menu_cache
           return unless Gem::Platform.local.ubuntu_10?
           Cmd.run %{sudo sh -c "/usr/share/gnome-menus/update-gnome-menus-cache /usr/share/applications/ > /usr/share/applications/desktop.${LANG}.cache"}, :announce_pwd => false
+        end
+        
+        def send_notification
+          Cmd.run %{notify-send --icon=mslog_gnome "MiniSIP Logging Server installation complete" "You are now ready to use your logging server." }, :internal => true, :die_on_failure => false
         end
         
         def define_relative_paths
