@@ -9,6 +9,12 @@ module CSD
   #
   class OptionsParser < OpenStruct
     
+    # When this method is called, the OptionsParser is populated with information gained via the CLI arguments.
+    # For example, the application, action and scope are determined and all --options are identified. Each time
+    # this method is called, all current options get lost and are replaced by what could be found in ARGV.
+    # Note that it is a destructive method, that is, the ARGV is stripped of all processed arguments. Thus this
+    # method can only be called once (that is, unless ARGV is re-populated).
+    #
     def parse!
       clear
       parse_literals
@@ -16,14 +22,23 @@ module CSD
       parse_options
     end
     
+    # Determines whether the action chosen by the user is valid for the application which was chosen.
+    # Returns +true+ if it is a valid action. Returns +false+ if not, or if no application was chosen.
+    #
     def valid_action?
-      self.actions_names.include?(self.action)
+      self.actions_names and self.actions_names.include?(self.action)
     end
     
+    # Determines whether the scope chosen by the user is valid for the application and action which was chosen.
+    # Returns +true+ if it is a valid action. Returns +false+ if not, or if no application was chosen.
+    #
     def valid_scope?
-      self.scopes_names.include?(self.scope)
+      self.scopes_names and self.scopes_names.include?(self.scope)
     end
     
+    # This method assumes that the application has been chosen and tries to determine which actions and scopes
+    # the chosen application can respond to.
+    #
     def define_actions_and_scopes
       if Applications.current
         # Here we overwrite the default supported actions and scopes with the application specific ones
@@ -41,6 +56,8 @@ module CSD
       end
     end
     
+    # This method resets all Options to default.
+    #
     def clear(additional_options='')
       # Resetting all attributes to nil (because e.g. an application instance might have modified or added some).
       super()
