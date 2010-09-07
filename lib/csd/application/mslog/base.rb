@@ -57,7 +57,7 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
         end
         
         def apt_get
-          UI.info "Update the package index".green.bold
+          UI.info "Updating the package index".green.bold
           Cmd.run "sudo apt-get update --yes --force-yes", :announce_pwd => false
           UI.info "Installing Debian packages".green.bold
           Cmd.run "sudo apt-get install #{DEBIAN_DEPENDENCIES.join(' ')} --yes --force-yes", :announce_pwd => false
@@ -69,10 +69,14 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
         
         def process
           Cmd.cd Path.packages, :internal => true
+          Cmd.run %{echo "export JAVA_HOME=/usr" >> ~/.bashrc} unless File.read(Path.bashrc) =~ /JAVA_HOME/
+          # Reload bashrc
+          # Cmd.run ". ~/.bashrc"
+          ENV['JAVA_HOME'] = '/usr'
+          # Cmd.run 'export JAVA_HOME=/usr; ant'
           Cmd.run 'ant'
           Cmd.cd Path.bin, :internal => true
           Cmd.run "chmod +x #{Path.logging_server_run}", :announce_pwd => false
-          Cmd.run %{echo "export JAVA_HOME=/usr" >> ~/.bashrc;. ~/.bashrc}
         end
         
         def create_desktop_entry
@@ -86,6 +90,7 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
         def update_gnome_menu_cache
           return unless Gem::Platform.local.ubuntu_10?
           Cmd.run %{sudo sh -c "/usr/share/gnome-menus/update-gnome-menus-cache /usr/share/applications/ > /usr/share/applications/desktop.${LANG}.cache"}, :announce_pwd => false
+          Cmd.run "sudo chown root:root #{Path.mslog_desktop_entry}", :announce_pwd => false
         end
         
         def send_notification
@@ -100,6 +105,7 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
           Path.mslog_gnome_pixmap       = Pathname.new(File.join('/', 'usr', 'share', 'pixmaps', 'mslog_gnome.png'))
           Path.mslog_desktop_entry      = Pathname.new(File.join('/', 'usr', 'share', 'applications', 'mslog.desktop'))
           Path.mslog_new_desktop_entry  = Pathname.new(File.join(Path.work, 'mslog.desktop'))
+          Path.bashrc                   = Pathname.new(File.join(ENV['HOME'], '.bashrc'))
         end
         
       end
