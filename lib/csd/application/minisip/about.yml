@@ -1,6 +1,6 @@
 # -*- encoding: UTF-8 -*-
 human: MiniSIP
-description: An open-source SIP client for high-definition video conferencing.
+description: SIP client for high-definition video conferencing.
 actions:
   public:
     #- show: Shows further information about MiniSIP

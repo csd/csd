@@ -78,7 +78,6 @@ module CSD
             UI.separator
             # Core.run_gtkgui # At this point we could run MiniSIP instead of ending the AI -- if we wanted to.
           end
-          
         end
         
       end

@@ -39,6 +39,7 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
           process
           create_desktop_entry
           send_notification
+          congratulations
         end
         
         def introduction
@@ -70,12 +71,13 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
         def process
           Cmd.cd Path.packages, :internal => true
           Cmd.run %{echo "export JAVA_HOME=/usr" >> ~/.bashrc} unless File.read(Path.bashrc) =~ /JAVA_HOME/
-          # Reload bashrc
+          # For some reason the bashrc file cannot be reloaded systemwide from within the AI.
+          # As a workaround we devine the JAVA_HOME constant manually instead of using the '.'-command
           # Cmd.run ". ~/.bashrc"
           ENV['JAVA_HOME'] = '/usr'
-          # Cmd.run 'export JAVA_HOME=/usr; ant'
+          # Compiling the Java source code
           Cmd.run 'ant'
-          Cmd.cd Path.bin, :internal => true
+          # Giving execution permissions to the executable
           Cmd.run "chmod +x #{Path.logging_server_run}", :announce_pwd => false
         end
         
@@ -95,6 +97,13 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
         
         def send_notification
           Cmd.run %{notify-send --icon=mslog_gnome "MiniSIP Logging Server installation complete" "You are now ready to use your logging server." }, :internal => true, :die_on_failure => false
+        end
+        
+        def congratulations
+          UI.separator
+          UI.info "        MiniSIP Logging Server installation complete.".green.bold
+          UI.info "  Please have a look in your applications menu -> Internet."
+          UI.separator
         end
         
         def define_relative_paths

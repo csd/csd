@@ -1,6 +1,6 @@
 # -*- encoding: UTF-8 -*-
 human: Mslog
-description: A MiniSIP logging server.
+description: Logging Server Receiver Unit for MiniSIP.
 actions:
   public:
     - install: Downloads and installs the logging server for MiniSIP.
