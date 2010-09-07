@@ -17,6 +17,10 @@ module CSD
       def ask_yes_no(question, default=nil)
       end
       
+      def continue?
+        ask_yes_no 'Continue?', true
+      end
+      
       def debug(message)
       end
       
