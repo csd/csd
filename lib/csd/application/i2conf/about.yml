@@ -1,6 +1,6 @@
 # -*- encoding: UTF-8 -*-
 human: i2conf
-description: A SIP video conference MCU (Reflector).
+description: SIP video conference MCU (Reflector).
 actions:
   public:
     - install: Downloads and installs the MCU.
