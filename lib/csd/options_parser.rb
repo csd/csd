@@ -155,16 +155,16 @@ module CSD
         opts.on("-e", "--verbose","Show more elaborate output") do |value|
           self.verbose = value
         end
-        opts.on("-d", "--debug","Show more elaborate output and debugging information about the AI") do |value|
+        opts.on("-d", "--debug","Show debugging information about the AI") do |value|
           self.debug = value
         end
         opts.on("-s", "--silent","Don't show any output") do |value|
           self.silent = value
         end
-        opts.on_tail("-a", "--developer", "Show information only relevant to AI and MiniSIP developers") do |value|
+        opts.on_tail("-a", "--developer", "Show information only relevant to software developers") do |value|
           self.developer = value
         end
-        opts.on_tail("-h", "--help", "Show detailed help (regarding the given ACTION and APPLICATION)") do |value|
+        opts.on_tail("-h", "--help", "Show detailed help (regarding the given TASK and APPLICATION)") do |value|
           self.help = value
         end
         opts.on_tail("-v", "--version", "Show the version of this AI") do
