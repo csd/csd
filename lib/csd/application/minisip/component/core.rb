@@ -40,7 +40,7 @@ module CSD
             
             def remove_ffmpeg
               ffmpeg_available = Cmd.run('ffmpeg -h', :internal => true, :die_on_failure => false).success?
-              return if Options.ffmpeg_first or !Options.configure or !libraries.include?('libminisip') or !ffmpeg_available
+              return if Options.ffmpeg_first or !libraries.include?('libminisip') or !ffmpeg_available
               UI.debug "MILESTONE_removing_ffmpeg"
               if Gem::Platform.local.debian?
                 # Note that FFmpeg must have been installed via apt-get or via the AI in order for this to work,
@@ -88,6 +88,10 @@ module CSD
                 Cmd.cd Path.repository, :internal => true
                 Cmd.run "git checkout -b #{Options.branch} origin/#{Options.branch}"
               end
+              UI.info "Initializing any optional git submodules".green.bold
+              Cmd.cd Path.repository, :internal => true
+              Cmd.run 'git submodule init'
+              Cmd.run 'git submodule update'
             end
             
             # Some places in the MiniSIP source code have to be modified before MiniSIP can be compiled.
@@ -108,11 +112,12 @@ module CSD
               UI.info "Fixing MiniSIP OpenGL GUI source code".green.bold
               # Replacing the hardcoded path in the OpenGLDisplay.cxx
               Cmd.replace Path.repository_open_gl_display, /\tstring path = "(.+)"\+/, %{\tstring path = "#{Path.build}"+}
+              UI.info "Modifying default MiniSIP configuration parameters".green.bold
               # Removing the default SIP proxy server from the Configuration generator
               Cmd.replace Path.repository_sip_conf, 'sip.domain.example', ''
-              # 
-              
-              # Making 
+              # We would like decklink to be the default video device
+              Cmd.replace Path.repository_sip_conf, 'be->commit();', %{be->save("video_device", "decklink:0/720p50@25");be->commit();}
+              # Making
               if Options.ffmpeg_first
                 UI.info "Fixing MiniSIP Audio/Video en/decoder source code".green.bold
                 Cmd.replace Path.repository_avcoder_cxx,   'PIX_FMT_RGBA32', 'PIX_FMT_RGB32'
