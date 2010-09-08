@@ -5,7 +5,8 @@ module CSD
   module Application
     module Mslog
       class Base < CSD::Application::Base
-        
+
+        # Necessary contents for MSLog .desktop file. It will be used in the method of create_desktop_entry.
                 DESKTOP_ENTRY = %{
 [Desktop Entry]
 Encoding=UTF-8
@@ -23,6 +24,9 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
         #
         DEBIAN_DEPENDENCIES = %w{ ant openjdk-6-jre openjdk-6-jdk libnotify-bin }
         
+        # The method is to notify users about following operation of AI, and initiate introduction method.
+        # The actual installation process is carried out by method install! for the purpose of keeping source code clean.
+        #
         def install
           UI.separator
           UI.info "This operation will install the logging server of MiniSIP.".green.bold
@@ -31,6 +35,10 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
           install!
         end
         
+        # The method is to set up logging server by initiate corresponding method. Its major operation includes
+        # install library dependencies, download and install logging server, create a desktop entry for logging server.
+        # Thus users can start the logging server by simply clicking the MSLog button in the Applications menu.
+        #
         def install!
           create_working_directory
           define_relative_paths
@@ -41,6 +49,22 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
           send_notification
         end
         
+        # This method is to provide general introductions to users, like current working directory.
+        # 
+        # ====Options
+        # [debug]  If debug option is set, users will be notified about system platform and current working module.
+        # [help]   If help option is set, AI will provide all help information and cleanup.
+        # [reveal] If reveal option is set, AI will continue and process the next method.
+        # [yes]    If yes option is set, AI will continue and process the next method.
+        # 
+        # If users did not specify any option, AI will ask for their willingness to continue and process the next method 
+        # after the users choose 'yes'. Or AI will terminate its operation.
+        # 
+        # ====Notes
+        # In mslog module the options of temp and work_dir will be turned off by default. The reason of doing that is because
+        # the minisip-logging-server directory and its content is needed to run the logging server. Thus AI is not going to 
+        # use temp directory to process the source code or clean up the working directory after installation procedure.
+        # 
         def introduction
           UI.info " Working directory:       ".green.bold + Path.work.to_s.yellow
           if Options.debug
@@ -56,6 +80,8 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
           end
         end
         
+        #
+        #
         def apt_get
           UI.info "Updating the package index".green.bold
           Cmd.run "sudo apt-get update --yes --force-yes", :announce_pwd => false
