@@ -91,6 +91,13 @@ module CSD
             # On Windows it will just crash here, unless we determine where the heck sudo make install is targetting at :)
             raise Error::Minisip::BuildDirNotFound, "Sorry, `/usr/local´ could not be found but was requested as MiniSIP target. Use `#{CSD.executable}´ with the option `--this-user´ instead." unless Path.build.directory?
           end
+          if Options.branch == 'master'
+            # Before TTA made changes in the edge version, this was the location of the address book.
+            # The master branch resembles the vendor's SVN branch. Whereas any other branch is made by TTA.
+            Path.phonebook = Pathname.new(File.join(ENV['HOME'], '.minisip.addr'))
+          else  
+            Path.phonebook = Pathname.new(File.join(ENV['HOME'], '.minisip', 'minisip.addr'))
+          end
           Path.build_bin                          = Pathname.new(File.join(Path.build, 'bin'))
           Path.build_gtkgui                       = Pathname.new(File.join(Path.build_bin, 'minisip_gtkgui'))
           Path.build_include                      = Pathname.new(File.join(Path.build, 'include'))
@@ -129,7 +136,6 @@ module CSD
           Path.minisip_gnome_png_fallback         = Pathname.new(File.join(Path.repository, 'minisip', 'share', 'minisip.png'))
           Path.minisip_gnome_pixmap               = Pathname.new(File.join('/', 'usr', 'share', 'pixmaps', 'minisip_gnome.png'))
           Path.minisip_desktop_entry              = Pathname.new(File.join('/', 'usr', 'share', 'applications', 'minisip.desktop'))
-          Path.phonebook                          = Pathname.new(File.join(ENV['HOME'], '.minisip.addr'))
           Path.realtek_firmware                   = Pathname.new(File.join(Path.work, 'realtek'))
           Path.intel_firmware                     = Pathname.new(File.join(Path.work, 'intel'))
           Path.intel_firmware_src                 = Pathname.new(File.join(Path.intel_firmware, 'src'))

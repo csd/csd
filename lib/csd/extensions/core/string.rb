@@ -1,4 +1,5 @@
 # -*- encoding: UTF-8 -*-
+require 'digest/sha1'
 require 'csd/vendor/term/ansicolor'
 require 'csd/vendor/active_support/inflector'
 
@@ -17,6 +18,12 @@ module CSD
         #
         def enquote
           %Q{"#{self}"}
+        end
+        
+        # Creates a SHA1 hash of the String object.
+        #
+        def hashed
+          Digest::SHA1.hexdigest self
         end
         
         # See CSD::Vendor::ActiveSupport::Inflector#constantize

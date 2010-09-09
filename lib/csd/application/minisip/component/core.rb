@@ -117,7 +117,8 @@ module CSD
               Cmd.replace Path.repository_sip_conf, 'sip.domain.example', ''
               # We would like decklink to be the default video device
               Cmd.replace Path.repository_sip_conf, 'be->commit();', %{be->save("video_device", "decklink:0/720p50@25");be->commit();}
-              # Making
+              # Switching logging to ON as default, as opposed to OFF
+              Cmd.replace Path.repository_sip_conf, 'be->saveBool("logging",false)', 'be->saveBool("logging",true)'
               if Options.ffmpeg_first
                 UI.info "Fixing MiniSIP Audio/Video en/decoder source code".green.bold
                 Cmd.replace Path.repository_avcoder_cxx,   'PIX_FMT_RGBA32', 'PIX_FMT_RGB32'
@@ -267,7 +268,7 @@ module CSD
             end
             
             def create_address_book
-              return if Path.phonebook.file?
+              return unless !Path.phonebook.file? or ::CSD::Application::Minisip::OUTDATED_PHONEBOOKS.include?(File.read(Path.phonebook).hashed)
               UI.info "Creating default MiniSIP phonebook".green.bold
               Cmd.touch_and_replace_content Path.phonebook, ::CSD::Application::Minisip::PHONEBOOK_EXAMPLE, :internal => true
               UI.info "  Phonebook successfully saved in #{Path.phonebook}".yellow
