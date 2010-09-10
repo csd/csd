@@ -21,7 +21,6 @@ module CSD
         
         def package!
           create_working_directory
-          Core.modify_libminisip_rules # TODO: Oursource into Component::Core
           super
         end
         

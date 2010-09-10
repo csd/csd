@@ -94,9 +94,11 @@ module CSD
           if Options.branch == 'master'
             # Before TTA made changes in the edge version, this was the location of the address book.
             # The master branch resembles the vendor's SVN branch. Whereas any other branch is made by TTA.
-            Path.phonebook = Pathname.new(File.join(ENV['HOME'], '.minisip.addr'))
+            Path.phonebook_dir  = Pathname.new(ENV['HOME'])
+            Path.phonebook      = Pathname.new(File.join(Path.phonebook_dir, '.minisip.addr'))
           else  
-            Path.phonebook = Pathname.new(File.join(ENV['HOME'], '.minisip', 'minisip.addr'))
+            Path.phonebook_dir  = Pathname.new(File.join(ENV['HOME'], '.minisip'))
+            Path.phonebook      = Pathname.new(File.join(Path.phonebook_dir, 'minisip.addr'))
           end
           Path.build_bin                          = Pathname.new(File.join(Path.build, 'bin'))
           Path.build_gtkgui                       = Pathname.new(File.join(Path.build_bin, 'minisip_gtkgui'))

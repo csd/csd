@@ -38,6 +38,10 @@ module CSD
               create_address_book
             end
             
+            def package!
+              Packaging.package!
+            end
+            
             def remove_ffmpeg
               ffmpeg_available = Cmd.run('ffmpeg -h', :internal => true, :die_on_failure => false).success?
               return if Options.ffmpeg_first or !libraries.include?('libminisip') or !ffmpeg_available
@@ -84,7 +88,9 @@ module CSD
             #
             def checkout
               Cmd.git_clone 'MiniSIP repository', 'http://github.com/csd/minisip.git', Path.repository
-              if Options.branch
+              # Note that the command above will checkout the master branch.
+              # In that case we are not allowed to checkout the master branch again.
+              if Options.branch and Options.branch != 'master'
                 Cmd.cd Path.repository, :internal => true
                 Cmd.run "git checkout -b #{Options.branch} origin/#{Options.branch}"
               end
@@ -123,6 +129,16 @@ module CSD
                 UI.info "Fixing MiniSIP Audio/Video en/decoder source code".green.bold
                 Cmd.replace Path.repository_avcoder_cxx,   'PIX_FMT_RGBA32', 'PIX_FMT_RGB32'
                 Cmd.replace Path.repository_avdecoder_cxx, 'PIX_FMT_RGBA32', 'PIX_FMT_RGB32'
+              end
+              modify_libminisip_rules
+            end
+            
+            def modify_libminisip_rules
+              if Path.repository_libminisip_rules_backup.file?
+                UI.warn "The libminisip rules seem to be fixed already, I won't touch them now. Delete #{Path.repository_libminisip_rules_backup.enquote} to enforce it."
+              else
+                Cmd.copy Path.repository_libminisip_rules, Path.repository_libminisip_rules_backup
+                Cmd.replace Path.repository_libminisip_rules, 'AUTOMATED_INSTALLER_PLACEHOLDER=""', [libminisip_cpp_flags, libminisip_ld_flags].join(' ')
               end
             end
             
@@ -258,70 +274,12 @@ module CSD
               end
             end
             
-            def modify_libminisip_rules
-              if Path.repository_libminisip_rules_backup.file?
-                UI.warn "The libminisip rules seem to be fixed already, I won't touch them now. Delete #{Path.repository_libminisip_rules_backup.enquote} to enforce it."
-              else
-                Cmd.copy Path.repository_libminisip_rules, Path.repository_libminisip_rules_backup
-                Cmd.replace Path.repository_libminisip_rules, 'AUTOMATED_INSTALLER_PLACEHOLDER=""', [libminisip_cpp_flags, libminisip_ld_flags].join(' ')
-              end
-            end
-            
             def create_address_book
               return unless !Path.phonebook.file? or ::CSD::Application::Minisip::OUTDATED_PHONEBOOKS.include?(File.read(Path.phonebook).hashed)
               UI.info "Creating default MiniSIP phonebook".green.bold
+              Cmd.mkdir Path.phonebook_dir
               Cmd.touch_and_replace_content Path.phonebook, ::CSD::Application::Minisip::PHONEBOOK_EXAMPLE, :internal => true
               UI.info "  Phonebook successfully saved in #{Path.phonebook}".yellow
-            end
-            
-            # Iteratively makes debian packages of the internal MiniSIP libraries.
-            # TODO: Refactor this, it looks terribly sensitive.
-            # TODO: Check for GPL and LGLP license conflicts.
-            #
-            def package!
-              Cmd.mkdir(Path.packaging)
-              libraries.each do |library|
-                directory = Pathname.new(File.join(Path.repository, library))
-                next if Options.only and !Options.only.include?(library)
-                UI.info "Making #{library} with target dist".green.bold
-                if Cmd.cd(directory) or Options.reveal
-                  Cmd.run("make dist")
-                  
-                  tar_filename = File.basename(Dir[File.join(directory, '*.tar.gz')].first)
-                  Cmd.move(File.join(directory, tar_filename.to_s), Path.packaging) if tar_filename or Options.reveal
-                  
-                  if Cmd.cd(Path.packaging) or Options.reveal
-                    Cmd.run("tar -xzf #{tar_filename}")
-                    tar_dirname = File.basename(tar_filename.to_s, '.tar.gz')
-                    if Cmd.cd(File.join(Path.packaging, tar_dirname))
-                      Cmd.run("dpkg-buildpackage -rfakeroot")
-                      if library == 'minisip'
-                        if Cmd.cd(Path.packaging)
-                          package = File.basename(Dir[File.join(Path.packaging, "#{library}*.deb")].first)
-                          Cmd.run("sudo dpkg -i #{package}") if package or Options.reveal
-                        end
-                      else
-                        if Cmd.cd(Path.packaging)
-                          package = File.basename(Dir[File.join(Path.packaging, "#{library}0*.deb")].first)
-                          Cmd.run("sudo dpkg -i #{package}") if package or Options.reveal
-                          dev_package = File.basename(Dir[File.join(Path.packaging, "#{library}-dev*.deb")].first)
-                          Cmd.run("sudo dpkg -i #{dev_package}") if dev_package or Options.reveal
-                        end
-                      end
-                    else
-                      UI.error "Could not enter #{File.join(Path.packaging, tar_dirname)}."
-                    end
-                    
-                  else
-                    UI.error "Could not enter #{Path.packaging}."
-                  end
-                  
-                else
-                  UI.error "Could not enter #{directory}."
-                end
-              end
-              Cmd.cd '/'
-              Cmd.run('minisip_gtkgui')
             end
             
           end
