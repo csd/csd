@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{csd}
-  s.version = "0.3.2"
+  s.version = "0.3.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Technology Transfer Alliance Team"]
@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
      "VERSION",
      "bin/ai",
      "bin/ttai",
+     "csd.gemspec",
      "lib/csd.rb",
      "lib/csd/application.rb",
      "lib/csd/application/decklink.rb",
@@ -55,6 +56,7 @@ Gem::Specification.new do |s|
      "lib/csd/application/minisip/base.rb",
      "lib/csd/application/minisip/component.rb",
      "lib/csd/application/minisip/component/core.rb",
+     "lib/csd/application/minisip/component/core_packaging.rb",
      "lib/csd/application/minisip/component/ffmpeg.rb",
      "lib/csd/application/minisip/component/gnome.rb",
      "lib/csd/application/minisip/component/hdviper.rb",
