@@ -78,7 +78,7 @@ module CSD
               
               
               
-            ##  --  ##
+=begin
             def package!
               Cmd.mkdir Path.packaging
               libraries.each do |library|
@@ -129,3 +129,5 @@ module CSD
     end
   end
 end
+
+=end
