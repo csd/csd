@@ -1,5 +1,4 @@
 # -*- encoding: UTF-8 -*-
-require 'csd/application/minisip/component/core_packaging'
 require 'csd/application/minisip/component/core'
 require 'csd/application/minisip/component/ffmpeg'
 require 'csd/application/minisip/component/gnome'

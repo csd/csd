@@ -1,5 +1,6 @@
 # -*- encoding: UTF-8 -*-
 require 'csd/application/minisip/phonebook_example'
+require 'csd/application/minisip/component/core_packaging'
 
 module CSD
   module Application
@@ -12,8 +13,6 @@ module CSD
         #
         module Core
           
-          include Packaging
-          
           # This is an +Array+ containing the names of the internal MiniSIP libraries. Note that they
           # are sorted according to the sequence in which they need to be compiled (because they depend on each other).
           #
@@ -21,6 +20,8 @@ module CSD
           
           class << self
             
+            include Packaging
+
             # This method processes the MiniSIP Core component and does everything needed for compiling it. Note that
             # it is not responsible for checking depenencies here. It will just focus on compiling the internal MiniSIP libraries.
             #

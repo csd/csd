@@ -21,9 +21,11 @@ module CSD
               packing_introduction
               Cmd.mkdir Path.packaging
               libraries.each do |library|
-              directory = Pathname.new(File.join(Path.repository, library))
-              next if Options.only and !Options.only.include?(library)
-              package!
+                @library = library
+                @directory = Pathname.new(File.join(Path.repository, library))
+                next if Options.only and !Options.only.include?(library)
+                package!
+              end
             end
             
             def packing_introduction
@@ -42,83 +44,33 @@ module CSD
             end
             
             def make_dist
-              UI.info "Making #{library} with target dist".green.bold
-              Cmd.cd(directory) or Options.reveal
-              Cmd.cd 
+              UI.info "Making #{@library} with target dist".green.bold
+              Cmd.cd(@directory) or Options.reveal
               Cmd.run("make dist")
-              tar_filename = File.basename(Dir[File.join(directory, '*.tar.gz')].first)
-              Cmd.move(File.join(directory, tar_filename.to_s), Path.packaging) if tar_filename or Options.reveal
+              @tar_filename = File.basename(Dir[File.join(@directory, '*.tar.gz')].first)
+              Cmd.move(File.join(@directory, @tar_filename.to_s), Path.packaging) if @tar_filename or Options.reveal
             end
             
             def extract_tar_file
               Cmd.cd(Path.packaging) or Options.reveal
-              Cmd.run("tar -xzf #{tar_filename}")
-              tar_dirname = File.basename(tar_filename.to_s, '.tar.gz')
+              Cmd.run("tar -xzf #{@tar_filename}")
+              @tar_dirname = File.basename(@tar_filename.to_s, '.tar.gz')
             end
               
             def build_package
-              Cmd.cd(File.join(Path.packaging, tar_dirname))
+              Cmd.cd(File.join(Path.packaging, @tar_dirname))
               Cmd.run("dpkg-buildpackage -rfakeroot")
-              if library == 'minisip'
+              if @library == 'minisip'
                 if Cmd.cd(Path.packaging)
-                     package = File.basename(Dir[File.join(Path.packaging, "#{library}*.deb")].first)
-                     Cmd.run("sudo dpkg -i #{package}") if package or Options.reveal
+                  package = File.basename(Dir[File.join(Path.packaging, "#{@library}*.deb")].first)
+                  Cmd.run("sudo dpkg -i #{package}") if package or Options.reveal
                 end
               else
-                 if Cmd.cd(Path.packaging)
-                      package = File.basename(Dir[File.join(Path.packaging, "#{library}0*.deb")].first)
-                      Cmd.run("sudo dpkg -i #{package}") if package or Options.reveal
-                      dev_package = File.basename(Dir[File.join(Path.packaging, "#{library}-dev*.deb")].first)
-                      Cmd.run("sudo dpkg -i #{dev_package}") if dev_package or Options.reveal
-                 end
-               end
-            end
-              
-              
-              
-              
-              
-=begin
-            def package!
-              Cmd.mkdir Path.packaging
-              libraries.each do |library|
-                directory = Pathname.new(File.join(Path.repository, library))
-                next if Options.only and !Options.only.include?(library)
-                UI.info "Making #{library} with target dist".green.bold
-                if Cmd.cd(directory) or Options.reveal
-                  Cmd.run("make dist")
-                  
-                  tar_filename = File.basename(Dir[File.join(directory, '*.tar.gz')].first)
-                  Cmd.move(File.join(directory, tar_filename.to_s), Path.packaging) if tar_filename or Options.reveal
-                  
-                  if Cmd.cd(Path.packaging) or Options.reveal
-                    Cmd.run("tar -xzf #{tar_filename}")
-                    tar_dirname = File.basename(tar_filename.to_s, '.tar.gz')
-                    if Cmd.cd(File.join(Path.packaging, tar_dirname))
-                      Cmd.run("dpkg-buildpackage -rfakeroot")
-                      if library == 'minisip'
-                        if Cmd.cd(Path.packaging)
-                          package = File.basename(Dir[File.join(Path.packaging, "#{library}*.deb")].first)
-                          Cmd.run("sudo dpkg -i #{package}") if package or Options.reveal
-                        end
-                      else
-                        if Cmd.cd(Path.packaging)
-                          package = File.basename(Dir[File.join(Path.packaging, "#{library}0*.deb")].first)
-                          Cmd.run("sudo dpkg -i #{package}") if package or Options.reveal
-                          dev_package = File.basename(Dir[File.join(Path.packaging, "#{library}-dev*.deb")].first)
-                          Cmd.run("sudo dpkg -i #{dev_package}") if dev_package or Options.reveal
-                        end
-                      end
-                    else
-                      UI.error "Could not enter #{File.join(Path.packaging, tar_dirname)}."
-                    end
-                    
-                  else
-                    UI.error "Could not enter #{Path.packaging}."
-                  end
-                  
-                else
-                  UI.error "Could not enter #{directory}."
+                if Cmd.cd(Path.packaging)
+                  package = File.basename(Dir[File.join(Path.packaging, "#{@library}0*.deb")].first)
+                  Cmd.run("sudo dpkg -i #{package}") if package or Options.reveal
+                  dev_package = File.basename(Dir[File.join(Path.packaging, "#{@library}-dev*.deb")].first)
+                  Cmd.run("sudo dpkg -i #{dev_package}") if dev_package or Options.reveal
                 end
               end
             end
@@ -129,5 +81,3 @@ module CSD
     end
   end
 end
-
-=end

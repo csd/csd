@@ -40,10 +40,7 @@ module CSD
         # This method is called by the AI when the user requests the task "package" for MiniSIP.
         #
         def package
-          UI.separator
-          UI.info("This operation will package ".green.bold + "an already compiled".red.bold + " MiniSIP.".green.bold)
-          introduction
-          package!
+          Core.package
         end
         
         # This is the internal compile procedure for MiniSIP and its components.
