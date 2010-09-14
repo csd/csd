@@ -4,6 +4,10 @@ module CSD
   module Application
     module I2conf
       
+      # This constant defines the example configuration contents for the i2conf server.
+      # This configuration is based on the current running carenet-se service, while users can 
+      # modify the configuration manually by applying their own network service parameter.
+      #
       CONFIG_EXAMPLE = %{
 <interface>eth0</interface>
 <use_udp>true</use_udp>

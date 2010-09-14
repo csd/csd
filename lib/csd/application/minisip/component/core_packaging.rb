@@ -14,6 +14,71 @@ module CSD
             # TODO: Refactor this, it looks terribly sensitive.
             # TODO: Check for GPL and LGLP license conflicts.
             #
+            def package
+              UI.separator
+              UI.info "This operation will make debian packages for all MiniSIP libraries.".green.bold
+              UI.separator
+              packing_introduction
+              Cmd.mkdir Path.packaging
+              libraries.each do |library|
+              directory = Pathname.new(File.join(Path.repository, library))
+              next if Options.only and !Options.only.include?(library)
+              package!
+            end
+            
+            def packing_introduction
+              UI.info " MiniSIP".green.bold
+              # If the repository directory already exists, we indicate that here
+              download_text = Path.repository.directory? ? "  - located at:           " : "  - downloading to:       "
+              UI.info download_text.green + Path.repository.to_s.yellow
+              # Now let's present which libraries will be compiled with which commands
+              UI.info "  - libraries to process: ".green + libraries.join(', ').yellow
+            end
+            
+            def package!
+              make_dist
+              extract_tar_file
+              build_package
+            end
+            
+            def make_dist
+              UI.info "Making #{library} with target dist".green.bold
+              Cmd.cd(directory) or Options.reveal
+              Cmd.cd 
+              Cmd.run("make dist")
+              tar_filename = File.basename(Dir[File.join(directory, '*.tar.gz')].first)
+              Cmd.move(File.join(directory, tar_filename.to_s), Path.packaging) if tar_filename or Options.reveal
+            end
+            
+            def extract_tar_file
+              Cmd.cd(Path.packaging) or Options.reveal
+              Cmd.run("tar -xzf #{tar_filename}")
+              tar_dirname = File.basename(tar_filename.to_s, '.tar.gz')
+            end
+              
+            def build_package
+              Cmd.cd(File.join(Path.packaging, tar_dirname))
+              Cmd.run("dpkg-buildpackage -rfakeroot")
+              if library == 'minisip'
+                if Cmd.cd(Path.packaging)
+                     package = File.basename(Dir[File.join(Path.packaging, "#{library}*.deb")].first)
+                     Cmd.run("sudo dpkg -i #{package}") if package or Options.reveal
+                end
+              else
+                 if Cmd.cd(Path.packaging)
+                      package = File.basename(Dir[File.join(Path.packaging, "#{library}0*.deb")].first)
+                      Cmd.run("sudo dpkg -i #{package}") if package or Options.reveal
+                      dev_package = File.basename(Dir[File.join(Path.packaging, "#{library}-dev*.deb")].first)
+                      Cmd.run("sudo dpkg -i #{dev_package}") if dev_package or Options.reveal
+                 end
+               end
+            end
+              
+              
+              
+              
+              
+=begin
             def package!
               Cmd.mkdir Path.packaging
               libraries.each do |library|
@@ -64,3 +129,5 @@ module CSD
     end
   end
 end
+
+=end

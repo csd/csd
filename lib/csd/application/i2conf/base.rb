@@ -8,8 +8,13 @@ module CSD
     module I2conf
       class Base < CSD::Application::Base
         
+        # This is to include MiniSIP component class, since MiniSIP need to be compiled before i2conf compilation.
+        # Thus, in the i2conf module AI will load methods in MiniSIP component class directly to compile MiniSIP.
+        #
         include ::CSD::Application::Minisip::Component
         
+        # Necessary contents for i2conf .desktop file. It will be used in the method of create_desktop_entry.
+        # 
         DESKTOP_ENTRY = %{
 [Desktop Entry]
 Encoding=UTF-8
@@ -23,12 +28,17 @@ Type=Application
 StartupNotify=true
 Categories=Application;Internet;Network;Chat;AudioVideo}
         
+        # This constant is to preserve the URL of the i2conf icon in github repository.
+        #
         GNOME_ICON_URL = 'http://github.com/downloads/csd/i2conf/i2conf_gnome.png'
         
         # A list of apt-get packages that are required to install i2conf.
         #
         DEBIAN_DEPENDENCIES = %w{ libboost-dev libboost-thread-dev liblog4cxx* }
         
+        # This method notifies users about following operation of AI, and initiates introduction method.
+        # The actual installation process is carried out by method install! for the purpose of keeping source code clean.
+        # 
         def install
           @minisip = ::CSD::Application::Minisip::Debian.new
           define_relative_paths
@@ -39,6 +49,8 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
           install!
         end
         
+        # This method initiates corresponding methods sequentially to set up i2conf server.
+        # 
         def install!
           create_working_directory
           compile_minisip
@@ -57,6 +69,11 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
           congratulations
         end
         
+        # This method compiles MiniSIP. Because i2conf will make use of MiniSIP libraries during the compilation process.
+        # However, MiniSIP is compiled without any additional option during the configuration process, since full configuration
+        # options cause conflict with 64bit system, while i2conf can also be run in 64bit system. Thus this operation assures
+        # i2conf server can be set up on both 32 and 64 bits system.
+        # 
         def compile_minisip
           return unless Options.minisip
           @minisip.aptitude
@@ -72,6 +89,12 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
           Core.link_libraries
         end
         
+        # This method installs all library dependencies of i2conf server.
+        # It will first update the package index and then install all Debian dependencies.
+        # AI will force the operation to continue without being interrupted by the request for user's approval
+        # This is because users have been asked once about their willingness to continue in the introduction method,
+        # thus AI will not bother users again for each of the library dependency.
+        #
         def aptitude
           return unless Options.apt_get
           UI.info "Installing Debian dependencies for i2conf".green.bold
@@ -79,10 +102,14 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
           Cmd.run "sudo apt-get install #{DEBIAN_DEPENDENCIES.sort.join(' ')} --yes --fix-missing", :announce_pwd => false
         end
         
+        # The method checks out the Lib strManager source code from git repository.
+        # strManager is a high-performance UDP packet reflector with high customizing per-flow options.
+        # 
         def checkout_strmanager
           Cmd.git_clone('strManager library', 'git://github.com/csd/strManager.git', Path.str_manager)
         end
         
+        # 
         def copy_libtool
           UI.info 'Copying libtool dependencies'.green.bold
           Cmd.cd Path.str_manager, :internal => true

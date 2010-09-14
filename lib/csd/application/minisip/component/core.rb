@@ -12,6 +12,8 @@ module CSD
         #
         module Core
           
+          include Packaging
+          
           # This is an +Array+ containing the names of the internal MiniSIP libraries. Note that they
           # are sorted according to the sequence in which they need to be compiled (because they depend on each other).
           #
@@ -36,10 +38,6 @@ module CSD
               compile_libraries # We would like to re-compile MiniSIP no matter what options were given as command-line arguments.
               link_libraries
               create_address_book
-            end
-            
-            def package!
-              Packaging.package!
             end
             
             def remove_ffmpeg
