@@ -247,7 +247,7 @@ module CSD
             end
             
             def make!
-              Cmd.run("make")
+              Cmd.run("make -j 15")
             end
             
             def make_install
