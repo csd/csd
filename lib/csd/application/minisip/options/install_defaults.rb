@@ -2,6 +2,7 @@ self.this_user = false
 self.apt_get = true
 self.ffmpeg_first = false
 self.github_tar = false
+self.vendor = false
 self.branch = 'edge'
 self.bootstrap = true
 self.configure = true

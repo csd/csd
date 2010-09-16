@@ -17,6 +17,10 @@ opts.on("--github-tar","Instead of fetching git repositories from Github, use ta
   self.github_tar = value
 end
 
+opts.on("--vendor","Use the latest, untested version from the vendor's repository (SVN) instead of Github") do |value|
+  self.vendor = value
+end
+
 opts.on('--branch BRANCH', 'Choose another branch than `master´ when downloading the source code') do |value|
   self.branch = value
 end
