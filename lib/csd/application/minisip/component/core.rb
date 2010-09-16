@@ -87,6 +87,8 @@ module CSD
             # by an TTA AI developer, after having made sure that that source code version is working properly.
             #
             def checkout
+              # The untested version from the vendor was requested
+              return checkout_from_vendor if Options.vendor
               Cmd.git_clone 'MiniSIP repository', 'http://github.com/csd/minisip.git', Path.repository
               # Note that the command above will checkout the master branch.
               # In that case we are not allowed to checkout the master branch again.
@@ -101,7 +103,8 @@ module CSD
             end
             
             def checkout_from_vendor
-              
+              Cmd.cd Path.work, :internal => true
+              Cmd.run "svn checkout svn://svn.minisip.org/minisip/trunk minisip"
             end
             
             # Some places in the MiniSIP source code have to be modified before MiniSIP can be compiled.
