@@ -29,14 +29,22 @@ module CSD
             end
             
             def packing_introduction
-              UI.info " MiniSIP".green.bold
-              # If the repository directory already exists, we indicate that here
-              download_text = Path.repository.directory? ? "  - located at:           " : "  - downloading to:       "
-              UI.info download_text.green + Path.repository.to_s.yellow
-              # Now let's present which libraries will be compiled with which commands
-              UI.info "  - libraries to process: ".green + libraries.join(', ').yellow
+              UI.info " Working directory:       ".green.bold + Path.work.to_s.yellow
+              unless Path.repository.directory?
+                UI.warn "#{::CSD.executable} install minisip --no-temp"
+                raise Error::Minisip::Core::PackagingNeedsInstalledMinisip
+              end
+              UI.separator
+              if Options.help
+                UI.info Options.helptext
+                # Cleanup in case the working directory was temporary and is empty
+                Path.work.rmdir if Options.temp and Path.work.directory? and Path.work.children.empty?
+                raise CSD::Error::Argument::HelpWasRequested
+              else
+                raise Interrupt unless Options.yes or Options.reveal or UI.continue?
+              end
             end
-            
+        
             def package!
               make_dist
               extract_tar_file

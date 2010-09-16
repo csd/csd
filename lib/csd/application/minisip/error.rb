@@ -12,6 +12,7 @@ module CSD
       
       module Core
         class FFmpegInstalled < CSDError; status_code(210); end
+        class PackagingNeedsInstalledMinisip < CSDError; status_code(220); end
       end
       
     end
