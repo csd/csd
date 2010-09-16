@@ -39,6 +39,7 @@ module CSD
               compile_libraries # We would like to re-compile MiniSIP no matter what options were given as command-line arguments.
               link_libraries
               create_address_book
+              ensure_ati_vsync
             end
             
             def remove_ffmpeg
@@ -97,6 +98,10 @@ module CSD
               Cmd.cd Path.repository, :internal => true
               Cmd.run 'git submodule init'
               Cmd.run 'git submodule update'
+            end
+            
+            def checkout_from_vendor
+              
             end
             
             # Some places in the MiniSIP source code have to be modified before MiniSIP can be compiled.
@@ -233,13 +238,13 @@ module CSD
                   ''
               end
               # The --enable-debug option should only be there if specifically requested
-              debug_options = (Options.enable_debug and (name == 'libminisip' or name == 'minisip')) ? '--enable-debug' : ''
+              debug_options = '--enable-debug' if Options.enable_debug
               # These options are used by all libraries
-              common_options = Options.this_user ? %Q{--prefix="#{Path.build}" PKG_CONFIG_PATH="#{Path.build_lib_pkg_config}" ACLOCAL_FLAGS="#{Path.build_share_aclocal}" LD_LIBRARY_PATH="#{Path.build_lib}"} : ''
+              common_options = %Q{--prefix="#{Path.build}" PKG_CONFIG_PATH="#{Path.build_lib_pkg_config}" ACLOCAL_FLAGS="#{Path.build_share_aclocal}" LD_LIBRARY_PATH="#{Path.build_lib}"} if Options.this_user
               # I2conf needs to compile MiniSIP without any options
-              individual_options = '' if Options.blank_minisip_configuration
+              individual_options = nil if Options.blank_minisip_configuration
               # Putting it all together
-              Cmd.run ['./configure', common_options, debug_options, individual_options].join(' ')
+              Cmd.run ['./configure', common_options, debug_options, individual_options].compact.join(' ')
             end
             
             def make
@@ -279,6 +284,26 @@ module CSD
               Cmd.mkdir Path.phonebook_dir
               Cmd.touch_and_replace_content Path.phonebook, ::CSD::Application::Minisip::PHONEBOOK_EXAMPLE, :internal => true
               UI.info "  Phonebook successfully saved in #{Path.phonebook}".yellow
+            end
+            
+            # This method is agreeably a little bit out of place. Because this technically should happen whenever
+            # the graphic card drivers are installed and not when MiniSIP is installed. However, the AI is not present
+            # when the graphic card drivers are installed (because then X11 is booted down and the AI process is
+            # replaced by the proprietary ATI or nVidia installation process). So we better make sure at this point,
+            # that the vertical synching for ATI graphic cards is switched on.
+            #
+            # The reason why we want this is because otherwise we will have vertical lines in the video. It is commonly
+            # referred to as "teared images" and is caused by the monitor having a Hertz rate of 60Hz, while OpenGL has
+            # a rate of about 400Hz. So the screen picture might be refreshed by OpenGL *while* the monitor is doing his
+            # own refresh. This will result in a horizontal line on the screen. When they are synchronized, OpenGL will
+            # be reduced to about 59Hz and the video will be clear. This information was obtained by Erik, the vendor
+            # of MiniSIP.
+            #
+            def ensure_ati_vsync
+              # Return if no ATI drivers are installed
+              return unless Path.catalyst_config.file?
+              UI.info "Ensuring AMD vertical synchronization between OpenGL and Monitor".green.bold
+              Cmd.run "sudo aticonfig --set-pcs-u32=BUSID-2:0:0-0/OpenGL,VSyncControl,2", :announce_pwd => false
             end
             
           end

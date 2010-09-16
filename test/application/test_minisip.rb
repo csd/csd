@@ -146,8 +146,9 @@ class TestMinisip < Test::Unit::TestCase
           Options.debug = true
           Options.enable_debug = true
           out, err = capture { Core.compile_libraries }
+          # We will check or the flag before and after the milestone to go sure it's everywhere
           assert_match /MILESTONE_processing_libminisip.+\-\-enable\-debug.+MILESTONE_processing_minisip.+\-\-enable\-debug/m, out
-          assert_no_match /\-\-enable\-debug.+MILESTONE_processing_libminisip/m, out
+          assert_match /\-\-enable\-debug.+MILESTONE_processing_libminisip/m, out
         end
         
       end # context "in theory when compiling"

@@ -7,6 +7,10 @@ module CSD
         module Network
           class << self
             
+            # These IP stack buffer values have been identified as optimal by the Master Thesis students.
+            # Feel free to experiment around with other values. Erik suspects that they might have to be
+            # higher than this.
+            #
             OPTIMUM_BUFFERS = {
               'net.core.rmem_max'     => '131071',
               'net.core.wmem_max'     => '131071',

@@ -144,6 +144,8 @@ module CSD
           Path.sysctl_conf                        = Pathname.new(File.join('/', 'etc', 'sysctl.conf'))
           Path.sysctl_conf_backup                 = Pathname.new(File.join('/', 'etc', 'sysctl.conf.ai-backup'))
           Path.new_sysctl_conf                    = Pathname.new(File.join(Path.work, 'sysctl.conf'))
+          Path.catalyst_config                    = Pathname.new(File.join('/', 'etc', 'ati', 'amdpcsdb'))
+          Path.new_catalyst_config                = Pathname.new(File.join(Path.work, 'amdpcsdb'))
         end
         
       end
