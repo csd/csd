@@ -127,6 +127,7 @@ module CSD
           Path.ffmpeg_libswscale                  = Pathname.new(File.join(Path.ffmpeg_repository, 'libswscale'))
           Path.x264_repository                    = Pathname.new(File.join(Path.work, 'x264'))
           Path.packaging                          = Pathname.new(File.join(Path.work, 'packaging'))
+          Path.packages                           = Pathname.new(File.join(Path.work, 'packages'))
           Path.hdviper                            = Pathname.new(File.join(Path.work, 'hdviper'))
           Path.hdviper_x264                       = Pathname.new(File.join(Path.hdviper, 'x264'))
           Path.hdviper_libtidx264                 = Pathname.new(File.join(Path.hdviper_x264, 'libtidx264.a'))

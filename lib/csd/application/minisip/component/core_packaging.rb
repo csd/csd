@@ -19,7 +19,9 @@ module CSD
               UI.info "This operation will make debian packages for all MiniSIP libraries.".green.bold
               UI.separator
               packing_introduction
+              remove_ffmpeg
               Cmd.mkdir Path.packaging
+              Cmd.mkdir Path.packages
               libraries.each do |library|
                 @library = library
                 @directory = Pathname.new(File.join(Path.repository, library))
@@ -72,13 +74,16 @@ module CSD
                 if Cmd.cd(Path.packaging)
                   package = File.basename(Dir[File.join(Path.packaging, "#{@library}*.deb")].first)
                   Cmd.run("sudo dpkg -i #{package}") if package or Options.reveal
+                  Cmd.move(File.join(Path.packaging, package.to_s), Path.packages) if package or Options.reveal
                 end
               else
                 if Cmd.cd(Path.packaging)
                   package = File.basename(Dir[File.join(Path.packaging, "#{@library}0*.deb")].first)
                   Cmd.run("sudo dpkg -i #{package}") if package or Options.reveal
+                  Cmd.move(File.join(Path.packaging, package.to_s), Path.packages) if package or Options.reveal
                   dev_package = File.basename(Dir[File.join(Path.packaging, "#{@library}-dev*.deb")].first)
                   Cmd.run("sudo dpkg -i #{dev_package}") if dev_package or Options.reveal
+                  Cmd.move(File.join(Path.packaging, dev_package.to_s), Path.packages) if dev_package or Options.reveal
                 end
               end
             end

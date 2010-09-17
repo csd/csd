@@ -200,7 +200,9 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
         end
         
         # The method creates a minimum configuration file for i2conf if it is not available.
-        # This configuration is based on 
+        # This configuration is based on currently available carenet-se service. However, the user may modify the
+        # configuration file according to its own network scenario after installation process.
+        #
         def configure_i2conf
           if Path.i2conf_example_conf.file?
             UI.warn "Creating no example configuration file, because it already exists: #{Path.i2conf_example_conf}. "
@@ -218,6 +220,11 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
           Cmd.run %{notify-send --icon=i2conf_gnome "I2conf installation complete" "You are now ready to use your SIP MCU." }, :internal => true, :die_on_failure => false
         end
         
+        # This method notifies users that i2conf installation process is completed successfully.
+        # It is AI's internal notification, which will be shown on the command line interface.
+        # Users can then start i2conf by clicking the icon in gnome menu or use command line interface.
+        # AI will also notify the users about possible modifications on the configuration file, according to users' network scenario.
+        # 
         def congratulations
           cleanup_working_directory if Options.temp
           UI.separator
@@ -233,6 +240,17 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
           UI.separator
         end
         
+        # This method provides general introductions to users, like current working directory.
+        # 
+        # ====Options
+        # [debug]  If debug option is set, users will be notified about system platform and current working module.
+        # [help]   If help option is set, AI will provide all help information and cleanup in case the working directory was temporary and is empty.
+        # [reveal] If reveal option is set, AI will continue and process the next method.
+        # [yes]    If yes option is set, AI will continue and process the next method.
+        # 
+        # If users did not specify any option, AI will ask for their willingness to continue and process the next method 
+        # after the users choose 'yes'. Or AI will terminate its operation.
+        # 
         def introduction
           UI.info " Working directory:       ".green.bold + Path.work.to_s.yellow
           if Options.debug
@@ -250,6 +268,8 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
           end
         end
         
+        # This method is to define relative path in i2conf module. This will make the program clean and easy to read.
+        #
         def define_relative_paths
           UI.debug "#{self.class}#define_relative_paths defines relative i2conf paths now"
           Path.str_manager              = Pathname.new(File.join(Path.work, 'libstrmanager'))
