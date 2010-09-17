@@ -208,7 +208,7 @@ module CSD
         def define_relative_paths
           UI.debug "#{self.class}#define_relative_paths defines relative graphics paths now"
           Path.radeon       = Pathname.new(File.join(Path.work, 'radeon'))
-          Path.radeon_run   = Pathname.new(File.join(Path.radeon, 'ati-driver-installer-10-7-x86.x86_64.run'))
+          Path.radeon_run   = Pathname.new(File.join(Path.radeon, 'ati-driver-installer-10-9-x86.x86_64.run'))
           Path.geforce      = Pathname.new(File.join(Path.work, 'geforce'))
           Path.geforce_run  = Pathname.new(File.join(Path.geforce, 'NVIDIA-Linux-x86-256.44.run.sh'))
         end

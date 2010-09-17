@@ -92,7 +92,7 @@ module CSD
         
         def define_relative_paths
           blacklink_repository   = 'http://www.blackmagic-design.com/downloads/software/'
-          decklink_basename      = 'DeckLink_Linux_7.7.3'
+          decklink_basename      = 'DeckLink_Linux_7.9'
           decklink_extension     = '.tar.gz'
           Path.decklink_url      = blacklink_repository + decklink_basename + decklink_extension
           Path.tar               = Pathname.new(File.join(Path.work, "#{decklink_basename + decklink_extension}"))
