@@ -33,7 +33,7 @@ module CSD
         def aptitude
           UI.info "Installing Debian dependencies".green.bold
           Cmd.run 'sudo apt-get update', :announce_pwd => false
-          Cmd.run "sudo apt-get install git_core --yes --fix-missing", :announce_pwd => false
+          Cmd.run "sudo apt-get install git-core --yes --fix-missing", :announce_pwd => false
         end
         
         # This method is to provide general introductions to users, like current working directory.
