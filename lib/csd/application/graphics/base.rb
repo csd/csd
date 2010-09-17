@@ -104,7 +104,7 @@ module CSD
           Cmd.git_clone 'drivers for ATI radeon', 'git://github.com/csd/ati.git', Path.radeon
           Cmd.run "chmod +x #{Path.radeon_run}", :announce_pwd => false
           proprietary_continue
-          Cmd.run "sh #{Path.radeon_run}", :announce_pwd => false
+          Cmd.run "sudo #{Path.radeon_run}", :announce_pwd => false
         end
         
         # The method is to check installation environment and initiate installation method of GeForce.
