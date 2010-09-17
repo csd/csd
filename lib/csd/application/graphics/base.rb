@@ -25,8 +25,15 @@ module CSD
         def install!
           define_relative_paths
           create_working_directory
+          aptitude
           process_graphics_card
           cleanup_working_directory
+        end
+        
+        def aptitude
+          UI.info "Installing Debian dependencies".green.bold
+          Cmd.run 'sudo apt-get update', :announce_pwd => false
+          Cmd.run "sudo apt-get install git-core --yes --fix-missing", :announce_pwd => false
         end
         
         # This method is to provide general introductions to users, like current working directory.
