@@ -91,15 +91,18 @@ module CSD
             # On Windows it will just crash here, unless we determine where the heck sudo make install is targetting at :)
             raise Error::Minisip::BuildDirNotFound, "Sorry, `/usr/local´ could not be found but was requested as MiniSIP target. Use `#{CSD.executable}´ with the option `--this-user´ instead." unless Path.build.directory?
           end
-          if Options.branch == 'master'
-            # Before TTA made changes in the edge version, this was the location of the address book.
-            # The master branch resembles the vendor's SVN branch. Whereas any other branch is made by TTA.
-            Path.phonebook_dir  = Pathname.new(ENV['HOME'])
-            Path.phonebook      = Pathname.new(File.join(Path.phonebook_dir, '.minisip.addr'))
-          else  
+          # These commented out things were needed during the transition period where the location of 
+          # the MiniSIP configuration file was not certain. Now it is always the same place.
+          #
+          #if Options.branch == 'master'
+          #  # Before TTA made changes in the edge version, this was the location of the address book.
+          #  # The master branch resembles the vendor's SVN branch. Whereas any other branch is made by TTA.
+          #  Path.phonebook_dir  = Pathname.new(ENV['HOME'])
+          #  Path.phonebook      = Pathname.new(File.join(Path.phonebook_dir, '.minisip.addr'))
+          #else  
             Path.phonebook_dir  = Pathname.new(File.join(ENV['HOME'], '.minisip'))
             Path.phonebook      = Pathname.new(File.join(Path.phonebook_dir, 'minisip.addr'))
-          end
+          #end
           Path.build_bin                          = Pathname.new(File.join(Path.build, 'bin'))
           Path.build_gtkgui                       = Pathname.new(File.join(Path.build_bin, 'minisip_gtkgui'))
           Path.build_include                      = Pathname.new(File.join(Path.build, 'include'))

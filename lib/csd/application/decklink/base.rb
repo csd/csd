@@ -34,6 +34,7 @@ module CSD
           extract
           apply
           add_boot_loader
+          update_firmware
           send_notification
           cleanup_working_directory
         end
@@ -109,6 +110,11 @@ module CSD
             Cmd.touch_and_replace_content Path.new_kernel_module, "#{content}\nblackmagic"
             Cmd.run "sudo cp #{Path.new_kernel_module} #{Path.kernel_module}", :announce_pwd => false
           end
+        end
+
+        def update_firmware
+          UI.info "Updating Decklink Firmware (if needed)".green.bold
+          Cmd.run "BlackmagicFirmwareUpdater update", :announce_pwd => false
         end
         
         def send_notification
