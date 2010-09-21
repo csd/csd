@@ -129,7 +129,11 @@ module CSD
               # Removing the default SIP proxy server from the Configuration generator
               Cmd.replace Path.repository_sip_conf, 'sip.domain.example', ''
               # We would like decklink to be the default video device
-              Cmd.replace Path.repository_sip_conf, 'be->commit();', %{be->save("video_device", "decklink:0/720p50@25");be->commit();}
+              Cmd.replace Path.repository_sip_conf, 'be->commit();', %{
+                be->save("display_frame_size", "hd720");
+                be->save("display_frame_rate", "24");
+                be->commit();
+              }
               # Switching logging to ON as default, as opposed to OFF
               Cmd.replace Path.repository_sip_conf, 'be->saveBool("logging",false)', 'be->saveBool("logging",true)'
               if Options.ffmpeg_first
