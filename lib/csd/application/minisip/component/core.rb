@@ -40,6 +40,7 @@ module CSD
               link_libraries
               create_address_book
               ensure_ati_vsync
+              update_decklink_firmware
             end
             
             def remove_ffmpeg
@@ -311,6 +312,11 @@ module CSD
               return unless Path.catalyst_config.file?
               UI.info "Ensuring AMD vertical synchronization between OpenGL and Monitor".green.bold
               Cmd.run "sudo aticonfig --set-pcs-u32=BUSID-2:0:0-0/OpenGL,VSyncControl,2", :announce_pwd => false
+            end
+            
+            def update_decklink_firmware
+              UI.info "Updating Decklink Firmware (if needed)".green.bold
+              Cmd.run "BlackmagicFirmwareUpdater update", :announce_pwd => false, :die_on_failure => false
             end
             
           end

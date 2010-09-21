@@ -34,7 +34,6 @@ module CSD
           extract
           apply
           add_boot_loader
-          update_firmware
           send_notification
           cleanup_working_directory
         end
@@ -112,11 +111,6 @@ module CSD
           end
         end
 
-        def update_firmware
-          UI.info "Updating Decklink Firmware (if needed)".green.bold
-          Cmd.run "BlackmagicFirmwareUpdater update", :announce_pwd => false
-        end
-        
         def send_notification
           Cmd.run %{notify-send --icon=gdm-setup "DeckLink installation complete" "You are now ready to use your Blackmagic Design DeckLink device." }, :internal => true, :die_on_failure => false
         end
