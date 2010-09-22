@@ -131,6 +131,7 @@ module CSD
               Cmd.replace Path.repository_sip_conf, 'sip.domain.example', ''
               # We would like decklink to be the default video device
               Cmd.replace Path.repository_sip_conf, 'be->commit();', %{
+                be->save("video_device", "decklink:0/720p50@25");
                 be->save("display_frame_size", "hd720");
                 be->save("display_frame_rate", "24");
                 be->commit();
@@ -192,6 +193,8 @@ module CSD
               UI.debug "MILESTONE_processing_libraries"
               libraries.each do |library|
                 directory = Pathname.new(File.join(Path.repository, library))
+                # The mloggingutil is more or less optional because it might not be checked in as of today yet
+                next if !directory.directory? and library == 'mloggingutil'
                 if Cmd.cd(directory, :internal => true).success? or Options.reveal
                   UI.debug "MILESTONE_processing_#{library}"
                   UI.info "Processing MiniSIP -> #{library}".green.bold

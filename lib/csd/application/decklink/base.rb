@@ -10,13 +10,13 @@ module CSD
         #
         DEBIAN_DEPENDENCIES = %w{ libnotify-bin libmng1 dkms }
         
-        MODPROBE_BLACKLIST = "# Minisip.org
+        MODPROBE_BLACKLIST = %w{# Minisip.org
 # We know that BlackMagic Design Decklink conflicts
 # with fglrx. We would like to load it manually later
 # via "sudo modprobe blackmagic"
 #
 blacklist blackmagic
-"
+}
         
         # This method notifies users about following operation of AI, and initiates introduction method.
         # The actual installation process is carried out by method install! for the purpose of keeping source code clean.
