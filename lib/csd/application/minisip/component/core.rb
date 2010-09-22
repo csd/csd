@@ -16,7 +16,7 @@ module CSD
           # This is an +Array+ containing the names of the internal MiniSIP libraries. Note that they
           # are sorted according to the sequence in which they need to be compiled (because they depend on each other).
           #
-          LIBRARIES = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip minisip }
+          LIBRARIES = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip minisip mloggingutil }
           
           class << self
             
