@@ -10,7 +10,7 @@ module CSD
         #
         DEBIAN_DEPENDENCIES = %w{ libnotify-bin libmng1 dkms }
         
-        MODPROBE_BLACKLIST = %w{# Minisip.org
+        MODPROBE_BLACKLIST = %{# Minisip.org
 # We know that BlackMagic Design Decklink conflicts
 # with fglrx. We would like to load it manually later
 # via "sudo modprobe blackmagic"
