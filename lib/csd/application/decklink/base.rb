@@ -80,7 +80,10 @@ module CSD
           end
         end
         
-        # This method extracts the tar file of DeckLink driver.
+        # This method extracts the tar file of DeckLink driver. AI will first check whether the tar files have been
+        # extracted, if not, AI will create a working directory for the tar file and extract the tar file into the 
+        # newly created directory.
+        #
         def extract
           if Path.packages.directory?
             UI.warn "The tar file will not be extracted, because package repository already exist: #{Path.packages.enquote}"
@@ -92,6 +95,7 @@ module CSD
           end
         end
         
+        # The method executes the Debian package of thex
         def apply
           Cmd.cd Path.packages, :internal => true
           archflag = Gem::Platform.local.cpu =~ /64/ ? 'amd64' : 'i386'
