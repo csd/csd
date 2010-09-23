@@ -10,6 +10,14 @@ module CSD
         #
         DEBIAN_DEPENDENCIES = %w{ libnotify-bin libmng1 dkms }
         
+        MODPROBE_BLACKLIST = %{# Minisip.org
+# We know that BlackMagic Design Decklink conflicts
+# with fglrx. We would like to load it manually later
+# via "sudo modprobe blackmagic"
+#
+blacklist blackmagic
+}
+        
         # This method notifies users about following operation of AI, and initiates introduction method.
         # The actual installation process is carried out by method install! for the purpose of keeping source code clean.
         #
@@ -34,6 +42,7 @@ module CSD
           extract
           apply
           add_boot_loader
+          load_kernel_module
           send_notification
           cleanup_working_directory
         end
@@ -107,27 +116,36 @@ module CSD
         end
         
         def add_boot_loader
-          content = Path.kernel_module.file? ? File.read(Path.kernel_module) : ''
-          if content !~ /\nblackmagic/m or Options.reveal
-            UI.info "Adding Blackmagic drivers to the boot loader".green.bold
-            Cmd.touch_and_replace_content Path.new_kernel_module, "#{content}\nblackmagic"
-            Cmd.run "sudo cp #{Path.new_kernel_module} #{Path.kernel_module}", :announce_pwd => false
-          end
+          UI.info "Adding Blackmagic to the kernel module blacklist".green.bold
+          Cmd.touch_and_replace_content Path.new_blacklist, MODPROBE_BLACKLIST
+          Cmd.run "sudo cp #{Path.new_blacklist} #{Path.blacklist}", :announce_pwd => false
+          UI.info "Creating Ubuntu init.d to load Blackmagic on runtime instead".green.bold
+          Cmd.touch_and_replace_content Path.new_upstart, "#!/bin/sh\nsudo /sbin/modprobe blackmagic"
+          Cmd.run "sudo cp #{Path.new_upstart} #{Path.upstart}", :announce_pwd => false
+          Cmd.run "sudo chmod +x #{Path.upstart}", :announce_pwd => false
+          Cmd.run "sudo update-rc.d blackmagic defaults", :announce_pwd => false
         end
         
+        def load_kernel_module
+          UI.info "Loading Decklink drivers".green.bold
+          Cmd.run "sudo modprobe blackmagic", :announce_pwd => false
+        end
+
         def send_notification
           Cmd.run %{notify-send --icon=gdm-setup "DeckLink installation complete" "You are now ready to use your Blackmagic Design DeckLink device." }, :internal => true, :die_on_failure => false
         end
         
         def define_relative_paths
           blacklink_repository   = 'http://www.blackmagic-design.com/downloads/software/'
-          decklink_basename      = 'DeckLink_Linux_7.7.3'
+          decklink_basename      = 'DeckLink_Linux_7.9'
           decklink_extension     = '.tar.gz'
           Path.decklink_url      = blacklink_repository + decklink_basename + decklink_extension
           Path.tar               = Pathname.new(File.join(Path.work, "#{decklink_basename + decklink_extension}"))
           Path.packages          = Pathname.new(File.join(Path.work, decklink_basename))
-          Path.new_kernel_module = Pathname.new(File.join(Path.work, 'modules'))
-          Path.kernel_module     = Pathname.new(File.join('/', 'etc', 'modules'))
+          Path.new_blacklist     = Pathname.new(File.join(Path.work, 'blacklist-minisip.conf'))
+          Path.blacklist         = Pathname.new(File.join('/', 'etc', 'modprobe.d', 'blacklist-minisip.conf'))
+          Path.new_upstart       = Pathname.new(File.join(Path.work, 'blackmagic'))
+          Path.upstart           = Pathname.new(File.join('/', 'etc', 'init.d', 'blackmagic'))
         end
         
       end

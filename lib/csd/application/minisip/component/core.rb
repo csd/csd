@@ -16,7 +16,7 @@ module CSD
           # This is an +Array+ containing the names of the internal MiniSIP libraries. Note that they
           # are sorted according to the sequence in which they need to be compiled (because they depend on each other).
           #
-          LIBRARIES = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip minisip }
+          LIBRARIES = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip minisip mloggingutil }
           
           class << self
             
@@ -40,6 +40,7 @@ module CSD
               link_libraries
               create_address_book
               ensure_ati_vsync
+              update_decklink_firmware
             end
             
             def remove_ffmpeg
@@ -129,7 +130,12 @@ module CSD
               # Removing the default SIP proxy server from the Configuration generator
               Cmd.replace Path.repository_sip_conf, 'sip.domain.example', ''
               # We would like decklink to be the default video device
-              Cmd.replace Path.repository_sip_conf, 'be->commit();', %{be->save("video_device", "decklink:0/720p50@25");be->commit();}
+              Cmd.replace Path.repository_sip_conf, 'be->commit();', %{
+                be->save("video_device", "decklink:0/720p50@25");
+                be->save("display_frame_size", "hd720");
+                be->save("display_frame_rate", "24");
+                be->commit();
+              }
               # Switching logging to ON as default, as opposed to OFF
               Cmd.replace Path.repository_sip_conf, 'be->saveBool("logging",false)', 'be->saveBool("logging",true)'
               if Options.ffmpeg_first
@@ -187,6 +193,8 @@ module CSD
               UI.debug "MILESTONE_processing_libraries"
               libraries.each do |library|
                 directory = Pathname.new(File.join(Path.repository, library))
+                # The mloggingutil is more or less optional because it might not be checked in as of today yet
+                next if !directory.directory? and library == 'mloggingutil'
                 if Cmd.cd(directory, :internal => true).success? or Options.reveal
                   UI.debug "MILESTONE_processing_#{library}"
                   UI.info "Processing MiniSIP -> #{library}".green.bold
@@ -307,6 +315,11 @@ module CSD
               return unless Path.catalyst_config.file?
               UI.info "Ensuring AMD vertical synchronization between OpenGL and Monitor".green.bold
               Cmd.run "sudo aticonfig --set-pcs-u32=BUSID-2:0:0-0/OpenGL,VSyncControl,2", :announce_pwd => false
+            end
+            
+            def update_decklink_firmware
+              UI.info "Updating Decklink Firmware (if needed)".green.bold
+              Cmd.run "BlackmagicFirmwareUpdater update", :announce_pwd => false, :die_on_failure => false
             end
             
           end

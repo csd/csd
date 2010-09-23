@@ -7,8 +7,9 @@ module CSD
       # This Array holds SHA1 hashes of phonebooks that should be overwritten by the AI without asking.
       #
       OUTDATED_PHONEBOOKS = [
-        'ad51d1f3ec295dec000d9690bd1b7b801027c958', # This is the default MiniSIP phonebook
-        '611e86dfbf82457d6137371884b8f56d224fbf59'  # This is the AI-made phonebook up to (and including) version 0.3.1
+        'ad51d1f3ec295dec000d9690bd1b7b801027c958',  # This is the default MiniSIP phonebook
+        '611e86dfbf82457d6137371884b8f56d224fbf59',  # This is the AI-made phonebook up to (and including) version 0.3.1
+        '81e65b55af8967c1cbba9947ca0de42fd79a2458'   # This is the AI-made phonebook up to (and including) version 0.3.6
       ]
       
       PHONEBOOK_EXAMPLE = %{
