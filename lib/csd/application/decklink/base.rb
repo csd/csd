@@ -116,8 +116,10 @@ blacklist blackmagic
           Cmd.touch_and_replace_content Path.new_blacklist, MODPROBE_BLACKLIST
           Cmd.run "sudo cp #{Path.new_blacklist} #{Path.blacklist}", :announce_pwd => false
           UI.info "Creating Ubuntu upstart script to load Blackmagic on runtime instead".green.bold
-          Cmd.touch_and_replace_content Path.new_upstart, 'exec /sbin/modprobe blackmagic'
+          Cmd.touch_and_replace_content Path.new_upstart, "#!/bin/sh\nsudo /sbin/modprobe blackmagic"
           Cmd.run "sudo cp #{Path.new_upstart} #{Path.upstart}", :announce_pwd => false
+          Cmd.run "sudo chmod +x #{Path.upstart}", :announce_pwd => false
+          Cmd.run "sudo update-rc.d blackmagic defaults", :announce_pwd => false
         end
         
         def load_kernel_module
@@ -139,7 +141,7 @@ blacklist blackmagic
           Path.new_blacklist     = Pathname.new(File.join(Path.work, 'blacklist-minisip.conf'))
           Path.blacklist         = Pathname.new(File.join('/', 'etc', 'modprobe.d', 'blacklist-minisip.conf'))
           Path.new_upstart       = Pathname.new(File.join(Path.work, 'blackmagic'))
-          Path.upstart           = Pathname.new(File.join('/', 'etc', 'init', 'blackmagic'))
+          Path.upstart           = Pathname.new(File.join('/', 'etc', 'init.d', 'blackmagic'))
         end
         
       end

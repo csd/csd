@@ -16,6 +16,17 @@ module CSD
           super
         end
         
+        def check
+          Core.ensure_ati_vsync
+          Core.update_decklink_firmware
+          load_decklink_on_runtime
+        end
+        
+        def load_decklink_on_runtime
+          UI.info "Loading Decklink drivers in case they were not loaded already".green.bold
+          Cmd.run "sudo /sbin/modprobe blackmagic", :announce_pwd => false, :die_on_failure => false
+        end
+        
         def after_aptitude
         end
         

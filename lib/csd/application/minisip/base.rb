@@ -22,6 +22,11 @@ module CSD
         def install
           compile
         end
+        
+        # Checking MiniSIP OS dependencies
+        def check
+          UI.error 'Currently not supported for this platform. Sorry.'
+        end
 
         # Running the compile task.
         #
