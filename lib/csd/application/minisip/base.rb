@@ -127,6 +127,7 @@ module CSD
           Path.repository_avdecoder_cxx           = Pathname.new(File.join(Path.repository, 'libminisip', 'source', 'subsystem_media', 'video', 'codec', 'AVDecoder.cxx'))
           Path.repository_sip_conf                = Pathname.new(File.join(Path.repository, 'libminisip', 'source', 'subsystem_signaling', 'sip', 'SipSoftPhoneConfiguration.cxx'))
           Path.repository_decklinksdk             = Pathname.new(File.join(Path.repository_grabber, 'decklinksdk'))
+          Path.repository_main_window             = Pathname.new(File.join(Path.repository, 'minisip', 'minisip', 'gui', 'gtkgui', 'MainWindow.cxx'))
           Path.ffmpeg_repository                  = Pathname.new(File.join(Path.work, 'ffmpeg'))
           Path.ffmpeg_libavutil                   = Pathname.new(File.join(Path.ffmpeg_repository, 'libavutil'))
           Path.ffmpeg_libavutil_common            = Pathname.new(File.join(Path.ffmpeg_libavutil, 'common.h'))

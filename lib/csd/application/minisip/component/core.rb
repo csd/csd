@@ -143,6 +143,9 @@ module CSD
                 Cmd.replace Path.repository_avcoder_cxx,   'PIX_FMT_RGBA32', 'PIX_FMT_RGB32'
                 Cmd.replace Path.repository_avdecoder_cxx, 'PIX_FMT_RGBA32', 'PIX_FMT_RGB32'
               end
+              # Changing MiniSIP HELP Version text
+              repository_name = Options.vendor ? 'SVN repository' : "Github (#{Options.branch})"
+              Cmd.replace Path.repository_main_window, '(VERSION)', %{("#{repository_name} via AI #{CSD::Version}")}
               modify_libminisip_rules
             end
             
