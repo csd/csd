@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{csd}
-  s.version = "0.3.8"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Technology Transfer Alliance Team"]
@@ -25,12 +25,14 @@ Gem::Specification.new do |s|
      "VERSION",
      "bin/ai",
      "bin/ttai",
+     "csd.gemspec",
      "img/3d1.png",
      "img/bios0.jpg",
      "img/bios1.jpg",
      "img/bios2.jpg",
      "img/camera1.jpg",
      "img/camera2.jpg",
+     "img/checkminisip.png",
      "img/decklink1.png",
      "img/decklink2.png",
      "img/graphics1.png",
@@ -44,6 +46,10 @@ Gem::Specification.new do |s|
      "img/minisip1.png",
      "img/minisip2.png",
      "img/minisip3.png",
+     "img/minisip4.png",
+     "img/minisip5.png",
+     "img/minisip6.png",
+     "img/minisip7.png",
      "img/reboot.png",
      "img/ruby1.png",
      "img/ruby2.png",
