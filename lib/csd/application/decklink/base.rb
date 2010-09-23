@@ -115,7 +115,7 @@ blacklist blackmagic
           UI.info "Adding Blackmagic to the kernel module blacklist".green.bold
           Cmd.touch_and_replace_content Path.new_blacklist, MODPROBE_BLACKLIST
           Cmd.run "sudo cp #{Path.new_blacklist} #{Path.blacklist}", :announce_pwd => false
-          UI.info "Creating Ubuntu upstart script to load Blackmagic on runtime instead".green.bold
+          UI.info "Creating Ubuntu init.d to load Blackmagic on runtime instead".green.bold
           Cmd.touch_and_replace_content Path.new_upstart, "#!/bin/sh\nsudo /sbin/modprobe blackmagic"
           Cmd.run "sudo cp #{Path.new_upstart} #{Path.upstart}", :announce_pwd => false
           Cmd.run "sudo chmod +x #{Path.upstart}", :announce_pwd => false
