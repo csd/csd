@@ -10,6 +10,7 @@ module CSD
         #
         DEBIAN_DEPENDENCIES = %w{ libnotify-bin libmng1 dkms }
         
+        # Command to block BlackMagic Design Decklink driver loaded together with system boot.
         MODPROBE_BLACKLIST = %{# Minisip.org
 # We know that BlackMagic Design Decklink conflicts
 # with fglrx. We would like to load it manually later
@@ -104,7 +105,10 @@ blacklist blackmagic
           end
         end
         
-        # The method executes the Debian package of thex
+        # The method executes the Debian package of the selected DeckLink driver. It starts with detecting the architecture
+        # of current system, and then picks up the corresponding drivers. Before execute the selected Debian file, AI will
+        # also install all the Library dependencies of DeckLink driver.
+        #
         def apply
           Cmd.cd Path.packages, :internal => true
           archflag = Gem::Platform.local.cpu =~ /64/ ? 'amd64' : 'i386'
@@ -115,6 +119,9 @@ blacklist blackmagic
           Cmd.run "sudo dpkg -i #{file.first || '[DRIVER FILE FOR THIS ARCHITECTURE]'}", :announce_pwd => false
         end
         
+        # The method add Blackmagic to the kernel module blacklist and load it on runtime after system boot.
+        # The reason of doing that is because BlackMagic Design Decklink conflicts with fglrx.
+        #
         def add_boot_loader
           UI.info "Adding Blackmagic to the kernel module blacklist".green.bold
           Cmd.touch_and_replace_content Path.new_blacklist, MODPROBE_BLACKLIST
@@ -126,15 +133,22 @@ blacklist blackmagic
           Cmd.run "sudo update-rc.d blackmagic defaults", :announce_pwd => false
         end
         
+        # The method loads DeckLink driver after completion of the installation process.
+        #
         def load_kernel_module
           UI.info "Loading Decklink drivers".green.bold
           Cmd.run "sudo modprobe blackmagic", :announce_pwd => false
         end
-
+        
+        # This method notifies users that decklinik installation process is completed successfully.
+        # This notification will be shown on the top right of the desktop in Ubuntu system.
+        #
         def send_notification
           Cmd.run %{notify-send --icon=gdm-setup "DeckLink installation complete" "You are now ready to use your Blackmagic Design DeckLink device." }, :internal => true, :die_on_failure => false
         end
         
+        # This method is to define relative path in decklink module. This will make the program clean and easy to read.
+        #
         def define_relative_paths
           blacklink_repository   = 'http://www.blackmagic-design.com/downloads/software/'
           decklink_basename      = 'DeckLink_Linux_7.9'

@@ -17,7 +17,7 @@ module CSD
           # are sorted according to the sequence in which they need to be compiled (because they depend on each other).
           #
           LIBRARIES = %w{ libmutil libmnetutil libmcrypto libmikey libmsip libmstun libminisip minisip mloggingutil }
-          
+
           class << self
             
             include Packaging
@@ -43,6 +43,15 @@ module CSD
               update_decklink_firmware
             end
             
+            # The method removes FFmpeg, if FFmpeg is already installed in the system before MiniSIP compilation.
+            # This is because MiniSIP use HDViper as its H.264 encoder, while HDviper use modified FFmpeg library within it.
+            # This may cause conflict with original FFmpeg library. The solution to that is to remove FFmpeg before MiniSIP
+            # compilation and install it again after completion of MiniSIP compilation process.
+            # However,if the user set the option "--force-ffmpeg", AI will skip the process, even though FFmpeg may have been
+            # installed in the system.
+            # Currently, FFmpeg must have been installed via apt-get or via the AI in order for this to work,
+            # because manual compilations of FFmpeg cannot be removed automatically.
+            # 
             def remove_ffmpeg
               ffmpeg_available = Cmd.run('ffmpeg -h', :internal => true, :die_on_failure => false).success?
               return if Options.ffmpeg_first or !libraries.include?('libminisip') or !ffmpeg_available
@@ -103,6 +112,10 @@ module CSD
               Cmd.run 'git submodule update'
             end
             
+            # The method downloads MiniSIP source code from official SVN repository. If the <tt>Options.vendor</tt>
+            # parameter is set, AI will not use the default git repository and use SVN to download the source code
+            # of MiniSIP.
+            #
             def checkout_from_vendor
               Cmd.cd Path.work, :internal => true
               Cmd.run "svn checkout svn://svn.minisip.org/minisip/trunk minisip"
@@ -146,6 +159,8 @@ module CSD
               modify_libminisip_rules
             end
             
+            # The method fixes libminisip Debian rules file.
+            #
             def modify_libminisip_rules
               if Path.repository_libminisip_rules_backup.file?
                 UI.warn "The libminisip rules seem to be fixed already, I won't touch them now. Delete #{Path.repository_libminisip_rules_backup.enquote} to enforce it."

@@ -30,11 +30,25 @@ module CSD
               end
             end
             
+            # This method is to provide general introductions to users, like current working directory.
+            # Since MiniSIP need to be installed before packaging its core libraries, AI will first check whether MiniSIP
+            # has been compiled in the current working directory, if it is not, AI will raise an error and notify users to
+            # to install MiniSIP before packaging, other wise, AI will continue with its operation.
+            #
+            # ====Options
+            # [debug]  If debug option is set, users will be notified about system platform and current working module.
+            # [help]   If help option is set, AI will provide all help information and cleanup in case the working directory was temporary and is empty.
+            # [reveal] If reveal option is set, AI will continue and process the next method.
+            # [yes]    If yes option is set, AI will continue and process the next method.
+            # 
+            # If users did not specify any option, AI will ask for their willingness to continue and process the next method 
+            # after the users choose 'yes'. Or AI will terminate its operation.
+            # 
             def packing_introduction
               UI.info " Working directory:       ".green.bold + Path.work.to_s.yellow
               unless Path.repository.directory?
                 UI.warn "#{::CSD.executable} install minisip --no-temp"
-                raise Error::Minisip::Core::PackagingNeedsInstalledMinisip
+                raise Error::Minisip::Core::PackagingNeedsInstalledMinisip,"Please install MiniSIP by AI, before creating its Debain packages. "
               end
               UI.separator
               if Options.help
@@ -46,13 +60,17 @@ module CSD
                 raise Interrupt unless Options.yes or Options.reveal or UI.continue?
               end
             end
-        
+            
+            # The method initiates corresponding method to package MiniSIP core libraries. The reason of doing that
+            # is to keep the source code clean and easy to read.
+            #
             def package!
               make_dist
               extract_tar_file
               build_package
             end
             
+            # 
             def make_dist
               UI.info "Making #{@library} with target dist".green.bold
               Cmd.cd(@directory) or Options.reveal
