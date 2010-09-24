@@ -158,7 +158,7 @@ module CSD
               end
               # Changing MiniSIP HELP Version text
               repository_name = Options.vendor ? 'SVN repository' : "Github (#{Options.branch})"
-              Cmd.replace Path.repository_main_window, '(VERSION)', %{("#{repository_name} via AI #{CSD::Version}")}
+              Cmd.replace Path.repository_main_window, '(VERSION)', %{("#{repository_name} via AI #{CSD::Version.gsub("\n", '')}")}
               modify_libminisip_rules
             end
             
