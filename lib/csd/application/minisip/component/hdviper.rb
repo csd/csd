@@ -36,9 +36,9 @@ module CSD
               UI.info "Compiling HDVIPER".green.bold
               Cmd.cd Path.hdviper_x264, :internal => true
               Cmd.run('./configure')
-              Cmd.run('make -j 15')
+              Cmd.run "make -j #{Options.threads}"
               Cmd.cd Path.hdviper_x264_test_x264api, :internal => true
-              Cmd.run('make -j 15')
+              Cmd.run "make -j #{Options.threads}"
             end
           
           end

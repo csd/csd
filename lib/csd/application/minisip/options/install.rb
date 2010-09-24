@@ -1,9 +1,9 @@
 # -*- encoding: UTF-8 -*-
 # This file gets eval'ed by the global options parser in lib/csd/options_parser
 
-opts.on("--this-user","Compile MiniSIP only for the current user (enforces the --no-temp option)") do |value|
-  self.this_user = value
-end
+#opts.on("--this-user","Compile MiniSIP only for the current user (enforces the --no-temp option)") do |value|
+#  self.this_user = value
+#end
 
 opts.on("--no-apt-get","Don't run any apt-get commands") do |value|
   self.apt_get = value
@@ -43,10 +43,18 @@ opts.on("--no-make-install","Don't run the make install command on any MiniSIP l
   self.make_install = value
 end
 
+opts.on("--threads [INT]", Integer, "Simultaneous compiling with this many threads (e.g. 10)") do |value|
+  self.threads = value
+end
+
 opts.on("--only libmutil,libmsip,etc.", Array, "Process only these libraries") do |list|
   self.only = list
 end
 
-opts.on("--enable-debug","Enable MiniSIP-internal debugging") do |value|
+opts.on("--enable-debug","Enable full MiniSIP-internal debugging") do |value|
   self.enable_debug = value
+end
+
+opts.on("--enable-debug-on libmsip,..", Array, "Enable MiniSIP-internal debugging only for these libraries") do |list|
+  self.enable_debug_on = list
 end

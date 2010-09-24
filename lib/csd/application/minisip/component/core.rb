@@ -87,6 +87,12 @@ module CSD
             def libraries
               Options.only ? LIBRARIES.map { |lib| lib if Options.only.to_a.include?(lib) }.compact : LIBRARIES
             end
+
+            # Determines which libraries of MiniSIP should be configured using --enable-debug
+            #
+            def debug_libraries
+              Options.enable_debug_on ? LIBRARIES.map { |lib| lib if Options.enable_debug_on.to_a.include?(lib) }.compact : LIBRARIES
+            end
             
             # This method downloads the minisip source code in the right version. If the <tt>Options.branch</tt>
             # parameter is set to a branchname of the source code repository, that branch will be downloaded. Currently
@@ -158,7 +164,7 @@ module CSD
               end
               # Changing MiniSIP HELP Version text
               repository_name = Options.vendor ? 'SVN repository' : "Github (#{Options.branch})"
-              Cmd.replace Path.repository_main_window, '(VERSION)', %{("#{repository_name} via AI #{CSD::Version}")}
+              Cmd.replace Path.repository_main_window, '(VERSION)', %{("#{repository_name} via AI #{CSD::Version.gsub("\n", '')}")}
               modify_libminisip_rules
             end
             
@@ -287,7 +293,7 @@ module CSD
                   ''
               end
               # The --enable-debug option should only be there if specifically requested
-              debug_options = '--enable-debug' if Options.enable_debug
+              debug_options = '--enable-debug' if Options.enable_debug or debug_libraries.include?(name)
               # These options are used by all libraries
               common_options = %Q{--prefix="#{Path.build}" PKG_CONFIG_PATH="#{Path.build_lib_pkg_config}" ACLOCAL_FLAGS="#{Path.build_share_aclocal}" LD_LIBRARY_PATH="#{Path.build_lib}"} if Options.this_user
               # I2conf needs to compile MiniSIP without any options
@@ -308,7 +314,7 @@ module CSD
             # AI uses "-j 15" option of +make+ command to speed up the make process.
             #
             def make!
-              Cmd.run("make -j 15")
+              Cmd.run "make -j #{Options.threads}"
             end
             
             # This method runs the `make install´ command in the current directory unless --no-make-install was given.
