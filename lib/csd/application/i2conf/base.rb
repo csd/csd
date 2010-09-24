@@ -34,7 +34,7 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
         
         # A list of apt-get packages that are required to install i2conf.
         #
-        DEBIAN_DEPENDENCIES = %w{ libboost-dev libboost-thread-dev liblog4cxx* libltdl-dev }
+        DEBIAN_DEPENDENCIES = %w{ libboost-dev libboost-thread-dev liblog4cxx* }
         
         # This method notifies users about following operation of AI, and initiates introduction method.
         # The actual installation process is carried out by method install! for the purpose of keeping source code clean.
