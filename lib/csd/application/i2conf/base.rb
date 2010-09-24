@@ -139,7 +139,7 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
           Cmd.cd Path.str_manager, :internal => true
           Cmd.run './configure'
           Cmd.run 'aclocal'
-          Cmd.run 'make -j 15'
+          Cmd.run "make -j #{Options.threads}"
           Cmd.run 'sudo make install'
           Cmd.run "sudo ldconfig /usr/local/lib/libstrmanager.so", :announce_pwd => false
         end
@@ -177,7 +177,7 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
           Cmd.run './bootstrap'
           Cmd.run './configure'
           Cmd.run 'aclocal'
-          Cmd.run 'make -j 15'
+          Cmd.run "make -j #{Options.threads}"
           Cmd.run 'sudo make install'
         end
         

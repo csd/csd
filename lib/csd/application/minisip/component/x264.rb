@@ -30,7 +30,7 @@ module CSD
               UI.info "Compiling and installing x264".green.bold
               Cmd.cd Path.x264_repository, :internal => true
               Cmd.run('./configure')
-              Cmd.run('make -j 15')
+              Cmd.run "make -j #{Options.threads}"
               Cmd.run('sudo checkinstall --pkgname=x264 --pkgversion "99:-`git log -1 --pretty=format:%h`" --backup=no --default')
             end
             

@@ -65,7 +65,7 @@ module CSD
               UI.info "Compiling and installing FFmpeg".green.bold
               Cmd.cd Path.ffmpeg_repository, :internal => true
               Cmd.run("#{c_flags} ./configure --enable-gpl --enable-libx264 --enable-x11grab")
-              Cmd.run('make -j 15')
+              Cmd.run "make -j #{Options.threads}"
               Cmd.run('sudo checkinstall --pkgname=ffmpeg --pkgversion "99:-`git log -1 --pretty=format:%h`" --backup=no --default')
             end
             

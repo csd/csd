@@ -287,7 +287,7 @@ module CSD
             end
             
             def make!
-              Cmd.run("make -j 15")
+              Cmd.run "make -j #{Options.threads}"
             end
             
             def make_install

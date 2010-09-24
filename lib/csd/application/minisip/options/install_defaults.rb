@@ -4,6 +4,7 @@ self.ffmpeg_first = false
 self.github_tar = false
 self.vendor = false
 self.branch = 'edge'
+self.threads = 1
 self.bootstrap = true
 self.configure = true
 self.make = true
