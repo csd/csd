@@ -43,7 +43,7 @@ opts.on("--no-make-install","Don't run the make install command on any MiniSIP l
   self.make_install = value
 end
 
-opts.on("--threads [OCTAL]", OptionParser::OctalInteger, "Simultaneous compiling with this many threads (e.g. 10)") do |value|
+opts.on("--threads [INT]", Integer, "Simultaneous compiling with this many threads (e.g. 10)") do |value|
   self.threads = value
 end
 
