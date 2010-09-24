@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
      "VERSION",
      "bin/ai",
      "bin/ttai",
+     "csd.gemspec",
      "img/3d1.png",
      "img/bios0.jpg",
      "img/bios1.jpg",

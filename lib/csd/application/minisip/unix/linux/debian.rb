@@ -39,7 +39,7 @@ module CSD
           return unless Options.apt_get
           UI.info "Installing Debian dependencies for MiniSIP".green.bold
           Cmd.run 'sudo apt-get update', :announce_pwd => false
-          Cmd.run "sudo apt-get install #{DEBIAN_DEPENDENCIES.sort.join(' ')} --yes --fix-missing", :announce_pwd => false
+          Cmd.run "sudo apt-get install #{DEBIAN_DEPENDENCIES.sort.join(' ')} --yes --fix-missing --force-yes", :announce_pwd => false
           # For some reason OpenGL crashes if we try to use this packet.
           # return unless Gem::Platform.local.ubuntu_10? or Options.reveal
           # UI.info "Installing 2D/3D acceleration for ATI graphic cards".green.bold
