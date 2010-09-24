@@ -34,7 +34,7 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
         
         # A list of apt-get packages that are required to install i2conf.
         #
-        DEBIAN_DEPENDENCIES = %w{ libboost-dev libboost-thread-dev liblog4cxx* }
+        DEBIAN_DEPENDENCIES = %w{ libboost-dev libboost-thread-dev liblog4cxx* libltdl-dev }
         
         # This method notifies users about following operation of AI, and initiates introduction method.
         # The actual installation process is carried out by method install! for the purpose of keeping source code clean.
@@ -99,7 +99,7 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
           return unless Options.apt_get
           UI.info "Installing Debian dependencies for i2conf".green.bold
           Cmd.run 'sudo apt-get update', :announce_pwd => false
-          Cmd.run "sudo apt-get install #{DEBIAN_DEPENDENCIES.sort.join(' ')} --yes --fix-missing", :announce_pwd => false
+          Cmd.run "sudo apt-get install #{DEBIAN_DEPENDENCIES.sort.join(' ')} --yes --fix-missing --force-yes", :announce_pwd => false
         end
         
         # The method checks out the Lib strManager source code from git repository.

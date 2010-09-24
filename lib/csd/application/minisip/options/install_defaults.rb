@@ -1,4 +1,4 @@
-self.this_user = false
+self.this_user = false # Deprecated, that's why always false
 self.apt_get = true
 self.ffmpeg_first = false
 self.github_tar = false
@@ -10,3 +10,4 @@ self.make = true
 self.make_install = true
 self.only = nil
 self.enable_debug = false
+self.enable_debug_on = nil

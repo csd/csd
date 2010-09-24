@@ -87,6 +87,12 @@ module CSD
             def libraries
               Options.only ? LIBRARIES.map { |lib| lib if Options.only.to_a.include?(lib) }.compact : LIBRARIES
             end
+
+            # Determines which libraries of MiniSIP should be configured using --enable-debug
+            #
+            def debug_libraries
+              Options.enable_debug_on ? LIBRARIES.map { |lib| lib if Options.enable_debug_on.to_a.include?(lib) }.compact : LIBRARIES
+            end
             
             # This method downloads the minisip source code in the right version. If the <tt>Options.branch</tt>
             # parameter is set to a branchname of the source code repository, that branch will be downloaded. Currently
@@ -267,7 +273,7 @@ module CSD
                   ''
               end
               # The --enable-debug option should only be there if specifically requested
-              debug_options = '--enable-debug' if Options.enable_debug
+              debug_options = '--enable-debug' if Options.enable_debug or debug_libraries.include?(name)
               # These options are used by all libraries
               common_options = %Q{--prefix="#{Path.build}" PKG_CONFIG_PATH="#{Path.build_lib_pkg_config}" ACLOCAL_FLAGS="#{Path.build_share_aclocal}" LD_LIBRARY_PATH="#{Path.build_lib}"} if Options.this_user
               # I2conf needs to compile MiniSIP without any options
