@@ -192,12 +192,20 @@ module CSD
               end
             end
             
+            # The method links shared MiniSIP libraries by +ldconfig+ command. +ldconfig+ determines run-time
+            # linkbindings between ld.so and shared libraries. It scans a running system and sets up the
+            # symbolic links that are used to load shared libraries properly.
+            #
             def link_libraries
               return if Options.this_user
               UI.info "Linking shared MiniSIP libraries".green.bold
               Cmd.run "sudo ldconfig #{Path.build_lib_libminisip_so}", :announce_pwd => false
             end
             
+            # The method holds the CPPFLAGS value, where MiniSIP +make+ process is needed. CPPFLAGS is for compiler to find
+            # the libraries and their header files. When force_ffmpeg option is set, the value of CPPFLAGS will also includes
+            # the path to related FFmpeg libraries.
+            #
             def libminisip_cpp_flags
               if Options.ffmpeg_first
                 %{CPPFLAGS="-I#{Path.hdviper_x264} -I#{Path.hdviper_x264_test_x264api} -I#{Path.ffmpeg_libavutil} -I#{Path.ffmpeg_libavcodec} -I#{Path.ffmpeg_libswscale} -I#{Path.repository_grabber} -I#{Path.repository_decklinksdk}"}
@@ -206,6 +214,9 @@ module CSD
               end
             end
             
+            # The method holds the LDFLAGS value, where MiniSIP +make+ process is needed. CPPFLAGS is for linker to find
+            # the libraries and their header files.
+            #
             def libminisip_ld_flags
               %{LDFLAGS="#{Path.hdviper_libx264api} #{Path.hdviper_libtidx264} -lpthread -lrt"}
             end
@@ -259,10 +270,19 @@ module CSD
               end
             end
             
+            # This method runs the `configure´ command in the current directory unless --no-configure was given.
+            # It is only used for the internal MiniSIP libraries.
+            #
             def configure(name='')
               configure! name if Options.configure
             end
             
+            # This method forces running the `configure´ command in the current directory.
+            # It is only used for the internal MiniSIP libraries.
+            # If enable_debug option is set, the configuration option will include "--enable-debug", except for the default options.
+            # If blank_minisip_configuration option is set, the configuration option will be blank. For example, this option will be
+            # used during the i2conf server setting-up procedure.
+            #
             def configure!(name='')
               individual_options = case name
                 when 'libminisip'
@@ -282,18 +302,31 @@ module CSD
               Cmd.run ['./configure', common_options, debug_options, individual_options].compact.join(' ')
             end
             
+            # This method runs the `make´ command in the current directory unless --no-make was given.
+            # It is only used for the internal MiniSIP libraries.
+            #
             def make
               make! if Options.make
             end
             
+            # This method forces running the `make´ command in the current directory.
+            # It is only used for the internal MiniSIP libraries.
+            # AI uses "-j 15" option of +make+ command to speed up the make process.
+            #
             def make!
               Cmd.run "make -j #{Options.threads}"
             end
             
+            # This method runs the `make install´ command in the current directory unless --no-make-install was given.
+            # It is only used for the internal MiniSIP libraries.
+            #
             def make_install
               make_install! if Options.make_install
             end
             
+            # This method forces running the `make install´ command in the current directory.
+            # It is only used for the internal MiniSIP libraries.
+            #
             def make_install!
               if Options.this_user
                 Cmd.run("make install")
@@ -313,6 +346,9 @@ module CSD
               end
             end
             
+            # The method create default MiniSIP phonebook for MiniSIP. The default phonebook is derived from carenet-se scenario,
+            # users can modify it in MiniSIP GUI after MiniSIP successfully installed.
+            #
             def create_address_book
               return unless !Path.phonebook.file? or ::CSD::Application::Minisip::OUTDATED_PHONEBOOKS.include?(File.read(Path.phonebook).hashed)
               UI.info "Creating default MiniSIP phonebook".green.bold
@@ -341,6 +377,8 @@ module CSD
               Cmd.run "sudo aticonfig --set-pcs-u32=BUSID-2:0:0-0/OpenGL,VSyncControl,2", :announce_pwd => false
             end
             
+            # The method updates Decklink Firmware (if needed).
+            #
             def update_decklink_firmware
               UI.info "Updating Decklink Firmware (if needed)".green.bold
               Cmd.run "BlackmagicFirmwareUpdater update", :announce_pwd => false, :die_on_failure => false
