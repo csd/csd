@@ -91,7 +91,8 @@ module CSD
             # Determines which libraries of MiniSIP should be configured using --enable-debug
             #
             def debug_libraries
-              Options.enable_debug_on ? LIBRARIES.map { |lib| lib if Options.enable_debug_on.to_a.include?(lib) }.compact : LIBRARIES
+              return LIBRARIES if Options.enable_debug
+              LIBRARIES.map { |lib| lib if Options.enable_debug_on.to_a.include?(lib) }.compact
             end
             
             # This method downloads the minisip source code in the right version. If the <tt>Options.branch</tt>
