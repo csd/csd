@@ -97,7 +97,7 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
         # The method is to check out MiniSIP source code from git repository and place it into the current working directory.
         #
         def download
-          Cmd.git_clone 'Source code of logging server', 'git://github.com/csd/minisip-logging-server.git', Path.packages
+          Cmd.git_clone 'Source code of logging server', 'http://github.com/csd/minisip-logging-server.git', Path.packages
         end
         
         # This method compiles Java source code.

@@ -101,7 +101,7 @@ module CSD
         # * The method will ask for users' approval before initiate the shell script.
         #
         def install_radeon
-          Cmd.git_clone 'drivers for ATI radeon', 'git://github.com/csd/ati.git', Path.radeon
+          Cmd.git_clone 'drivers for ATI radeon', 'http://github.com/csd/ati.git', Path.radeon
           Cmd.run "chmod +x #{Path.radeon_run}", :announce_pwd => false
           proprietary_continue
           Cmd.run "sudo #{Path.radeon_run}", :announce_pwd => false
@@ -160,7 +160,7 @@ module CSD
         #
         def install_geforce!
           raise Error::Graphics::Amd64NotSupported, "Sorry, nVIDIA GeForce is currently only supported on x86" unless Gem::Platform.local.cpu == 'x86' 
-          Cmd.git_clone 'drivers for nVIDIA GeForce', 'git://github.com/csd/nvidia.git', Path.geforce
+          Cmd.git_clone 'drivers for nVIDIA GeForce', 'http://github.com/csd/nvidia.git', Path.geforce
           Cmd.run "chmod +x #{Path.geforce_run}", :announce_pwd => false
           proprietary_continue_for_geforce
           # Note that we cannot use Cmd.run here, because the User input is not forwared to

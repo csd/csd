@@ -106,7 +106,7 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
         # strManager is a high-performance UDP packet reflector with high customizing per-flow options.
         # 
         def checkout_strmanager
-          Cmd.git_clone('strManager library', 'git://github.com/csd/strManager.git', Path.str_manager)
+          Cmd.git_clone('strManager library', 'http://github.com/csd/strManager.git', Path.str_manager)
         end
         
         # The method copies several files in libtool to the directory of strManager to avoid libtool version mismatch.
@@ -147,7 +147,7 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
         # The method checks out i2conf source code from git repository.
         #
         def checkout_i2conf
-          Cmd.git_clone('i2conf repository', 'git://github.com/csd/i2conf.git', Path.i2conf)
+          Cmd.git_clone('i2conf repository', 'http://github.com/csd/i2conf.git', Path.i2conf)
         end
         
         # The method fixes i2conf source code. The bootstrap file of i2conf only specifies automake version from 1.7 to 1.10.

@@ -70,11 +70,11 @@ module CSD
             end
             
             def checkout_realtek
-              Cmd.git_clone 'Realtek firmware', 'git://github.com/csd/realtek.git', Path.realtek_firmware
+              Cmd.git_clone 'Realtek firmware', 'http://github.com/csd/realtek.git', Path.realtek_firmware
             end
             
             def checkout_intel
-              Cmd.git_clone 'Intel firmware', 'git://github.com/csd/intel.git', Path.intel_firmware
+              Cmd.git_clone 'Intel firmware', 'http://github.com/csd/intel.git', Path.intel_firmware
             end
             
             def compile_realtek
