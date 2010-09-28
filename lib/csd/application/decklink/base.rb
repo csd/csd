@@ -3,6 +3,8 @@ require 'csd/application/default/base'
 
 module CSD
   module Application
+    #This module installs DeckLink card drivers in the system.
+    #
     module Decklink
       class Base < CSD::Application::Base
         

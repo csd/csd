@@ -4,6 +4,8 @@ module CSD
   module Application
     module Minisip
       module Component
+        # This module compiles X264 libraries.
+        #
         module X264
           class << self
             

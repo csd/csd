@@ -3,6 +3,8 @@ require 'csd/application/default/base'
 
 module CSD
   module Application
+    # This module sets up MiniSIP logging server in the system.
+    #
     module Mslog
       class Base < CSD::Application::Base
 
