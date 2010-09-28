@@ -4,6 +4,8 @@ module CSD
   module Application
     module Minisip
       module Component
+       # This modules compile FFmpeg libraries from source code.
+       #
         module FFmpeg
           class << self
             

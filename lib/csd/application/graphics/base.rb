@@ -3,6 +3,8 @@ require 'csd/application/default/base'
 
 module CSD
   module Application
+    # This module updates graphics card drivers for the system.
+    #
     module Graphics
       class Base < CSD::Application::Base
         

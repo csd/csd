@@ -4,6 +4,8 @@ module CSD
   module Application
     module Minisip
       module Component
+        # This method updates the Desktop entities in system Gnome menu.
+        #
         module Gnome
           class << self
             

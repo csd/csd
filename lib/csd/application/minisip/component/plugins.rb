@@ -4,9 +4,14 @@ module CSD
   module Application
     module Minisip
       module Component
+        # This module adds the plugins for MiniSIP
+        #
         module Plugins
           class << self
             
+            # The method adds MiniSIP plugins. It will first check whether the plugins have been added, if not, AI will 
+            # initiate corresponding methods to add the plugins.
+            #
             def compile
               UI.debug "#{self}.compile was called"
               if Path.plugins.directory? and !Options.reveal
@@ -16,10 +21,13 @@ module CSD
                 copy
               end
             end
-          
+            
+            # There is no actual operation for this introduction method.
+            #
             def introduction
             end
-          
+            
+            # This method checks out
             def checkout
               Cmd.git_clone('additional MiniSIP plugins', 'http://github.com/csd/minisip-plugins.git', Path.plugins)
             end

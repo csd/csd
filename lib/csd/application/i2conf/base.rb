@@ -5,6 +5,8 @@ require 'csd/application/i2conf/config_example'
 
 module CSD
   module Application
+    # This module sets up the i2conf reflector in the system.
+    #
     module I2conf
       class Base < CSD::Application::Base
         
