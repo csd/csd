@@ -24,7 +24,7 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
 
         # A list of apt-get packages that are required to install the logging server.
         #
-        DEBIAN_DEPENDENCIES = %w{ ant openjdk-6-jre openjdk-6-jdk libnotify-bin }
+        DEBIAN_DEPENDENCIES = %w{ ant openjdk-6-jre openjdk-6-jdk libnotify-bin git-core }
         
         # This method notifies users about following operation of AI, and initiates introduction method.
         # The actual installation process is carried out by method install! for the purpose of keeping source code clean.
