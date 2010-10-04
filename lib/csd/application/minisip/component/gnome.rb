@@ -9,6 +9,8 @@ module CSD
         module Gnome
           class << self
             
+            # Necessary contents for MiniSIP .desktop file. It will be used in the method of create_desktop_entry.
+            #
             DESKTOP_ENTRY = %{
 [Desktop Entry]
 Encoding=UTF-8
@@ -22,6 +24,8 @@ Type=Application
 StartupNotify=true
 Categories=Application;Internet;Network;Chat;AudioVideo}
             
+            # This method creates MiniSIP gnome menu by initiating corresponding methods.
+            #
             def compile
               UI.debug "#{self}.compile was called"
               return unless Gem::Platform.local.debian? # TODO: Actually, Ubuntu only, not Debian. But I'm not so sure.
@@ -36,6 +40,11 @@ Categories=Application;Internet;Network;Chat;AudioVideo}
               send_notification
             end
             
+            # This method creates desktop entry, so users can run MiniSIP by clicking the MiniSIP icon in the Applications menu.
+            # It copies the downloaded icon to pixmaps directory, so the icon can be shown at the gnome menu. 
+            # It creates a .desktop file, and fills the file with the constant DESKTOP_ENTRY.
+            # Then,the AI copies the .desktop file to /usr/share/applications directory.
+            #
             def create_desktop_entry
               # In fact, we would like to update the desktop entry it each time the AI (re-)compiles minisip
               # So we do not return here now

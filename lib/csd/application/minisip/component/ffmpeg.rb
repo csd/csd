@@ -9,6 +9,10 @@ module CSD
         module FFmpeg
           class << self
             
+            # This method compiles FFmpeg libraries by initiating corresponding modules. AI will first check whether
+            # FFmpeg source code has been already in the current directory, it will execute the checkout and make process only when
+            # the source code is not there. If the option of ffmpeg_first is set, AI will not initiate +modify_libavutil+ method.
+            #
             def compile
               UI.debug "#{self}.compile was called"
               if Path.ffmpeg_repository.directory? and !Options.reveal
@@ -20,6 +24,8 @@ module CSD
               end
             end
             
+            # This method gives UI information to users about the AI operation regarding FFmpeg library.
+            #
             def introduction
               if Path.ffmpeg_repository.directory?
                 UI.debug "There is no FFmpeg introduction, because the directory already exists: #{Path.ffmpeg_repository.enquote}"
@@ -30,6 +36,8 @@ module CSD
               end
             end
             
+            # This method checkout FFmpeg and libswscale source code from git repository.
+            #
             def checkout
               Cmd.git_clone('ffmpeg repository', 'http://github.com/csd/ffmpeg.git', Path.ffmpeg_repository)
               Cmd.git_clone('ffmpeg libswscale sub-repository', 'http://github.com/csd/libswscale.git', Path.ffmpeg_libswscale)

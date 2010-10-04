@@ -27,7 +27,8 @@ module CSD
             def introduction
             end
             
-            # This method checks out
+            # This method checks out MiniSIP plugins from git repository.
+            #
             def checkout
               Cmd.git_clone('additional MiniSIP plugins', 'http://github.com/csd/minisip-plugins.git', Path.plugins)
             end
