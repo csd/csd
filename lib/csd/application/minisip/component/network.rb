@@ -14,10 +14,10 @@ module CSD
             # higher than this.
             #
             OPTIMUM_BUFFERS = {
-              'net.core.rmem_max'     => '131071',
-              'net.core.wmem_max'     => '131071',
-              'net.core.rmem_default' => '114688',
-              'net.core.wmem_default' => '114688',
+              'net.core.rmem_max'     => '8000000',
+              'net.core.wmem_max'     => '8000000',
+              'net.core.rmem_default' => '8000000',
+              'net.core.wmem_default' => '8000000',
               'net.ipv4.udp_mem'      => '81120 108160 162240',
               'net.ipv4.udp_rmem_min' => '4096',
               'net.ipv4.udp_wmem_min' => '4096'
